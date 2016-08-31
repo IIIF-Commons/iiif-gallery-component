@@ -1,5 +1,10 @@
 namespace IIIFComponents{
     export interface IGalleryComponentOptions extends _Components.IBaseComponentOptions {
-        helper: IHelper;
+        helper: Manifold.IHelper;
+        chunkedResizingEnabled: boolean;
+        chunkedResizingThreshold: number;
+        pageModeEnabled: boolean;
+        scrollStopDuration: number;
+        sizingEnabled: boolean;
     }
 }

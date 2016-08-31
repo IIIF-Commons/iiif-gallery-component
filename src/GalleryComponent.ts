@@ -2,19 +2,19 @@ namespace IIIFComponents {
     export class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
 
         public options: IGalleryComponentOptions;
-        private _thumbsCache: JQuery;
+
+        private _$header: JQuery;
+        private _$main: JQuery;
+        private _$selectedThumb: JQuery;
+        private _$sizeDownButton: JQuery;
+        private _$sizeRange: JQuery;
+        private _$sizeUpButton: JQuery;
+        private _$thumbs: JQuery;
+        private _lastThumbClickedIndex: number;
+        private _multiSelectState: Manifold.MultiSelectState;
+        private _range: number;
         private _scrollStopDuration: number = 100;
-        $header: JQuery;
-        $main: JQuery;
-        $selectedThumb: JQuery;
-        $sizeDownButton: JQuery;
-        $sizeRange: JQuery;
-        $sizeUpButton: JQuery;
-        $thumbs: JQuery;
-        isOpen: boolean = false;
-        lastThumbClickedIndex: number;
-        multiSelectState: Manifold.MultiSelectState;
-        range: number;
+        private _thumbsCache: JQuery;
 
         public thumbs: Manifold.IThumb[];
 
@@ -32,47 +32,47 @@ namespace IIIFComponents {
                 console.error("Component failed to initialise");
             }
             
-            this.$header = $('<div class="header"></div>');
-            this._$element.append(this.$header);
+            this._$header = $('<div class="header"></div>');
+            this._$element.append(this._$header);
 
-            this.$sizeDownButton = $('<input class="btn btn-default size-down" type="button" value="-" />');
-            this.$header.append(this.$sizeDownButton);
+            this._$sizeDownButton = $('<input class="btn btn-default size-down" type="button" value="-" />');
+            this._$header.append(this._$sizeDownButton);
 
-            this.$sizeRange = $('<input type="range" name="size" min="1" max="10" value="6" />');
-            this.$header.append(this.$sizeRange);
+            this._$sizeRange = $('<input type="range" name="size" min="1" max="10" value="6" />');
+            this._$header.append(this._$sizeRange);
 
-            this.$sizeUpButton = $('<input class="btn btn-default size-up" type="button" value="+" />');
-            this.$header.append(this.$sizeUpButton);
+            this._$sizeUpButton = $('<input class="btn btn-default size-up" type="button" value="+" />');
+            this._$header.append(this._$sizeUpButton);
 
-            this.$main = $('<div class="main"></div>');
-            this._$element.append(this.$main);
+            this._$main = $('<div class="main"></div>');
+            this._$element.append(this._$main);
 
-            this.$thumbs = $('<div class="thumbs"></div>');
-            this.$main.append(this.$thumbs);
+            this._$thumbs = $('<div class="thumbs"></div>');
+            this._$main.append(this._$thumbs);
 
-            this.$thumbs.addClass(this.options.helper.getViewingDirection().toString()); // defaults to "left-to-right"
+            this._$thumbs.addClass(this.options.helper.getViewingDirection().toString()); // defaults to "left-to-right"
 
-            this.$sizeDownButton.on('click', () => {
-                var val = Number(this.$sizeRange.val()) - 1;
+            this._$sizeDownButton.on('click', () => {
+                var val = Number(this._$sizeRange.val()) - 1;
 
-                if (val >= Number(this.$sizeRange.attr('min'))){
-                    this.$sizeRange.val(val.toString());
-                    this.$sizeRange.trigger('change');
-                    this._emit(GalleryComponent.Events.GALLERY_DECREASE_SIZE);
+                if (val >= Number(this._$sizeRange.attr('min'))){
+                    this._$sizeRange.val(val.toString());
+                    this._$sizeRange.trigger('change');
+                    this._emit(GalleryComponent.Events.DECREASE_SIZE);
                 }
             });
 
-            this.$sizeUpButton.on('click', () => {
-                var val = Number(this.$sizeRange.val()) + 1;
+            this._$sizeUpButton.on('click', () => {
+                var val = Number(this._$sizeRange.val()) + 1;
 
-                if (val <= Number(this.$sizeRange.attr('max'))){
-                    this.$sizeRange.val(val.toString());
-                    this.$sizeRange.trigger('change');
-                    this._emit(GalleryComponent.Events.GALLERY_INCREASE_SIZE);
+                if (val <= Number(this._$sizeRange.attr('max'))){
+                    this._$sizeRange.val(val.toString());
+                    this._$sizeRange.trigger('change');
+                    this._emit(GalleryComponent.Events.INCREASE_SIZE);
                 }
             });
 
-            this.$sizeRange.on('change', () => {
+            this._$sizeRange.on('change', () => {
                 this.updateThumbs();
                 this.scrollToThumb(this.getSelectedThumbIndex());
             });
@@ -109,12 +109,12 @@ namespace IIIFComponents {
             });
 
             // use unevent to detect scroll stop.
-            this.$main.on('scroll', () => {
+            this._$main.on('scroll', () => {
                 this.updateThumbs();
-            }, this._scrollStopDuration);
+            }, this.options.scrollStopDuration);
 
-            if (!Modernizr.inputtypes.range){
-                this.$sizeRange.hide();
+            if (!this.options.sizingEnabled){
+                this._$sizeRange.hide();
             }
 
             return success;
@@ -122,6 +122,12 @@ namespace IIIFComponents {
         
         protected _getDefaultOptions(): IGalleryComponentOptions {
             return <IGalleryComponentOptions>{
+                helper: null,
+                scrollStopDuration: 100,
+                chunkedResizingEnabled: true,
+                chunkedResizingThreshold: 400,
+                pageModeEnabled: false,
+                sizingEnabled: true
             }
         }
         
@@ -137,7 +143,7 @@ namespace IIIFComponents {
             if (!this.thumbs) return;
 
             if (this.isChunkedResizingEnabled()) {
-                this.$thumbs.addClass("chunked");
+                this._$thumbs.addClass("chunked");
             }
 
             // set initial thumb sizes
@@ -159,25 +165,25 @@ namespace IIIFComponents {
                 thumb.initialHeight = medianHeight;
             }
 
-            this.$thumbs.link($.templates.galleryThumbsTemplate, this.thumbs);
+            this._$thumbs.link($.templates.galleryThumbsTemplate, this.thumbs);
 
-            if (!that.multiSelectState.isEnabled){
+            if (!that._multiSelectState.isEnabled){
                 // add a selection click event to all thumbs
-                this.$thumbs.delegate('.thumb', 'click', function (e) {
+                this._$thumbs.delegate('.thumb', 'click', function (e) {
                     e.preventDefault();
-                    var data = $.view(this).data;
-                    that.lastThumbClickedIndex = data.index;
-                    $.publish(BaseCommands.THUMB_SELECTED, [data]);
+                    var thumb = $.view(this).data;
+                    that._lastThumbClickedIndex = thumb.index;
+                    that._emit(GalleryComponent.Events.THUMB_SELECTED, thumb);
                 });
             } else {
                 // make each thumb a checkboxButton
-                $.each(this.$thumbs.find('.thumb'), (index: number, thumb: any) => {
+                $.each(this._$thumbs.find('.thumb'), (index: number, thumb: any) => {
                     var $thumb = $(thumb);
 
                     $thumb.checkboxButton(function(checked: boolean) {
-                        var data = $.view(this).data;
-                        that._setThumbMultiSelected(data, !data.multiSelected);
-                        $.publish(Commands.THUMB_MULTISELECTED, [data]);
+                        var thumb = $.view(this).data;
+                        that._setThumbMultiSelected(thumb, !thumb.multiSelected);
+                        that._emit(GalleryComponent.Events.THUMB_MULTISELECTED, thumb);
                     });
                 })
             }
@@ -210,9 +216,85 @@ namespace IIIFComponents {
         
         }
 
+        isChunkedResizingEnabled(): boolean {
+            if (this.options.chunkedResizingEnabled && this.thumbs.length > this.options.chunkedResizingThreshold){
+                return true;
+            }
+            return false;
+        }
+
+        getSelectedThumbIndex(): number {
+            return Number(this._$selectedThumb.data('index'));
+        }
+
+        getAllThumbs(): JQuery {
+            if (!this._thumbsCache){
+                this._thumbsCache = this._$thumbs.find('.thumb');
+            }
+            return this._thumbsCache;
+        }
+
+        getThumbByIndex(canvasIndex: number): JQuery {
+            return this._$thumbs.find('[data-index="' + canvasIndex + '"]');
+        }
+
+        scrollToThumb(canvasIndex: number): void {
+            var $thumb = this.getThumbByIndex(canvasIndex)
+            this._$main.scrollTop($thumb.position().top);
+        }
+
+        searchPreviewStart(canvasIndex: number): void {
+            this.scrollToThumb(canvasIndex);
+            var $thumb = this.getThumbByIndex(canvasIndex);
+            $thumb.addClass('searchpreview');
+        }
+
+        searchPreviewFinish(): void {
+            this.scrollToThumb(this.options.helper.canvasIndex);
+            this.getAllThumbs().removeClass('searchpreview');
+        }
+
+        selectIndex(index): void {
+            // may be authenticating
+            if (index === -1) return;
+            if (!this.thumbs || !this.thumbs.length) return;
+            index = parseInt(index);
+            this.getAllThumbs().removeClass('selected');
+            this._$selectedThumb = this.getThumbByIndex(index);
+            this._$selectedThumb.addClass('selected');
+            // make sure visible images are loaded.
+            this.updateThumbs();
+        }
+
+        setLabel(): void {
+            if (this.options.pageModeEnabled) {
+                $(this._$thumbs).find('span.index').hide();
+                $(this._$thumbs).find('span.label').show();
+            } else {
+                $(this._$thumbs).find('span.index').show();
+                $(this._$thumbs).find('span.label').hide();
+            }
+        }
+
         private _setRange(): void {
-            var norm = Math.normalise(Number(this.$sizeRange.val()), 0, 10);
-            this.range = Math.clamp(norm, 0.05, 1);
+            var norm = Math.normalise(Number(this._$sizeRange.val()), 0, 10);
+            this._range = Math.clamp(norm, 0.05, 1);
+        }
+
+        private _setThumbMultiSelected(thumb: Manifold.IThumb, selected: boolean): void {
+            $.observable(thumb).setProperty("multiSelected", selected);
+        }
+
+        private _setMultiSelectEnabled(enabled: boolean): void {
+            for (var i = 0; i < this.thumbs.length; i++){
+                var thumb: Manifold.IThumb = this.thumbs[i];
+                thumb.multiSelectEnabled = enabled;
+            }
+        }
+
+        private _reset(): void {
+            this._$thumbs.undelegate('.thumb', 'click');
+            this._setMultiSelectEnabled(this._multiSelectState.isEnabled);
         }
 
         protected _resize(): void {
@@ -223,8 +305,10 @@ namespace IIIFComponents {
 
 namespace IIIFComponents.GalleryComponent {
     export class Events {
-        static GALLERY_DECREASE_SIZE: string = 'decreaseSize';
-        static GALLERY_INCREASE_SIZE: string = 'increaseSize';
+        static DECREASE_SIZE: string = 'decreaseSize';
+        static INCREASE_SIZE: string = 'increaseSize';
+        static THUMB_SELECTED: string = 'thumbSelected';
+        static THUMB_MULTISELECTED: string = 'thumbMultiSelected';
     }
 }
 
