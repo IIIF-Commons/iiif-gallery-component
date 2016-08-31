@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>component-boilerplate: test</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/iiif-gallery-component.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
+    <script src="js/iiif-gallery-component.bundle.js"></script>
+    <script src="js/manifold.bundle.js"></script>
+</head>
+<body>
+
+    <div id="gallery" class="iiif-gallery-component">
+        loading...
+    </div>
+
+    <script>
+
+        var helper, component, rootNode, multiSelectState;
+        
+        $(function() {
+            
+            Manifold.loadManifest({
+                iiifResourceUri: 'http://wellcomelibrary.org/iiif/b18035723/manifest',
+                collectionIndex: 0,
+                manifestIndex: 0,
+                sequenceIndex: 0,
+                canvasIndex: 0
+            }).then(function(h){
+                
+                helper = h;
+                
+                component = new IIIFComponents.GalleryComponent({
+                    element: "#gallery",
+                    helper: h
+                });
+
+                component.on('decreaseSize', function() {
+                    console.log('decrease size');
+                });
+
+                component.on('increaseSize', function() {
+                    console.log('increase size');
+                });
+
+                multiSelectState = helper.getMultiSelectState();
+
+                databindGallery();
+
+            }).catch(function() {
+                console.error('failed to load manifest');
+            });
+            
+            function databindGallery(treeSortType) {
+                component.databind();
+            }
+        });
+
+    </script>
+</body>
+</html>
