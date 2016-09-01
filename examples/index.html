@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" href="css/iiif-gallery-component.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
-    <script src="js/iiif-gallery-component.bundle.js"></script>
+    <script src="js/base-component.bundle.js"></script>
+    <script src="js/iiif-gallery-component.js"></script>
+    <script src="js/jquery-plugins.js"></script>
     <script src="js/manifold.bundle.js"></script>
 </head>
 <body>
@@ -44,17 +46,13 @@
                     console.log('increase size');
                 });
 
-                multiSelectState = helper.getMultiSelectState();
+                var thumbs = helper.getThumbs(200, 320);
 
-                databindGallery();
+                component.databind(thumbs);
 
             }).catch(function() {
                 console.error('failed to load manifest');
             });
-            
-            function databindGallery(treeSortType) {
-                component.databind();
-            }
         });
 
     </script>

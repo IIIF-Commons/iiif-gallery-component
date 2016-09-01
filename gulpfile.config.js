@@ -5,11 +5,13 @@ var GulpConfig = (function () {
         this.name = metadata.name;
         // libs that MUST be included in a consuming app for this component to work
         this.deps = [
-            'node_modules/base-component/dist/base-component.bundle.js'
+            'node_modules/base-component/dist/base-component.bundle.js',
+            'node_modules/jquery-plugins/dist/jquery-plugins.js',
+            'node_modules/manifold/dist/manifold.bundle.js'
         ];
         // libs that MAY be included in a consuming app but are used here for example purposes
         this.examplesDeps = [
-            'node_modules/manifold/dist/manifold.bundle.js'
+            
         ];
         this.examplesDir = './examples';
         this.examplesDepsDir = './examples/js';
@@ -45,6 +47,13 @@ var GulpConfig = (function () {
         };
         this.browserifySrc = this.dist;
         this.browserifyTarget = this.dist;
+        this.cssOut = this.name + '.css';
+        this.cssSrc = [
+            'src/css/**/*.less'
+        ];
+        this.examplesImgDir = './examples/img';
+        this.examplesCssDir = './examples/css';
+        this.imgSrc = './src/img/**';
     }
     return GulpConfig;
 })();

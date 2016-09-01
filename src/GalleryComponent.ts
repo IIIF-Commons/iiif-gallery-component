@@ -14,9 +14,8 @@ namespace IIIFComponents {
         private _multiSelectState: Manifold.MultiSelectState;
         private _range: number;
         private _scrollStopDuration: number = 100;
+        private _thumbs: Manifold.IThumb[];
         private _thumbsCache: JQuery;
-
-        public thumbs: Manifold.IThumb[];
 
         constructor(options: IGalleryComponentOptions) {
             super(options);
@@ -31,7 +30,7 @@ namespace IIIFComponents {
             if (!success){
                 console.error("Component failed to initialise");
             }
-            
+
             this._$header = $('<div class="header"></div>');
             this._$element.append(this._$header);
 
@@ -73,8 +72,8 @@ namespace IIIFComponents {
             });
 
             this._$sizeRange.on('change', () => {
-                this.updateThumbs();
-                this.scrollToThumb(this.getSelectedThumbIndex());
+                this._updateThumbs();
+                this._scrollToThumb(this._getSelectedThumbIndex());
             });
 
             this._setRange();
@@ -110,47 +109,51 @@ namespace IIIFComponents {
 
             // use unevent to detect scroll stop.
             this._$main.on('scroll', () => {
-                this.updateThumbs();
+                this._updateThumbs();
             }, this.options.scrollStopDuration);
 
             if (!this.options.sizingEnabled){
                 this._$sizeRange.hide();
             }
 
+            this._updateMultiSelectState();
+
             return success;
         }
         
         protected _getDefaultOptions(): IGalleryComponentOptions {
             return <IGalleryComponentOptions>{
-                helper: null,
-                scrollStopDuration: 100,
                 chunkedResizingEnabled: true,
                 chunkedResizingThreshold: 400,
+                helper: null,
+                imageFadeInDuration: 300,
                 pageModeEnabled: false,
-                sizingEnabled: true
+                scrollStopDuration: 100,
+                sizingEnabled: true,
+                thumbLoadPadding: 3
             }
         }
         
-        public databind(): void{
-            if (!this.thumbs) return;
+        public databind(thumbs: Manifold.IThumb[]): void{
+            this._thumbs = thumbs;
             this._reset();
-            this.createThumbs();
+            this._createThumbs();
         }
 
-        createThumbs(): void{
+        private _createThumbs(): void{
             var that = this;
 
-            if (!this.thumbs) return;
+            if (!this._thumbs) return;
 
-            if (this.isChunkedResizingEnabled()) {
+            if (this._isChunkedResizingEnabled()) {
                 this._$thumbs.addClass("chunked");
             }
 
             // set initial thumb sizes
             var heights = [];
 
-            for(var i = 0; i < this.thumbs.length; i++) {
-                var thumb: Manifold.IThumb = this.thumbs[i];
+            for(var i = 0; i < this._thumbs.length; i++) {
+                var thumb: Manifold.IThumb = this._thumbs[i];
                 var initialWidth = thumb.width;
                 var initialHeight = thumb.height;
                 thumb.initialWidth = initialWidth;
@@ -160,12 +163,12 @@ namespace IIIFComponents {
 
             var medianHeight = Math.median(heights);
 
-            for(var j = 0; j < this.thumbs.length; j++){
-                var thumb: Manifold.IThumb = this.thumbs[j];
+            for(var j = 0; j < this._thumbs.length; j++){
+                var thumb: Manifold.IThumb = this._thumbs[j];
                 thumb.initialHeight = medianHeight;
             }
 
-            this._$thumbs.link($.templates.galleryThumbsTemplate, this.thumbs);
+            this._$thumbs.link($.templates.galleryThumbsTemplate, this._thumbs);
 
             if (!that._multiSelectState.isEnabled){
                 // add a selection click event to all thumbs
@@ -188,18 +191,69 @@ namespace IIIFComponents {
                 })
             }
 
-            this.selectIndex(this.options.helper.canvasIndex);
+            this._selectIndex(this.options.helper.canvasIndex);
+            this._setLabel();
+            this._updateThumbs();
+        }
 
-            this.setLabel();
+        private _updateMultiSelectState(): void {
+            this._multiSelectState = this.options.helper.getMultiSelectState();
+        }
 
-            this.updateThumbs();
+        private _sizeThumb($thumb: JQuery) : void {
+
+            var $wrap = $thumb.find('.wrap');
+
+            var width: number = Number($thumb.data().initialwidth);
+            var height: number = Number($thumb.data().initialheight);
+
+            var $label = $thumb.find('.label');
+
+            var newWidth = Math.floor(width * this._range);
+            var newHeight = Math.floor(height * this._range);
+
+            $wrap.outerWidth(newWidth);
+            $wrap.outerHeight(newHeight);
+            $label.outerWidth(newWidth);
+        }
+
+        private _loadThumb($thumb: JQuery, cb?: (img: JQuery) => void): void {
+            var $wrap = $thumb.find('.wrap');
+
+            if ($wrap.hasClass('loading') || $wrap.hasClass('loaded')) return;
+
+            $thumb.removeClass('preLoad');
+
+            // if no img has been added yet
+
+            var visible = $thumb.attr('data-visible');
+
+            var fadeDuration = this.options.imageFadeInDuration;
+
+            if (visible !== "false") {
+                $wrap.addClass('loading');
+                var src = $thumb.attr('data-src');
+                var img = $('<img class="thumbImage" src="' + src + '" />');
+                // fade in on load.
+                $(img).hide().load(function () {
+                    $(this).fadeIn(fadeDuration, function () {
+                        $(this).parent().swapClass('loading', 'loaded');
+                    });
+                });
+
+                $wrap.prepend(img);
+                if (cb) cb(img);
+            } else {
+                $wrap.addClass('hidden');
+            }
+
         }
 
         private _getThumbsByRange(range: Manifold.IRange): Manifold.IThumb[] {
             var thumbs: Manifold.IThumb[] = [];
 
-            for (var i = 0; i < this.thumbs.length; i++) {
-                var thumb: Manifold.IThumb = this.thumbs[i];
+            for (var i = 0; i < this._thumbs.length; i++) {
+                var thumb: Manifold.IThumb = this._thumbs[i];
                 var canvas: Manifold.ICanvas = thumb.data;
 
                 var r: Manifold.IRange = <Manifold.IRange>this.options.helper.getCanvasRange(canvas, range.path);
@@ -212,61 +266,119 @@ namespace IIIFComponents {
             return thumbs;
         }
 
-        updateThumbs(): void {
-        
+        _updateThumbs(): void {
+
+            var debug: boolean = false;
+
+            // cache range size
+            this._setRange();
+
+            var scrollTop: number = this._$main.scrollTop();
+            var scrollHeight: number = this._$main.height();
+            var scrollBottom: number = scrollTop + scrollHeight;
+
+            if (debug){
+                console.log('scrollTop %s, scrollBottom %s', scrollTop, scrollBottom);
+            }
+
+            // test which thumbs are scrolled into view
+            var thumbs = this._getAllThumbs();
+
+            for (var i = 0; i < thumbs.length; i++) {
+
+                var $thumb = $(thumbs[i]);
+
+                var thumbTop = $thumb.position().top;
+                var thumbHeight = $thumb.outerHeight();
+                var thumbBottom = thumbTop + thumbHeight;
+
+                if (debug) {
+                    var $label = $thumb.find('span:visible');
+                    $label.empty().append('t: ' + thumbTop + ', b: ' + thumbBottom);
+                }
+
+                // if chunked resizing isn't enabled, resize all thumbs
+                if (!this._isChunkedResizingEnabled()) {
+                    this._sizeThumb($thumb);
+                }
+
+                var padding: number = thumbHeight * this.options.thumbLoadPadding;
+
+                // check all thumbs to see if they are within the scroll area plus padding
+                if (thumbTop <= scrollBottom + padding && thumbBottom >= scrollTop - padding){
+
+                    // if chunked resizing is enabled, only resize, equalise, and show thumbs in the scroll area
+                    if (this._isChunkedResizingEnabled()) {
+                        this._sizeThumb($thumb);
+                    }
+
+                    $thumb.removeClass('outsideScrollArea');
+
+                    if (debug) {
+                        $label.append(', i: true');
+                    }
+
+                    this._loadThumb($thumb);
+                } else {
+
+                    $thumb.addClass('outsideScrollArea');
+
+                    if (debug) {
+                        $label.append(', i: false');
+                    }
+                }
+            }
         }
 
-        isChunkedResizingEnabled(): boolean {
-            if (this.options.chunkedResizingEnabled && this.thumbs.length > this.options.chunkedResizingThreshold){
+        private _isChunkedResizingEnabled(): boolean {
+            if (this.options.chunkedResizingEnabled && this._thumbs.length > this.options.chunkedResizingThreshold){
                 return true;
             }
             return false;
         }
 
-        getSelectedThumbIndex(): number {
+        private _getSelectedThumbIndex(): number {
             return Number(this._$selectedThumb.data('index'));
         }
 
-        getAllThumbs(): JQuery {
+        private _getAllThumbs(): JQuery {
             if (!this._thumbsCache){
                 this._thumbsCache = this._$thumbs.find('.thumb');
             }
             return this._thumbsCache;
         }
 
-        getThumbByIndex(canvasIndex: number): JQuery {
+        private _getThumbByIndex(canvasIndex: number): JQuery {
             return this._$thumbs.find('[data-index="' + canvasIndex + '"]');
         }
 
-        scrollToThumb(canvasIndex: number): void {
-            var $thumb = this.getThumbByIndex(canvasIndex)
+        private _scrollToThumb(canvasIndex: number): void {
+            var $thumb = this._getThumbByIndex(canvasIndex)
             this._$main.scrollTop($thumb.position().top);
         }
 
-        searchPreviewStart(canvasIndex: number): void {
-            this.scrollToThumb(canvasIndex);
-            var $thumb = this.getThumbByIndex(canvasIndex);
+        private _searchPreviewStart(canvasIndex: number): void {
+            this._scrollToThumb(canvasIndex);
+            var $thumb = this._getThumbByIndex(canvasIndex);
             $thumb.addClass('searchpreview');
         }
 
-        searchPreviewFinish(): void {
-            this.scrollToThumb(this.options.helper.canvasIndex);
-            this.getAllThumbs().removeClass('searchpreview');
+        private _searchPreviewFinish(): void {
+            this._scrollToThumb(this.options.helper.canvasIndex);
+            this._getAllThumbs().removeClass('searchpreview');
         }
 
-        selectIndex(index): void {
-            // may be authenticating
-            if (index === -1) return;
-            if (!this.thumbs || !this.thumbs.length) return;
+        private _selectIndex(index): void {
+            if (!this._thumbs || !this._thumbs.length) return;
             index = parseInt(index);
-            this.getAllThumbs().removeClass('selected');
-            this._$selectedThumb = this.getThumbByIndex(index);
+            this._getAllThumbs().removeClass('selected');
+            this._$selectedThumb = this._getThumbByIndex(index);
             this._$selectedThumb.addClass('selected');
             // make sure visible images are loaded.
-            this.updateThumbs();
+            this._updateThumbs();
         }
 
-        setLabel(): void {
+        private _setLabel(): void {
             if (this.options.pageModeEnabled) {
                 $(this._$thumbs).find('span.index').hide();
                 $(this._$thumbs).find('span.label').show();
@@ -286,12 +398,12 @@ namespace IIIFComponents {
         }
 
         private _setMultiSelectEnabled(enabled: boolean): void {
-            for (var i = 0; i < this.thumbs.length; i++){
-                var thumb: Manifold.IThumb = this.thumbs[i];
+            for (var i = 0; i < this._thumbs.length; i++){
+                var thumb: Manifold.IThumb = this._thumbs[i];
                 thumb.multiSelectEnabled = enabled;
             }
         }
-
+ 
         private _reset(): void {
             this._$thumbs.undelegate('.thumb', 'click');
             this._setMultiSelectEnabled(this._multiSelectState.isEnabled);

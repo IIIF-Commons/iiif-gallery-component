@@ -13,24 +13,27 @@ declare namespace IIIFComponents {
         private _multiSelectState;
         private _range;
         private _scrollStopDuration;
+        private _thumbs;
         private _thumbsCache;
-        thumbs: Manifold.IThumb[];
         constructor(options: IGalleryComponentOptions);
         protected _init(): boolean;
         protected _getDefaultOptions(): IGalleryComponentOptions;
-        databind(): void;
-        createThumbs(): void;
+        databind(thumbs: Manifold.IThumb[]): void;
+        private _createThumbs();
+        private _updateMultiSelectState();
+        private _sizeThumb($thumb);
+        private _loadThumb($thumb, cb?);
         private _getThumbsByRange(range);
-        updateThumbs(): void;
-        isChunkedResizingEnabled(): boolean;
-        getSelectedThumbIndex(): number;
-        getAllThumbs(): JQuery;
-        getThumbByIndex(canvasIndex: number): JQuery;
-        scrollToThumb(canvasIndex: number): void;
-        searchPreviewStart(canvasIndex: number): void;
-        searchPreviewFinish(): void;
-        selectIndex(index: any): void;
-        setLabel(): void;
+        _updateThumbs(): void;
+        private _isChunkedResizingEnabled();
+        private _getSelectedThumbIndex();
+        private _getAllThumbs();
+        private _getThumbByIndex(canvasIndex);
+        private _scrollToThumb(canvasIndex);
+        private _searchPreviewStart(canvasIndex);
+        private _searchPreviewFinish();
+        private _selectIndex(index);
+        private _setLabel();
         private _setRange();
         private _setThumbMultiSelected(thumb, selected);
         private _setMultiSelectEnabled(enabled);
@@ -54,11 +57,13 @@ declare namespace IIIFComponents {
 
 declare namespace IIIFComponents {
     interface IGalleryComponentOptions extends _Components.IBaseComponentOptions {
-        helper: Manifold.IHelper;
         chunkedResizingEnabled: boolean;
         chunkedResizingThreshold: number;
+        helper: Manifold.IHelper;
+        imageFadeInDuration: number;
         pageModeEnabled: boolean;
         scrollStopDuration: number;
         sizingEnabled: boolean;
+        thumbLoadPadding: number;
     }
 }
