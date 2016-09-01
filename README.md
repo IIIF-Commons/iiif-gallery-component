@@ -1,3 +1,5 @@
 # iiif-gallery-component
 
-WIP
+WIP!
+
+http://viewdir.github.io/iiif-tree-component/examples/
