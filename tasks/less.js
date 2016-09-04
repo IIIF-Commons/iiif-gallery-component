@@ -6,10 +6,10 @@ var path = require('path');
 var rename = require('gulp-rename');
  
 gulp.task('less', function () {
-  return gulp.src(config.cssSrc)
+  return gulp.src(config.sources.css)
     .pipe(less({
       paths: [ path.join(__dirname, 'less', 'includes') ]
     }))
-    .pipe(rename(config.cssOut))
-    .pipe(gulp.dest(config.dist));
+    .pipe(rename(config.fileNames.cssOut))
+    .pipe(gulp.dest(config.directories.dist));
 });
