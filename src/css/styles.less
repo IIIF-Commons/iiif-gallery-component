@@ -30,6 +30,26 @@ body{
         overflow: hidden;
         height: 45px;
 
+        .left {
+            float: left;
+            overflow: hidden;
+        }
+
+        .right {
+            float: right;
+            overflow: hidden;
+
+            .multiSelectOptions{
+                .multiSelectAll {
+                    float: left;
+                }
+
+                .select{
+                    margin-left: @margin-medium-horizontal;
+                }
+            }
+        }
+
         .btn {
             float: left;
             width: 30px;
@@ -59,7 +79,7 @@ body{
             overflow: hidden;
             position: relative;
 
-            // all thumb spacing-related styles
+            // thumb spacing-related styles
 
             &.multiSelect{
                 .thumb {
@@ -107,7 +127,6 @@ body{
                 }
             }
 
-            // all spacing-related thumb styles
             .thumb{
                 margin: 0 7px 7px 0;
 
@@ -132,6 +151,8 @@ body{
                     padding: 2px 0 0 0;
                 }
             }
+            
+            // end thumb spacing-related styles
 
             .thumb{
                 float: left;
@@ -141,6 +162,7 @@ body{
                     overflow: hidden;
                     text-align: center;
                     background: none;
+                    position: relative;
 
                     &.loading{
                         .loading(@loader-black-bg);
@@ -152,16 +174,16 @@ body{
 
                     img{
                         display: block;
-                        float: left;
                         max-width: 100%;
                         max-height: 100%;
-                        //margin: 0 auto;
                     }
 
                     input{
-                        float: left;
+                        //float: left;
+                        position: absolute;
                         cursor: pointer;
-                        margin-top: -20px;
+                        top: 10px;
+                        left: 10px;
                     }
                 }
 
@@ -192,6 +214,10 @@ body{
 
                             .thumbImage {
                                 .opacity(.35);
+                            }
+
+                            input {
+
                             }
                         }
                     }

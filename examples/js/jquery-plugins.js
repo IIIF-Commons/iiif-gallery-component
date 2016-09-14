@@ -98,7 +98,7 @@
         });
     };
     // Truncates to a certain number of letters, while ignoring and preserving HTML
-    $.fn.ellipsisHtmlFixed = function (chars, callback) {
+    $.fn.ellipsisHtmlFixed = function (chars, cb) {
         return this.each(function () {
             var $self = $(this);
             var expandedText = $self.html();
@@ -132,8 +132,8 @@
                 });
                 expanded = !expanded;
                 $self.append($toggleButton);
-                if (callback)
-                    callback();
+                if (cb)
+                    cb();
             };
             $self.toggle();
         });
@@ -211,9 +211,7 @@
     $.mlp = { x: 0, y: 0 }; // Mouse Last Position
     function documentHandler() {
         var $current = this === document ? $(this) : $(this).contents();
-        $current.mousemove(function (e) {
-            jQuery.mlp = { x: e.pageX, y: e.pageY };
-        });
+        $current.mousemove(function (e) { jQuery.mlp = { x: e.pageX, y: e.pageY }; });
         $current.find("iframe").load(documentHandler);
     }
     $(documentHandler);
@@ -222,7 +220,8 @@
         this.eq(0).each(function () {
             var $current = $(this).is("iframe") ? $(this).contents().find("body") : $(this);
             var offset = $current.offset();
-            result = offset.left <= $.mlp.x && offset.left + $current.outerWidth() > $.mlp.x && offset.top <= $.mlp.y && offset.top + $current.outerHeight() > $.mlp.y;
+            result = offset.left <= $.mlp.x && offset.left + $current.outerWidth() > $.mlp.x &&
+                offset.top <= $.mlp.y && offset.top + $current.outerHeight() > $.mlp.y;
         });
         return result;
     };
@@ -243,28 +242,28 @@
         });
         return on.apply(this, args);
     };
-    $.fn.onEnter = function (callback) {
+    $.fn.onEnter = function (cb) {
         return this.each(function () {
             var $this = $(this);
             $this.on('keyup', function (e) {
                 if (e.keyCode === 13) {
                     e.preventDefault();
-                    callback();
+                    cb();
                 }
             });
         });
     };
-    $.fn.onPressed = function (callback) {
+    $.fn.onPressed = function (cb) {
         return this.each(function () {
             var $this = $(this);
-            $this.on('click', function (e) {
+            $this.on('touchstart click', function (e) {
                 e.preventDefault();
-                callback();
+                cb(e);
             });
             $this.on('keyup', function (e) {
                 if (e.keyCode === 13) {
                     e.preventDefault();
-                    callback();
+                    cb(e);
                 }
             });
         });
@@ -320,7 +319,7 @@
             }
         });
     };
-    $.fn.toggleExpandText = function (chars, lessText, moreText, callback) {
+    $.fn.toggleExpandText = function (chars, lessText, moreText, cb) {
         return this.each(function () {
             var $self = $(this);
             var expandedText = $self.html();
@@ -348,14 +347,14 @@
                 });
                 expanded = !expanded;
                 $self.append($toggleButton);
-                if (callback)
-                    callback();
+                if (cb)
+                    cb();
             };
             $self.toggle();
         });
     };
     // Toggle expansion by number of lines
-    $.fn.toggleExpandTextByLines = function (lines, lessText, moreText, callback) {
+    $.fn.toggleExpandTextByLines = function (lines, lessText, moreText, cb) {
         return this.each(function () {
             var $self = $(this);
             var expandedText = $self.html();
@@ -364,6 +363,7 @@
             // when height changes, store string, then pick from line counts
             var stringsByLine = [expandedText];
             var lastHeight = $self.height();
+            // Until empty
             while ($self.text().length > 0) {
                 $self.removeLastWord();
                 var html = $self.html();
@@ -400,8 +400,8 @@
                 });
                 expanded = !expanded;
                 $self.append($toggleButton);
-                if (callback)
-                    callback();
+                if (cb)
+                    cb();
             };
             $self.toggle();
         });

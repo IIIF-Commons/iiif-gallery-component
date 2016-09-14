@@ -169,7 +169,7 @@ module.exports = E;
         });
     };
     // Truncates to a certain number of letters, while ignoring and preserving HTML
-    $.fn.ellipsisHtmlFixed = function (chars, callback) {
+    $.fn.ellipsisHtmlFixed = function (chars, cb) {
         return this.each(function () {
             var $self = $(this);
             var expandedText = $self.html();
@@ -203,8 +203,8 @@ module.exports = E;
                 });
                 expanded = !expanded;
                 $self.append($toggleButton);
-                if (callback)
-                    callback();
+                if (cb)
+                    cb();
             };
             $self.toggle();
         });
@@ -282,9 +282,7 @@ module.exports = E;
     $.mlp = { x: 0, y: 0 }; // Mouse Last Position
     function documentHandler() {
         var $current = this === document ? $(this) : $(this).contents();
-        $current.mousemove(function (e) {
-            jQuery.mlp = { x: e.pageX, y: e.pageY };
-        });
+        $current.mousemove(function (e) { jQuery.mlp = { x: e.pageX, y: e.pageY }; });
         $current.find("iframe").load(documentHandler);
     }
     $(documentHandler);
@@ -293,7 +291,8 @@ module.exports = E;
         this.eq(0).each(function () {
             var $current = $(this).is("iframe") ? $(this).contents().find("body") : $(this);
             var offset = $current.offset();
-            result = offset.left <= $.mlp.x && offset.left + $current.outerWidth() > $.mlp.x && offset.top <= $.mlp.y && offset.top + $current.outerHeight() > $.mlp.y;
+            result = offset.left <= $.mlp.x && offset.left + $current.outerWidth() > $.mlp.x &&
+                offset.top <= $.mlp.y && offset.top + $current.outerHeight() > $.mlp.y;
         });
         return result;
     };
@@ -314,28 +313,28 @@ module.exports = E;
         });
         return on.apply(this, args);
     };
-    $.fn.onEnter = function (callback) {
+    $.fn.onEnter = function (cb) {
         return this.each(function () {
             var $this = $(this);
             $this.on('keyup', function (e) {
                 if (e.keyCode === 13) {
                     e.preventDefault();
-                    callback();
+                    cb();
                 }
             });
         });
     };
-    $.fn.onPressed = function (callback) {
+    $.fn.onPressed = function (cb) {
         return this.each(function () {
             var $this = $(this);
-            $this.on('click', function (e) {
+            $this.on('touchstart click', function (e) {
                 e.preventDefault();
-                callback();
+                cb(e);
             });
             $this.on('keyup', function (e) {
                 if (e.keyCode === 13) {
                     e.preventDefault();
-                    callback();
+                    cb(e);
                 }
             });
         });
@@ -391,7 +390,7 @@ module.exports = E;
             }
         });
     };
-    $.fn.toggleExpandText = function (chars, lessText, moreText, callback) {
+    $.fn.toggleExpandText = function (chars, lessText, moreText, cb) {
         return this.each(function () {
             var $self = $(this);
             var expandedText = $self.html();
@@ -419,14 +418,14 @@ module.exports = E;
                 });
                 expanded = !expanded;
                 $self.append($toggleButton);
-                if (callback)
-                    callback();
+                if (cb)
+                    cb();
             };
             $self.toggle();
         });
     };
     // Toggle expansion by number of lines
-    $.fn.toggleExpandTextByLines = function (lines, lessText, moreText, callback) {
+    $.fn.toggleExpandTextByLines = function (lines, lessText, moreText, cb) {
         return this.each(function () {
             var $self = $(this);
             var expandedText = $self.html();
@@ -435,6 +434,7 @@ module.exports = E;
             // when height changes, store string, then pick from line counts
             var stringsByLine = [expandedText];
             var lastHeight = $self.height();
+            // Until empty
             while ($self.text().length > 0) {
                 $self.removeLastWord();
                 var html = $self.html();
@@ -471,8 +471,8 @@ module.exports = E;
                 });
                 expanded = !expanded;
                 $self.append($toggleButton);
-                if (callback)
-                    callback();
+                if (cb)
+                    cb();
             };
             $self.toggle();
         });
@@ -508,7 +508,7 @@ module.exports = E;
     };
 })(jQuery);
 
-// manifold v1.0.1 https://github.com/UniversalViewer/manifold#readme
+// manifold v1.0.2 https://github.com/viewdir/manifold#readme
 var exjs;!function(r){r.version="0.4.0"}(exjs||(exjs={}));var exjs;!function(r){Array.isArray||(Array.isArray=function(r){return"[object Array]"===Object.prototype.toString.call(r)})}(exjs||(exjs={}));var exjs;!function(r){var e=function(){function r(){}return r.prototype.getEnumerator=function(){return{moveNext:function(){return!1},current:void 0}},r.prototype.aggregate=function(r,e){for(var t=r,n=this.getEnumerator();n.moveNext();)t=e(t,n.current);return t},r.prototype.all=function(r){if(r)for(var e=this.getEnumerator(),t=0;e.moveNext();){if(!r(e.current,t))return!1;t++}return!0},r.prototype.any=function(r){for(var e=this.getEnumerator(),t=0;e.moveNext();){if(!r)return!0;if(r(e.current,t))return!0;t++}return!1},r.prototype.append=function(){for(var r=[],e=0;e<arguments.length;e++)r[e-0]=arguments[e];throw new Error("Not implemented")},r.prototype.apply=function(r){throw new Error("Not implemented")},r.prototype.at=function(r){for(var e=this.getEnumerator(),t=0;e.moveNext();){if(t===r)return e.current;t++}},r.prototype.average=function(r){var e=0,t=0;r=r||function(r){if("number"!=typeof r)throw new Error("Object is not a number.");return r};for(var n=this.getEnumerator();n.moveNext();)t+=r(n.current),e++;return 0===e?0:t/e},r.prototype.concat=function(r){throw new Error("Not implemented")},r.prototype.count=function(r){for(var e=0,t=this.getEnumerator();t.moveNext();)(!r||r(t.current))&&e++;return e},r.prototype.difference=function(r,e){return e=e||function(r,e){return r===e},r instanceof Array&&(r=r.en()),{intersection:this.intersect(r,e).toArray().en(),aNotB:this.except(r,e).toArray().en(),bNotA:r.except(this,e).toArray().en()}},r.prototype.distinct=function(r){throw new Error("Not implemented")},r.prototype.except=function(r,e){throw new Error("Not implemented")},r.prototype.first=function(r){for(var e=this.getEnumerator();e.moveNext();)if(!r||r(e.current))return e.current},r.prototype.firstIndex=function(r){for(var e=this.getEnumerator(),t=0;e.moveNext();t++)if(!r||r(e.current))return t;return-1},r.prototype.forEach=function(r){for(var e=this.getEnumerator();e.moveNext();)r(e.current)},r.prototype.groupBy=function(r,e){throw new Error("Not implemented")},r.prototype.intersect=function(r,e){throw new Error("Not implemented")},r.prototype.join=function(r,e,t,n,o){throw new Error("Not implemented")},r.prototype.last=function(r){for(var e,t=this.getEnumerator();t.moveNext();)(!r||r(t.current))&&(e=t.current);return e},r.prototype.lastIndex=function(r){for(var e=-1,t=this.getEnumerator(),n=0;t.moveNext();n++)(!r||r(t.current))&&(e=n);return e},r.prototype.max=function(r){var e=this.getEnumerator();if(!e.moveNext())return 0;r=r||function(r){if("number"!=typeof r)throw new Error("Object is not a number.");return r};for(var t=r(e.current);e.moveNext();)t=Math.max(t,r(e.current));return t},r.prototype.min=function(r){var e=this.getEnumerator();if(!e.moveNext())return 0;r=r||function(r){if("number"!=typeof r)throw new Error("Object is not a number.");return r};for(var t=r(e.current);e.moveNext();)t=Math.min(t,r(e.current));return t},r.prototype.orderBy=function(r,e){throw new Error("Not implemented")},r.prototype.orderByDescending=function(r,e){throw new Error("Not implemented")},r.prototype.prepend=function(){for(var r=[],e=0;e<arguments.length;e++)r[e-0]=arguments[e];throw new Error("Not implemented")},r.prototype.reverse=function(){throw new Error("Not implemented")},r.prototype.select=function(r){throw new Error("Not implemented")},r.prototype.selectMany=function(r){throw new Error("Not implemented")},r.prototype.skip=function(r){throw new Error("Not implemented")},r.prototype.skipWhile=function(r){throw new Error("Not implemented")},r.prototype.standardDeviation=function(r){var e=this.average(r),t=0,n=0;r=r||function(r){if("number"!=typeof r)throw new Error("Object is not a number.");return r};for(var o=this.getEnumerator();o.moveNext();){var u=r(o.current)-e;t+=u*u,n++}return Math.sqrt(t/n)},r.prototype.sum=function(r){var e=0;r=r||function(r){if("number"!=typeof r)throw new Error("Object is not a number.");return r};for(var t=this.getEnumerator();t.moveNext();)e+=r(t.current);return e},r.prototype.take=function(r){throw new Error("Not implemented")},r.prototype.takeWhile=function(r){throw new Error("Not implemented")},r.prototype.traverse=function(r){throw new Error("Not implemented")},r.prototype.traverseUnique=function(r,e){throw new Error("Not implemented")},r.prototype.toArray=function(){for(var r=[],e=this.getEnumerator();e.moveNext();)r.push(e.current);return r},r.prototype.toMap=function(r,e){throw new Error("Not implemented")},r.prototype.toList=function(){throw new Error("Not implemented")},r.prototype.union=function(r,e){throw new Error("Not implemented")},r.prototype.where=function(r){throw new Error("Not implemented")},r.prototype.zip=function(r,e){throw new Error("Not implemented")},r}();r.Enumerable=e}(exjs||(exjs={}));var Symbol,exjs;!function(r){function e(r){var e;return{next:function(){var t={done:!0,value:void 0};return r&&(e=e||r.getEnumerator())?(t.done=!e.moveNext(),t.value=e.current,t):t}}}Symbol&&Symbol.iterator&&(r.Enumerable.prototype[Symbol.iterator]=function(){return e(this)})}(exjs||(exjs={}));var exjs;!function(r){var e=function(){function e(r){this.size=0,this._keys=[],this._values=[];var e;if(r instanceof Array?e=r.en():r&&r.getEnumerator instanceof Function&&(e=r),e)for(var t=e.getEnumerator();t&&t.moveNext();)this.set(t.current[0],t.current[1])}return e.prototype.clear=function(){this._keys.length=0,this._values.length=0,this.size=0},e.prototype["delete"]=function(r){var e=this._keys.indexOf(r);return e>-1?(this._keys.splice(e,1),this._values.splice(e,1),this.size--,!0):!1},e.prototype.entries=function(){var e=this;return r.range(0,this.size).select(function(r){return[e._keys[r],e._values[r]]})},e.prototype.forEach=function(r,e){null==e&&(e=this);for(var t=0,n=this._keys,o=this._values,u=n.length;u>t;t++)r.call(e,o[t],n[t],this)},e.prototype.get=function(r){var e=this._keys.indexOf(r);return this._values[e]},e.prototype.has=function(r){return this._keys.indexOf(r)>-1},e.prototype.keys=function(){return this._keys.en()},e.prototype.set=function(r,e){var t=this._keys.indexOf(r);t>-1?this._values[t]=e:(this._keys.push(r),this._values.push(e),this.size++)},e.prototype.values=function(){return this._values.en()},e}();r.Map3=e,r.Enumerable.prototype.toMap=function(r,t){for(var n=new e,o=this.getEnumerator();o.moveNext();)n.set(r(o.current),t(o.current));return n},r.List&&(r.List.prototype.toMap=r.Enumerable.prototype.toMap)}(exjs||(exjs={})),function(r){r.Map||(r.Map=exjs.Map3)}("undefined"==typeof window?global:window);var exjs;!function(r){function e(e){var t=new r.Enumerable;return t.getEnumerator=function(){var r={current:void 0,moveNext:function(){return e(r)}};return r},t}r.anonymous=e}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n,o=1,u={current:void 0,moveNext:function(){if(2>o){if(t=t||r.getEnumerator(),t.moveNext())return u.current=t.current,!0;o++}return n=n||e.en().getEnumerator(),n.moveNext()?(u.current=n.current,!0):(u.current=void 0,!1)}};return u}r.Enumerable.prototype.append=function(){for(var t=this,n=[],o=0;o<arguments.length;o++)n[o-0]=arguments[o];var u=new r.Enumerable;return u.getEnumerator=function(){return e(t,n)},u},r.List&&(r.List.prototype.append=r.Enumerable.prototype.append)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n=0,o={current:void 0,moveNext:function(){return t||(t=r.getEnumerator()),t.moveNext()?(e(o.current=t.current,n),n++,!0):!1}};return o}r.Enumerable.prototype.apply=function(t){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return e(n,t)},o},r.List&&(r.List.prototype.apply=r.Enumerable.prototype.apply)}(exjs||(exjs={}));var __extends=this&&this.__extends||function(r,e){function t(){this.constructor=r}for(var n in e)e.hasOwnProperty(n)&&(r[n]=e[n]);r.prototype=null===e?Object.create(e):(t.prototype=e.prototype,new t)},exjs;!function(r){function e(r){var e=r.length,t={moveNext:void 0,current:void 0},n=-1;return t.moveNext=function(){return n++,n>=e?(t.current=void 0,!1):(t.current=r[n],!0)},t}function t(){return this&&Array.isArray(this)?new n(this):new r.Enumerable}var n=function(r){function t(t){r.call(this),this.getEnumerator=function(){return e(t)},this.toArray=function(){return t.slice(0)}}return __extends(t,r),t}(r.Enumerable);try{Object.defineProperty(Array.prototype,"en",{value:t,enumerable:!1,writable:!1,configurable:!1})}catch(o){Array.prototype.en=t}}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n=!1,o={current:void 0,moveNext:function(){return t||(t=r.getEnumerator()),o.current=void 0,t.moveNext()?(o.current=t.current,!0):n?!1:(n=!0,t=e.getEnumerator(),t.moveNext()?(o.current=t.current,!0):!1)}};return o}r.Enumerable.prototype.concat=function(t){var n=this,o=t instanceof Array?t.en():t,u=new r.Enumerable;return u.getEnumerator=function(){return e(n,o)},u},r.List&&(r.List.prototype.concat=r.Enumerable.prototype.concat)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n=[],o={current:void 0,moveNext:function(){if(t||(t=r.getEnumerator()),o.current=void 0,!e){for(;t.moveNext();)if(n.indexOf(t.current)<0)return n.push(o.current=t.current),!0;return!1}for(;t.moveNext();){for(var u=0,i=n.length,c=!1;i>u&&!c;u++)c=!!e(n[u],t.current);if(!c)return n.push(o.current=t.current),!0}return!1}};return o}r.Enumerable.prototype.distinct=function(t){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return e(n,t)},o},r.List&&(r.List.prototype.distinct=r.Enumerable.prototype.distinct)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e,t){t=t||function(r,e){return r===e};var n,o={current:void 0,moveNext:function(){for(n||(n=r.getEnumerator()),o.current=void 0;n.moveNext();){for(var u=!1,i=e.getEnumerator();i.moveNext()&&!u;)u=t(n.current,i.current);if(!u)return o.current=n.current,!0}return!1}};return o}r.Enumerable.prototype.except=function(t,n){var o=this,u=t instanceof Array?t.en():t,i=new r.Enumerable;return i.getEnumerator=function(){return e(o,u,n)},i},r.List&&(r.List.prototype.except=r.Enumerable.prototype.except)}(exjs||(exjs={})),Function.prototype.fromJson=function(r,e){function t(r,e){if(null==r)return r;if(e instanceof Function)return e(r);if(e instanceof Array){if(e=e[0],!(e instanceof Function&&r instanceof Array))return;for(var t=[],n=0;n<r.length;n++)t.push(e(r[n]));return t}}var n=new this;if(null==r)return n;var o=[];for(var u in e){var i=t(r[u],e[u]);void 0!==i&&(n[u]=i,o.push(u))}for(var u in this.$jsonMappings)if(!(o.indexOf(u)>-1)){var i=t(r[u],this.$jsonMappings[u]);void 0!==i&&(n[u]=i,o.push(u))}for(var u in r)o.indexOf(u)>-1||(n[u]=r[u]);return n};var exjs;!function(r){function e(r,e,n){var o,u=0,i={current:void 0,moveNext:function(){return o||(o=t(r,e,n)),i.current=void 0,u>=o.length?!1:(i.current=o[u],u++,!0)}};return i}function t(r,e,t){t=t||function(r,e){return r===e};for(var o,u=[],i=[],c=r.getEnumerator();c.moveNext();){o=e(c.current);for(var a=-1,p=0,s=i.length;s>p;p++)if(t(o,i[p])){a=p;break}var f;0>a?(i.push(o),u.push(f=new n(o))):f=u[a],f._add(c.current)}return u}var n=function(r){function e(e){var t=this;r.call(this),this.key=e,this._arr=[],this.getEnumerator=function(){return t._arr.en().getEnumerator()}}return __extends(e,r),e.prototype._add=function(r){this._arr.push(r)},e}(r.Enumerable);r.Enumerable.prototype.groupBy=function(t,n){var o=this,u=new r.Enumerable;return u.getEnumerator=function(){return e(o,t,n)},u},r.List&&(r.List.prototype.groupBy=r.Enumerable.prototype.groupBy)}(exjs||(exjs={}));var exjs;!function(r){function e(e,t,n){n=n||function(r,e){return r===e};var o,u={current:void 0,moveNext:function(){for(o||(o=r.en(e).distinct().getEnumerator()),u.current=void 0;o.moveNext();){for(var i=!1,c=t.getEnumerator();c.moveNext()&&!i;)i=n(o.current,c.current);if(i)return u.current=o.current,!0}return!1}};return u}r.Enumerable.prototype.intersect=function(t,n){var o=this,u=t instanceof Array?t.en():t,i=new r.Enumerable;return i.getEnumerator=function(){return e(o,u,n)},i},r.List&&(r.List.prototype.intersect=r.Enumerable.prototype.intersect)}(exjs||(exjs={}));var exjs;!function(r){function e(e,t,n,o,u,i){i=i||function(r,e){return r===e};var c,a,p=0,s={current:void 0,moveNext:function(){if(s.current=void 0,!c){if(c=e.getEnumerator(),!c.moveNext())return!1;a=r.en(t).toArray()}var f;do{for(;p<a.length;p++)if(f=a[p],i(n(c.current),o(f)))return p++,s.current=u(c.current,f),!0;p=0}while(c.moveNext());return!1}};return s}r.Enumerable.prototype.join=function(t,n,o,u,i){var c=this,a=t instanceof Array?t.en():t,p=new r.Enumerable;return p.getEnumerator=function(){return e(c,a,n,o,u,i)},p},r.List&&(r.List.prototype.join=r.Enumerable.prototype.join)}(exjs||(exjs={}));var exjs;!function(r){function e(){this.constructor=t}r.Enumerable.prototype.toList=function(){for(var r=new t,e=this.getEnumerator();e.moveNext();)r.push(e.current);return r};var t=function(r){function e(){r.apply(this,arguments)}return __extends(e,r),e.prototype.toString=function(){throw new Error("Not implemented")},e.prototype.toLocaleString=function(){throw new Error("Not implemented")},e.prototype.pop=function(){throw new Error("Not implemented")},e.prototype.push=function(){for(var r=[],e=0;e<arguments.length;e++)r[e-0]=arguments[e];throw new Error("Not implemented")},e.prototype.shift=function(){throw new Error("Not implemented")},e.prototype.slice=function(r,e){throw new Error("Not implemented")},e.prototype.sort=function(r){throw new Error("Not implemented")},e.prototype.splice=function(){throw new Error("Not implemented")},e.prototype.unshift=function(){for(var r=[],e=0;e<arguments.length;e++)r[e-0]=arguments[e];throw new Error("Not implemented")},e.prototype.indexOf=function(r,e){throw new Error("Not implemented")},e.prototype.lastIndexOf=function(r,e){throw new Error("Not implemented")},e.prototype.every=function(r,e){throw new Error("Not implemented")},e.prototype.some=function(r,e){throw new Error("Not implemented")},e.prototype.forEach=function(r,e){throw new Error("Not implemented")},e.prototype.map=function(r,e){throw new Error("Not implemented")},e.prototype.filter=function(r,e){throw new Error("Not implemented")},e.prototype.reduce=function(r,e){throw new Error("Not implemented")},e.prototype.reduceRight=function(r,e){throw new Error("Not implemented")},e.prototype.remove=function(r){throw new Error("Not implemented")},e.prototype.removeWhere=function(r){throw new Error("Not implemented")},e}(r.Enumerable);r.List=t;for(var n in Array)Array.hasOwnProperty(n)&&(t[n]=Array[n]);e.prototype=Array.prototype,t.prototype=new e;for(var o in r.Enumerable.prototype)"getEnumerator"!==o&&(t.prototype[o]=r.Enumerable.prototype[o]);t.prototype.getEnumerator=function(){var r=this,e=r.length,t={moveNext:void 0,current:void 0},n=-1;return t.moveNext=function(){return n++,n>=e?(t.current=void 0,!1):(t.current=r[n],!0)},t},t.prototype.remove=function(r){return this.removeWhere(function(e){return e===r}).any()},t.prototype.removeWhere=function(r){for(var e,t=[],n=this.length-1;n>=0;n--)e=this[n],r(e,n)===!0&&(this.splice(n,1),t.push(e));return t.en().reverse()}}(exjs||(exjs={}));var exjs;!function(r){function e(r,e,n,o){return new t(r,e,n,o)}var t=function(e){function t(r,t,n,o){e.call(this),this.Source=r,o=o||function(r,e){return r>e?1:e>r?-1:0};var u=n===!0?-1:1;this.Sorter=function(r,e){return u*o(t(r),t(e))}}return __extends(t,e),t.prototype.getEnumerator=function(){var e,t=this.Source,n=this.Sorter,o=0,u={current:void 0,moveNext:function(){return e||(e=r.en(t).toArray(),e.sort(n)),u.current=void 0,o>=e.length?!1:(u.current=e[o],o++,!0)}};return u},t.prototype.thenBy=function(r,e){return new n(this,r,!1,e)},t.prototype.thenByDescending=function(r,e){return new n(this,r,!0,e)},t}(r.Enumerable),n=function(r){function e(e,t,n,o){r.call(this,e,t,n,o);var u=e.Sorter,i=this.Sorter;this.Sorter=function(r,e){return u(r,e)||i(r,e)}}return __extends(e,r),e}(t),o=r.Enumerable.prototype;o.orderBy=function(r,t){return e(this,r,!1,t)},o.orderByDescending=function(r,t){return e(this,r,!0,t)},r.List&&(r.List.prototype.orderBy=r.Enumerable.prototype.orderBy,r.List.prototype.orderByDescending=r.Enumerable.prototype.orderByDescending)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n,o=1,u={current:void 0,moveNext:function(){if(2>o){if(t=t||e.en().getEnumerator(),t.moveNext())return u.current=t.current,!0;o++}return n=n||r.getEnumerator(),n.moveNext()?(u.current=n.current,!0):(u.current=void 0,!1)}};return u}r.Enumerable.prototype.prepend=function(){for(var t=this,n=[],o=0;o<arguments.length;o++)n[o-0]=arguments[o];var u=new r.Enumerable;return u.getEnumerator=function(){return e(t,n)},u},r.List&&(r.List.prototype.prepend=r.Enumerable.prototype.prepend)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e,t){var n=r-t,o={current:void 0,moveNext:function(){return n+=t,n>=e?!1:(o.current=n,!0)}};return o}function t(t,n,o){if(t=t||0,n=n||0,t>n)throw new Error("Start cannot be greater than end.");null==o&&(o=1);var u=new r.Enumerable;return u.getEnumerator=function(){return e(t,n,o)},u}r.range=t}(exjs||(exjs={}));var exjs;!function(r){function e(e){var t,n=0,o={current:void 0,moveNext:function(){return t||(t=r.en(e).toArray(),n=t.length),n--,o.current=t[n],n>=0}};return o}r.Enumerable.prototype.reverse=function(){var t=this,n=new r.Enumerable;return n.getEnumerator=function(){return e(t)},n},r.List&&(r.List.prototype.reverse=r.Enumerable.prototype.reverse)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){if(e=e||0,0===e)return Math.round(r);var t=Math.pow(10,e);return Math.round(r*t)/t}r.round=e}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n=0,o={current:void 0,moveNext:function(){return t||(t=r.getEnumerator()),t.moveNext()?(o.current=e(t.current,n),n++,!0):!1}};return o}function t(e,t){var n,o,u={current:void 0,moveNext:function(){for(u.current=void 0,n||(n=e.getEnumerator());!o||!o.moveNext();){if(!n.moveNext())return!1;o=r.selectorEnumerator(t(n.current))}return u.current=o.current,!0}};return u}r.Enumerable.prototype.select=function(t){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return e(n,t)},o},r.Enumerable.prototype.selectMany=function(e){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return t(n,e)},o},r.List&&(r.List.prototype.select=r.Enumerable.prototype.select,r.List.prototype.selectMany=r.Enumerable.prototype.selectMany)}(exjs||(exjs={}));var exjs;!function(r){function e(r){return Array.isArray(r)?r.en().getEnumerator():null!=r&&"function"==typeof r.getEnumerator?r.getEnumerator():null}r.selectorEnumerator=e}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n={current:void 0,moveNext:function(){if(!t){t=r.getEnumerator();for(var o=0;e>o;o++)if(!t.moveNext())return!1}return t.moveNext()?(n.current=t.current,!0):(n.current=void 0,!1)}};return n}function t(r,e){var t,n={current:void 0,moveNext:function(){if(!t){t=r.getEnumerator();for(var o=0;t.moveNext();o++)if(!e(n.current=t.current,o))return!0;return n.current=void 0,!1}return t.moveNext()?(n.current=t.current,!0):(n.current=void 0,!1)}};return n}r.Enumerable.prototype.skip=function(t){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return e(n,t)},o},r.Enumerable.prototype.skipWhile=function(e){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return t(n,e)},o},r.List&&(r.List.prototype.skip=r.Enumerable.prototype.skip,r.List.prototype.skipWhile=r.Enumerable.prototype.skipWhile)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n=0,o={current:void 0,moveNext:function(){return t||(t=r.getEnumerator()),n++,n>e?!1:(o.current=void 0,t.moveNext()?(o.current=t.current,!0):!1)}};return o}function t(r,e){var t,n=0,o={current:void 0,moveNext:function(){return t||(t=r.getEnumerator()),t.moveNext()&&e(t.current,n)?(n++,o.current=t.current,!0):(o.current=void 0,!1)}};return o}r.Enumerable.prototype.take=function(t){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return e(n,t)},o},r.Enumerable.prototype.takeWhile=function(e){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return t(n,e)},o},r.List&&(r.List.prototype.take=r.Enumerable.prototype.take,r.List.prototype.takeWhile=r.Enumerable.prototype.takeWhile)}(exjs||(exjs={}));var exjs;!function(r){function e(e,t){var n,o=!1,u=[],i={current:void 0,moveNext:function(){if(o){if(null==n)return!1;u.push(n),n=r.selectorEnumerator(t(i.current))}else n=e.getEnumerator(),o=!0;for(;!(n&&n.moveNext()||u.length<1);)n=u.pop();return i.current=null==n?void 0:n.current,void 0!==i.current}};return i}function t(e,t,n){var o,u=!1,i=[],c={current:void 0,moveNext:function(){if(u){if(null==o)return!1;i.push(o),o=r.selectorEnumerator(t(c.current))}else o=e.getEnumerator(),u=!0;do{for(;!(o&&o.moveNext()||i.length<1);)o=i.pop();c.current=null==o?void 0:o.current}while(n(c.current));return void 0!==c.current}};return c}r.Enumerable.prototype.traverse=function(t){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return e(n,t)},o},r.Enumerable.prototype.traverseUnique=function(e,n){var o=this,u=[],i=new r.Enumerable;return n?i.getEnumerator=function(){return t(o,e,function(r){return u.some(function(e){return n(r,e)})?!0:(u.push(r),!1)})}:i.getEnumerator=function(){return t(o,e,function(r){return u.indexOf(r)>-1?!0:(u.push(r),!1)})},i},r.List&&(r.List.prototype.traverse=r.Enumerable.prototype.traverse,r.List.prototype.traverseUnique=r.Enumerable.prototype.traverseUnique)}(exjs||(exjs={}));var exjs;!function(r){function e(e,t,n){n=n||function(r,e){return r===e};var o,u,i=[],c={current:void 0,moveNext:function(){if(o||(o=r.en(e).distinct().getEnumerator()),c.current=void 0,!u&&o.moveNext())return i.push(c.current=o.current),!0;for(u=u||r.en(t).distinct().getEnumerator();u.moveNext();){for(var a=0,p=!1,s=i.length;s>a&&!p;a++)p=n(i[a],u.current);if(!p)return c.current=u.current,!0}return!1}};return c}r.Enumerable.prototype.union=function(t,n){var o=this,u=t instanceof Array?t.en():t,i=new r.Enumerable;return i.getEnumerator=function(){return e(o,u,n)},i},r.List&&(r.List.prototype.union=r.Enumerable.prototype.union)}(exjs||(exjs={}));var exjs;!function(r){function e(r,e){var t,n={current:void 0,moveNext:function(){t||(t=r.getEnumerator());for(var o;t.moveNext();)if(e(o=t.current))return n.current=o,!0;return!1}};return n}r.Enumerable.prototype.where=function(t){var n=this,o=new r.Enumerable;return o.getEnumerator=function(){return e(n,t)},o},r.List&&(r.List.prototype.where=r.Enumerable.prototype.where)}(exjs||(exjs={}));var exjs;!function(r){function e(e){var n=new r.Enumerable;return n.getEnumerator=function(){return t(e)},n}function t(r){var e=r.getEnumerator(),t={current:void 0,moveNext:void 0};return t.moveNext=function(){return e.moveNext()?(t.current=e.current,!0):(t.current=void 0,!1)},t}r.en=e}(exjs||(exjs={}));var ex=exjs.en,exjs;!function(r){function e(r,e,t){var n,o,u={current:void 0,moveNext:function(){return n||(n=r.getEnumerator()),o||(o=e.getEnumerator()),u.current=void 0,n.moveNext()&&o.moveNext()?(u.current=t(n.current,o.current),!0):!1}};return u}r.Enumerable.prototype.zip=function(t,n){var o=this,u=t instanceof Array?t.en():t,i=new r.Enumerable;return i.getEnumerator=function(){return e(o,u,n)},i},r.List&&(r.List.prototype.zip=r.Enumerable.prototype.zip)}(exjs||(exjs={}));
 //# sourceMappingURL=ex.es3.min.js.map
 
@@ -722,14 +722,22 @@ var Manifesto;
             _super.apply(this, arguments);
         }
         // todo: use getters when ES3 target is no longer required.
-        IIIFResourceType.prototype.manifest = function () {
-            return new IIIFResourceType(IIIFResourceType.MANIFEST.toString());
+        IIIFResourceType.prototype.canvas = function () {
+            return new IIIFResourceType(IIIFResourceType.CANVAS.toString());
         };
         IIIFResourceType.prototype.collection = function () {
             return new IIIFResourceType(IIIFResourceType.COLLECTION.toString());
         };
-        IIIFResourceType.MANIFEST = new IIIFResourceType("sc:manifest");
+        IIIFResourceType.prototype.manifest = function () {
+            return new IIIFResourceType(IIIFResourceType.MANIFEST.toString());
+        };
+        IIIFResourceType.prototype.range = function () {
+            return new IIIFResourceType(IIIFResourceType.RANGE.toString());
+        };
+        IIIFResourceType.CANVAS = new IIIFResourceType("sc:canvas");
         IIIFResourceType.COLLECTION = new IIIFResourceType("sc:collection");
+        IIIFResourceType.MANIFEST = new IIIFResourceType("sc:manifest");
+        IIIFResourceType.RANGE = new IIIFResourceType("sc:range");
         return IIIFResourceType;
     }(Manifesto.StringValue));
     Manifesto.IIIFResourceType = IIIFResourceType;
@@ -925,6 +933,12 @@ var Manifesto;
         ServiceProfile.prototype.uiExtensions = function () {
             return new ServiceProfile(ServiceProfile.UIEXTENSIONS.toString());
         };
+        ServiceProfile.prototype.printExtensions = function () {
+            return new ServiceProfile(ServiceProfile.PRINTEXTENSIONS.toString());
+        };
+        ServiceProfile.prototype.shareExtensions = function () {
+            return new ServiceProfile(ServiceProfile.SHAREEXTENSIONS.toString());
+        };
         ServiceProfile.AUTOCOMPLETE = new ServiceProfile("http://iiif.io/api/search/0/autocomplete");
         ServiceProfile.STANFORDIIIFIMAGECOMPLIANCE0 = new ServiceProfile("http://library.stanford.edu/iiif/image-api/compliance.html#level0");
         ServiceProfile.STANFORDIIIFIMAGECOMPLIANCE1 = new ServiceProfile("http://library.stanford.edu/iiif/image-api/compliance.html#level1");
@@ -960,6 +974,8 @@ var Manifesto;
         ServiceProfile.TOKEN = new ServiceProfile("http://iiif.io/api/auth/0/token");
         ServiceProfile.TRACKINGEXTENSIONS = new ServiceProfile("http://universalviewer.io/tracking-extensions-profile");
         ServiceProfile.UIEXTENSIONS = new ServiceProfile("http://universalviewer.io/ui-extensions-profile");
+        ServiceProfile.PRINTEXTENSIONS = new ServiceProfile("http://universalviewer.io/print-extensions-profile");
+        ServiceProfile.SHAREEXTENSIONS = new ServiceProfile("http://universalviewer.io/share-extensions-profile");
         return ServiceProfile;
     }(Manifesto.StringValue));
     Manifesto.ServiceProfile = ServiceProfile;
@@ -1050,7 +1066,10 @@ var Manifesto;
             this.id = this.getProperty('@id');
         }
         JSONLDResource.prototype.getProperty = function (name) {
-            return this.__jsonld[name];
+            if (this.__jsonld) {
+                return this.__jsonld[name];
+            }
+            return null;
         };
         return JSONLDResource;
     }());
@@ -1070,6 +1089,9 @@ var Manifesto;
             _super.call(this, jsonld);
             this.options = options;
         }
+        ManifestResource.prototype.getIIIFResourceType = function () {
+            return new Manifesto.IIIFResourceType(this.getProperty('@type'));
+        };
         ManifestResource.prototype.getLabel = function () {
             return Manifesto.Utils.getLocalisedValue(this.getProperty('label'), this.options.locale);
         };
@@ -1128,6 +1150,12 @@ var Manifesto;
         ManifestResource.prototype.getServices = function () {
             return Manifesto.Utils.getServices(this);
         };
+        ManifestResource.prototype.isCanvas = function () {
+            return this.getIIIFResourceType().toString() === Manifesto.IIIFResourceType.CANVAS.toString();
+        };
+        ManifestResource.prototype.isRange = function () {
+            return this.getIIIFResourceType().toString() === Manifesto.IIIFResourceType.RANGE.toString();
+        };
         return ManifestResource;
     }(Manifesto.JSONLDResource));
     Manifesto.ManifestResource = ManifestResource;
@@ -1178,6 +1206,7 @@ var Manifesto;
         function Canvas(jsonld, options) {
             _super.call(this, jsonld, options);
         }
+        // http://iiif.io/api/image/2.1/#canonical-uri-syntax
         Canvas.prototype.getCanonicalImageUri = function (w) {
             var id;
             var region = 'full';
@@ -1213,6 +1242,7 @@ var Manifesto;
                         quality = Manifesto.Utils.getImageQuality(service.getProfile());
                     }
                 }
+                // todo: this is not compatible and should be moved to getThumbUri
                 if (!id) {
                     return "undefined" == typeof this.__jsonld.thumbnail
                         ? null : this.__jsonld.thumbnail;
@@ -1236,9 +1266,11 @@ var Manifesto;
         Canvas.prototype.getIndex = function () {
             return this.getProperty('index');
         };
-        // todo: Prefer thumbnail service to image service if supplied and if
-        // todo: the thumbnail service can provide a satisfactory size +/- x pixels.
-        // this is used to get thumb URIs for databinding *before* the info.json has been requested
+        // Prefer thumbnail service to image service if supplied and if
+        // the thumbnail service can provide a satisfactory size +/- x pixels.
+        // this is used to get thumb URIs *before* the info.json has been requested
+        // and populate thumbnails in a viewer.
+        // the publisher may also provide pre-computed fixed-size thumbs for better performance.
         //getThumbUri(width: number): string {
         //
         //    var uri;
@@ -1299,21 +1331,6 @@ var Manifesto;
             };
             this.options = _assign(defaultOptions, options);
         }
-        IIIFResource.prototype.generateTreeNodeIds = function (treeNode, index) {
-            if (index === void 0) { index = 0; }
-            var id;
-            if (!treeNode.parentNode) {
-                id = '0';
-            }
-            else {
-                id = treeNode.parentNode.id + "-" + index;
-            }
-            treeNode.id = id;
-            for (var i = 0; i < treeNode.nodes.length; i++) {
-                var n = treeNode.nodes[i];
-                this.generateTreeNodeIds(n, i);
-            }
-        };
         IIIFResource.prototype.getAttribution = function () {
             return Manifesto.Utils.getLocalisedValue(this.getProperty('attribution'), this.options.locale);
         };
@@ -1346,10 +1363,16 @@ var Manifesto;
         IIIFResource.prototype.getLabel = function () {
             return Manifesto.Utils.getLocalisedValue(this.getProperty('label'), this.options.locale);
         };
-        IIIFResource.prototype.getTree = function () {
-            this.treeRoot = new Manifesto.TreeNode('root');
-            this.treeRoot.data = this;
-            return this.treeRoot;
+        IIIFResource.prototype.getDefaultTree = function () {
+            this.defaultTree = new Manifesto.TreeNode('root');
+            this.defaultTree.data = this;
+            return this.defaultTree;
+        };
+        IIIFResource.prototype.isCollection = function () {
+            return this.getIIIFResourceType().toString() === Manifesto.IIIFResourceType.COLLECTION.toString();
+        };
+        IIIFResource.prototype.isManifest = function () {
+            return this.getIIIFResourceType().toString() === Manifesto.IIIFResourceType.MANIFEST.toString();
         };
         IIIFResource.prototype.load = function () {
             var that = this;
@@ -1389,28 +1412,51 @@ var Manifesto;
         function Manifest(jsonld, options) {
             _super.call(this, jsonld, options);
             this.index = 0;
-            this._ranges = null;
+            this._allRanges = null;
             this._sequences = null;
+            this._topRanges = [];
             if (this.__jsonld.structures && this.__jsonld.structures.length) {
-                var r = this._getRootRange();
-                this._parseRanges(r, '');
+                var topRanges = this._getTopRanges();
+                for (var i = 0; i < topRanges.length; i++) {
+                    var range = topRanges[i];
+                    this._parseRanges(range, String(i));
+                }
             }
         }
-        Manifest.prototype._getRootRange = function () {
-            var range;
+        Manifest.prototype.getDefaultTree = function () {
+            _super.prototype.getDefaultTree.call(this);
+            this.defaultTree.data.type = Manifesto.TreeNodeType.MANIFEST.toString();
+            if (!this.isLoaded) {
+                return this.defaultTree;
+            }
+            var topRanges = this.getTopRanges();
+            // if there are any ranges in the manifest, default to the first 'top' range or generated placeholder
+            if (topRanges.length) {
+                topRanges[0].getTree(this.defaultTree);
+            }
+            Manifesto.Utils.generateTreeNodeIds(this.defaultTree);
+            return this.defaultTree;
+        };
+        Manifest.prototype._getTopRanges = function () {
+            var topRanges = [];
             if (this.__jsonld.structures && this.__jsonld.structures.length) {
                 for (var i = 0; i < this.__jsonld.structures.length; i++) {
-                    var r = this.__jsonld.structures[i];
-                    if (r.viewingHint === Manifesto.ViewingHint.TOP.toString()) {
-                        range = r;
+                    var json = this.__jsonld.structures[i];
+                    if (json.viewingHint === Manifesto.ViewingHint.TOP.toString()) {
+                        topRanges.push(json);
                     }
                 }
-                if (!range) {
-                    range = {};
+                // if no viewingHint="top" range was found, create a default one
+                if (!topRanges.length) {
+                    var range = {};
                     range.ranges = this.__jsonld.structures;
+                    topRanges.push(range);
                 }
             }
-            return range;
+            return topRanges;
+        };
+        Manifest.prototype.getTopRanges = function () {
+            return this._topRanges;
         };
         Manifest.prototype._getRangeById = function (id) {
             if (this.__jsonld.structures && this.__jsonld.structures.length) {
@@ -1423,38 +1469,68 @@ var Manifesto;
             }
             return null;
         };
+        Manifest.prototype._parseRangeCanvas = function (json, range) {
+            // todo: currently this isn't needed
+            //var canvas: IJSONLDResource = new JSONLDResource(json);
+            //range.members.push(<IManifestResource>canvas);
+        };
         Manifest.prototype._parseRanges = function (r, path, parentRange) {
             var range;
             if (_isString(r)) {
                 r = this._getRangeById(r);
             }
             range = new Manifesto.Range(r, this.options);
-            // if no parent range is passed, assign the new range to manifest.rootRange
+            range.parentRange = parentRange;
+            range.path = path;
             if (!parentRange) {
-                this.rootRange = range;
+                this._topRanges.push(range);
             }
             else {
-                range.parentRange = parentRange;
-                parentRange.ranges.push(range);
+                parentRange.members.push(range);
             }
-            range.path = path;
             if (r.ranges) {
                 for (var j = 0; j < r.ranges.length; j++) {
                     this._parseRanges(r.ranges[j], path + '/' + j, range);
                 }
             }
-        };
-        Manifest.prototype.getRanges = function () {
-            if (this._ranges != null)
-                return this._ranges;
-            this._ranges = [];
-            if (this.rootRange) {
-                this._ranges = this.rootRange.ranges.en().traverseUnique(function (range) { return range.ranges; }).toArray();
+            if (r.canvases) {
+                for (var k = 0; k < r.canvases.length; k++) {
+                    this._parseRangeCanvas(r.canvases[k], r);
+                }
             }
-            return this._ranges;
+            if (r.members) {
+                for (var l = 0; l < r.members.length; l++) {
+                    var child = r.members[l];
+                    // only add to members if not already parsed from backwards-compatible ranges/canvases arrays
+                    if (r.members.en().where(function (m) { return m.id === child.id; }).first()) {
+                        continue;
+                    }
+                    if (child['@type'].toLowerCase() === 'sc:range') {
+                        this._parseRanges(child, path + '/' + l, range);
+                    }
+                    else if (child['@type'].toLowerCase() === 'sc:canvas') {
+                        this._parseRangeCanvas(child, r);
+                    }
+                }
+            }
+        };
+        Manifest.prototype.getAllRanges = function () {
+            if (this._allRanges != null)
+                return this._allRanges;
+            this._allRanges = [];
+            var topRanges = this.getTopRanges();
+            for (var i = 0; i < topRanges.length; i++) {
+                var topRange = topRanges[i];
+                if (topRange.id) {
+                    this._allRanges.push(topRange); // it might be a placeholder root range
+                }
+                var subRanges = topRange.getRanges();
+                this._allRanges = this._allRanges.concat(subRanges.en().traverseUnique(function (range) { return range.getRanges(); }).toArray());
+            }
+            return this._allRanges;
         };
         Manifest.prototype.getRangeById = function (id) {
-            var ranges = this.getRanges();
+            var ranges = this.getAllRanges();
             for (var i = 0; i < ranges.length; i++) {
                 var range = ranges[i];
                 if (range.id === id) {
@@ -1464,7 +1540,7 @@ var Manifesto;
             return null;
         };
         Manifest.prototype.getRangeByPath = function (path) {
-            var ranges = this.getRanges();
+            var ranges = this.getAllRanges();
             for (var i = 0; i < ranges.length; i++) {
                 var range = ranges[i];
                 if (range.path === path) {
@@ -1493,41 +1569,6 @@ var Manifesto;
         };
         Manifest.prototype.getTotalSequences = function () {
             return this.getSequences().length;
-        };
-        Manifest.prototype.getTree = function () {
-            _super.prototype.getTree.call(this);
-            this.treeRoot.data.type = Manifesto.TreeNodeType.MANIFEST.toString();
-            if (!this.isLoaded) {
-                return this.treeRoot;
-            }
-            if (!this.rootRange)
-                return this.treeRoot;
-            this.treeRoot.data = this.rootRange;
-            this.rootRange.treeNode = this.treeRoot;
-            if (this.rootRange.ranges) {
-                for (var i = 0; i < this.rootRange.ranges.length; i++) {
-                    var range = this.rootRange.ranges[i];
-                    var node = new Manifesto.TreeNode();
-                    this.treeRoot.addNode(node);
-                    this._parseTreeNode(node, range);
-                }
-            }
-            this.generateTreeNodeIds(this.treeRoot);
-            return this.treeRoot;
-        };
-        Manifest.prototype._parseTreeNode = function (node, range) {
-            node.label = range.getLabel();
-            node.data = range;
-            node.data.type = Manifesto.TreeNodeType.RANGE.toString();
-            range.treeNode = node;
-            if (range.ranges) {
-                for (var i = 0; i < range.ranges.length; i++) {
-                    var childRange = range.ranges[i];
-                    var childNode = new Manifesto.TreeNode();
-                    node.addNode(childNode);
-                    this._parseTreeNode(childNode, childRange);
-                }
-            }
         };
         Manifest.prototype.getManifestType = function () {
             var service = this.getService(Manifesto.ServiceProfile.UIEXTENSIONS);
@@ -1574,58 +1615,77 @@ var Manifesto;
         __extends(Collection, _super);
         function Collection(jsonld, options) {
             _super.call(this, jsonld, options);
-            this.collections = [];
-            this.manifests = [];
+            this.members = [];
+            this._collections = null;
+            this._manifests = null;
             jsonld.__collection = this;
         }
+        Collection.prototype.getCollections = function () {
+            if (this._collections) {
+                return this._collections;
+            }
+            return this._collections = this.members.en().where(function (m) { return m.isCollection(); }).toArray();
+        };
+        Collection.prototype.getManifests = function () {
+            if (this._manifests) {
+                return this._manifests;
+            }
+            return this._manifests = this.members.en().where(function (m) { return m.isManifest(); }).toArray();
+        };
         Collection.prototype.getCollectionByIndex = function (collectionIndex) {
-            var collection = this.collections[collectionIndex];
+            var collection = this.getCollections()[collectionIndex];
             collection.options.index = collectionIndex;
             // id for collection MUST be dereferenceable
             return collection.load();
         };
         Collection.prototype.getManifestByIndex = function (manifestIndex) {
-            var manifest = this.manifests[manifestIndex];
+            var manifest = this.getManifests()[manifestIndex];
             manifest.options.index = manifestIndex;
             return manifest.load();
         };
         Collection.prototype.getTotalCollections = function () {
-            return this.collections.length;
+            return this.getCollections().length;
         };
         Collection.prototype.getTotalManifests = function () {
-            return this.manifests.length;
+            return this.getManifests().length;
         };
-        Collection.prototype.getTree = function () {
-            _super.prototype.getTree.call(this);
-            this.treeRoot.data.type = Manifesto.TreeNodeType.COLLECTION.toString();
+        Collection.prototype.getTotalMembers = function () {
+            return this.members.length;
+        };
+        /**
+         * Get a tree of sub collections and manifests, using each child manifest's first 'top' range.
+         */
+        Collection.prototype.getDefaultTree = function () {
+            _super.prototype.getDefaultTree.call(this);
+            this.defaultTree.data.type = Manifesto.TreeNodeType.COLLECTION.toString();
             this._parseManifests(this);
             this._parseCollections(this);
-            this.generateTreeNodeIds(this.treeRoot);
-            return this.treeRoot;
+            Manifesto.Utils.generateTreeNodeIds(this.defaultTree);
+            return this.defaultTree;
         };
         Collection.prototype._parseManifests = function (parentCollection) {
-            if (parentCollection.manifests && parentCollection.manifests.length) {
-                for (var i = 0; i < parentCollection.manifests.length; i++) {
-                    var manifest = parentCollection.manifests[i];
-                    var tree = manifest.getTree();
+            if (parentCollection.getManifests() && parentCollection.getManifests().length) {
+                for (var i = 0; i < parentCollection.getManifests().length; i++) {
+                    var manifest = parentCollection.getManifests()[i];
+                    var tree = manifest.getDefaultTree();
                     tree.label = manifest.parentLabel || manifest.getLabel() || 'manifest ' + (i + 1);
                     tree.navDate = manifest.getNavDate();
                     tree.data.id = manifest.id;
                     tree.data.type = Manifesto.TreeNodeType.MANIFEST.toString();
-                    parentCollection.treeRoot.addNode(tree);
+                    parentCollection.defaultTree.addNode(tree);
                 }
             }
         };
         Collection.prototype._parseCollections = function (parentCollection) {
-            if (parentCollection.collections && parentCollection.collections.length) {
-                for (var i = 0; i < parentCollection.collections.length; i++) {
-                    var collection = parentCollection.collections[i];
-                    var tree = collection.getTree();
+            if (parentCollection.getCollections() && parentCollection.getCollections().length) {
+                for (var i = 0; i < parentCollection.getCollections().length; i++) {
+                    var collection = parentCollection.getCollections()[i];
+                    var tree = collection.getDefaultTree();
                     tree.label = collection.parentLabel || collection.getLabel() || 'collection ' + (i + 1);
                     tree.navDate = collection.getNavDate();
                     tree.data.id = collection.id;
                     tree.data.type = Manifesto.TreeNodeType.COLLECTION.toString();
-                    parentCollection.treeRoot.addNode(tree);
+                    parentCollection.defaultTree.addNode(tree);
                     this._parseCollections(collection);
                 }
             }
@@ -1646,13 +1706,27 @@ var Manifesto;
         __extends(Range, _super);
         function Range(jsonld, options) {
             _super.call(this, jsonld, options);
-            this.ranges = [];
+            this._canvases = null;
+            this._ranges = null;
+            this.members = [];
         }
         Range.prototype.getCanvasIds = function () {
             if (this.__jsonld.canvases) {
                 return this.__jsonld.canvases;
             }
             return [];
+        };
+        Range.prototype.getCanvases = function () {
+            if (this._canvases) {
+                return this._canvases;
+            }
+            return this._canvases = this.members.en().where(function (m) { return m.isCanvas(); }).toArray();
+        };
+        Range.prototype.getRanges = function () {
+            if (this._ranges) {
+                return this._ranges;
+            }
+            return this._ranges = this.members.en().where(function (m) { return m.isRange(); }).toArray();
         };
         Range.prototype.getViewingDirection = function () {
             if (this.getProperty('viewingDirection')) {
@@ -1665,6 +1739,36 @@ var Manifesto;
                 return new Manifesto.ViewingHint(this.getProperty('viewingHint'));
             }
             return null;
+        };
+        Range.prototype.getTree = function (treeRoot) {
+            treeRoot.data = this;
+            this.treeNode = treeRoot;
+            var ranges = this.getRanges();
+            if (ranges && ranges.length) {
+                for (var i = 0; i < ranges.length; i++) {
+                    var range = ranges[i];
+                    var node = new Manifesto.TreeNode();
+                    treeRoot.addNode(node);
+                    this._parseTreeNode(node, range);
+                }
+            }
+            Manifesto.Utils.generateTreeNodeIds(treeRoot);
+            return treeRoot;
+        };
+        Range.prototype._parseTreeNode = function (node, range) {
+            node.label = range.getLabel();
+            node.data = range;
+            node.data.type = Manifesto.TreeNodeType.RANGE.toString();
+            range.treeNode = node;
+            var ranges = range.getRanges();
+            if (ranges && ranges.length) {
+                for (var i = 0; i < ranges.length; i++) {
+                    var childRange = ranges[i];
+                    var childNode = new Manifesto.TreeNode();
+                    node.addNode(childNode);
+                    this._parseTreeNode(childNode, childRange);
+                }
+            }
         };
         return Range;
     }(Manifesto.ManifestResource));
@@ -1957,6 +2061,7 @@ var Manifesto;
             }
             this.parseCollections(collection, options);
             this.parseManifests(collection, options);
+            this.parseMembers(collection, options);
             return collection;
         };
         Deserialiser.parseCollections = function (collection, options) {
@@ -1969,7 +2074,7 @@ var Manifesto;
                     var child = this.parseCollection(children[i], options);
                     child.index = i;
                     child.parentCollection = collection;
-                    collection.collections.push(child);
+                    collection.members.push(child);
                 }
             }
         };
@@ -1984,7 +2089,33 @@ var Manifesto;
                     var child = this.parseManifest(children[i], options);
                     child.index = i;
                     child.parentCollection = collection;
-                    collection.manifests.push(child);
+                    collection.members.push(child);
+                }
+            }
+        };
+        Deserialiser.parseMember = function (json, options) {
+            if (json['@type'].toLowerCase() === 'sc:manifest') {
+                return this.parseManifest(json, options);
+            }
+            else if (json['@type'].toLowerCase() === 'sc:collection') {
+                return this.parseCollection(json, options);
+            }
+        };
+        Deserialiser.parseMembers = function (collection, options) {
+            var children = collection.__jsonld.members;
+            if (children) {
+                for (var i = 0; i < children.length; i++) {
+                    if (options) {
+                        options.index = i;
+                    }
+                    var child = this.parseMember(children[i], options);
+                    // only add to members if not already parsed from backwards-compatible collections/manifests arrays
+                    if (collection.members.en().where(function (m) { return m.id === child.id; }).first()) {
+                        continue;
+                    }
+                    child.index = i;
+                    child.parentCollection = collection;
+                    collection.members.push(child);
                 }
             }
         };
@@ -2174,6 +2305,21 @@ var Manifesto;
                 }
             }
             return null;
+        };
+        Utils.generateTreeNodeIds = function (treeNode, index) {
+            if (index === void 0) { index = 0; }
+            var id;
+            if (!treeNode.parentNode) {
+                id = '0';
+            }
+            else {
+                id = treeNode.parentNode.id + "-" + index;
+            }
+            treeNode.id = id;
+            for (var i = 0; i < treeNode.nodes.length; i++) {
+                var n = treeNode.nodes[i];
+                Utils.generateTreeNodeIds(n, i);
+            }
         };
         Utils.loadResource = function (uri) {
             return new Promise(function (resolve, reject) {
@@ -3009,7 +3155,9 @@ function fromArrayBuffer (that, array, byteOffset, length) {
     throw new RangeError('\'length\' is out of bounds')
   }
 
-  if (length === undefined) {
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array)
+  } else if (length === undefined) {
     array = new Uint8Array(array, byteOffset)
   } else {
     array = new Uint8Array(array, byteOffset, length)
@@ -12836,7 +12984,8 @@ var Manifold;
             }
             if (iiifResource.getIIIFResourceType().toString() === manifesto.IIIFResourceType.collection().toString()) {
                 // if it's a collection and has child collections, get the collection by index
-                if (iiifResource.collections && iiifResource.collections.length) {
+                var collections = iiifResource.getCollections();
+                if (collections && collections.length) {
                     iiifResource.getCollectionByIndex(bootstrapper._options.collectionIndex).then(function (collection) {
                         if (!collection) {
                             reject('Collection index not found');
@@ -13072,7 +13221,7 @@ var Manifold;
                 return canvas.ranges; // cache
             }
             else {
-                canvas.ranges = this.manifest.getRanges().en().where(function (range) { return (range.getCanvasIds().en().any(function (c) { return c === canvas.id; })); }).toArray();
+                canvas.ranges = this.manifest.getAllRanges().en().where(function (range) { return (range.getCanvasIds().en().any(function (c) { return c === canvas.id; })); }).toArray();
             }
             return canvas.ranges;
         };
@@ -13196,13 +13345,15 @@ var Manifold;
             return result;
         };
         Helper.prototype.getMultiSelectState = function () {
-            var m = new Manifold.MultiSelectState();
-            m.ranges = this.getRanges().clone();
-            m.canvases = this.getCurrentSequence().getCanvases().clone();
-            return m;
+            if (!this._multiSelectState) {
+                this._multiSelectState = new Manifold.MultiSelectState();
+                this._multiSelectState.ranges = this.getRanges().clone();
+                this._multiSelectState.canvases = this.getCurrentSequence().getCanvases().clone();
+            }
+            return this._multiSelectState;
         };
         Helper.prototype.getRanges = function () {
-            return this.manifest.getRanges();
+            return this.manifest.getAllRanges();
         };
         Helper.prototype.getRangeByPath = function (path) {
             return this.manifest.getRangeByPath(path);
@@ -13227,6 +13378,17 @@ var Manifold;
         Helper.prototype.getSequenceByIndex = function (index) {
             return this.manifest.getSequenceByIndex(index);
         };
+        Helper.prototype.getShareServiceUrl = function () {
+            var url;
+            var shareService = this.manifest.getService(manifesto.ServiceProfile.shareExtensions());
+            if (shareService) {
+                if (shareService.length) {
+                    shareService = shareService[0];
+                }
+                url = shareService.__jsonld.shareUrl;
+            }
+            return url;
+        };
         Helper.prototype.getSortedTreeNodesByDate = function (sortedTree, tree) {
             var all = tree.nodes.en().traverseUnique(function (node) { return node.nodes; })
                 .where(function (n) { return n.data.type === manifesto.TreeNodeType.collection().toString() ||
@@ -13250,14 +13412,37 @@ var Manifold;
         Helper.prototype.getThumbs = function (width, height) {
             return this.getCurrentSequence().getThumbs(width, height);
         };
+        Helper.prototype.getTopRanges = function () {
+            return this.manifest.getTopRanges();
+        };
         Helper.prototype.getTotalCanvases = function () {
             return this.getCurrentSequence().getTotalCanvases();
         };
         Helper.prototype.getTrackingLabel = function () {
             return this.manifest.getTrackingLabel();
         };
-        Helper.prototype.getTree = function (sortType) {
-            var tree = this.iiifResource.getTree();
+        Helper.prototype.getTree = function (topRangeIndex, sortType) {
+            // if it's a collection, use IIIFResource.getDefaultTree()
+            // otherwise, get the top range by index and use Range.getTree()
+            if (topRangeIndex === void 0) { topRangeIndex = 0; }
+            if (sortType === void 0) { sortType = Manifold.TreeSortType.NONE; }
+            var tree;
+            if (this.iiifResource.isCollection()) {
+                tree = this.iiifResource.getDefaultTree();
+            }
+            else {
+                var topRanges = this.iiifResource.getTopRanges();
+                var root = manifesto.getTreeNode();
+                root.label = 'root';
+                root.data = this.iiifResource;
+                if (topRanges.length) {
+                    var range = topRanges[topRangeIndex];
+                    tree = range.getTree(root);
+                }
+                else {
+                    return root;
+                }
+            }
             var sortedTree = manifesto.getTreeNode();
             switch (sortType.toString()) {
                 case Manifold.TreeSortType.DATE.toString():
@@ -13298,6 +13483,9 @@ var Manifold;
         };
         Helper.prototype.hasRelatedPage = function () {
             var related = this.getRelated();
+            if (related.length) {
+                related = related[0];
+            }
             return related['format'] === 'text/html';
         };
         Helper.prototype.hasResources = function () {
@@ -13313,13 +13501,19 @@ var Manifold;
             return this.getViewingHint().toString() === manifesto.ViewingHint.continuous().toString();
         };
         Helper.prototype.isFirstCanvas = function (index) {
-            return this.getCurrentSequence().isFirstCanvas(index);
+            if (typeof index !== 'undefined') {
+                return this.getCurrentSequence().isFirstCanvas(index);
+            }
+            return this.getCurrentSequence().isFirstCanvas(this.canvasIndex);
         };
         Helper.prototype.isHorizontallyAligned = function () {
             return this.isLeftToRight() || this.isRightToLeft();
         };
         Helper.prototype.isLastCanvas = function (index) {
-            return this.getCurrentSequence().isLastCanvas(index);
+            if (typeof index !== 'undefined') {
+                return this.getCurrentSequence().isLastCanvas(index);
+            }
+            return this.getCurrentSequence().isLastCanvas(this.canvasIndex);
         };
         Helper.prototype.isLeftToRight = function () {
             return this.getViewingDirection().toString() === manifesto.ViewingDirection.leftToRight().toString();
@@ -13665,4 +13859,4 @@ var Manifold;
 
 },{}]},{},[1])(1)
 });
-!function(f){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=f();else if("function"==typeof define&&define.amd)define([],f);else{var g;g="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,g.iiifGalleryComponent=f()}}(function(){return function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a="function"==typeof require&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}for(var i="function"==typeof require&&require,o=0;o<r.length;o++)s(r[o]);return s}({1:[function(require,module,exports){var IIIFComponents,__extends=this&&this.__extends||function(d,b){function __(){this.constructor=d}for(var p in b)b.hasOwnProperty(p)&&(d[p]=b[p]);d.prototype=null===b?Object.create(b):(__.prototype=b.prototype,new __)};!function(IIIFComponents){var GalleryComponent=function(_super){function GalleryComponent(options){_super.call(this,options),this._scrollStopDuration=100,this._init(),this._resize()}return __extends(GalleryComponent,_super),GalleryComponent.prototype._init=function(){var _this=this,success=_super.prototype._init.call(this);return success||console.error("Component failed to initialise"),this._$header=$('<div class="header"></div>'),this._$element.append(this._$header),this._$sizeDownButton=$('<input class="btn btn-default size-down" type="button" value="-" />'),this._$header.append(this._$sizeDownButton),this._$sizeRange=$('<input type="range" name="size" min="1" max="10" value="6" />'),this._$header.append(this._$sizeRange),this._$sizeUpButton=$('<input class="btn btn-default size-up" type="button" value="+" />'),this._$header.append(this._$sizeUpButton),this._$main=$('<div class="main"></div>'),this._$element.append(this._$main),this._$thumbs=$('<div class="thumbs"></div>'),this._$main.append(this._$thumbs),this._$thumbs.addClass(this.options.helper.getViewingDirection().toString()),this._$sizeDownButton.on("click",function(){var val=Number(_this._$sizeRange.val())-1;val>=Number(_this._$sizeRange.attr("min"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this._emit(GalleryComponent.Events.DECREASE_SIZE))}),this._$sizeUpButton.on("click",function(){var val=Number(_this._$sizeRange.val())+1;val<=Number(_this._$sizeRange.attr("max"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this._emit(GalleryComponent.Events.INCREASE_SIZE))}),this._$sizeRange.on("change",function(){_this._updateThumbs(),_this._scrollToThumb(_this._getSelectedThumbIndex())}),this._setRange(),$.templates({galleryThumbsTemplate:'                    <div class="{{:~className()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">                        <div class="wrap" style="width:{{>initialWidth}}px; height:{{>initialHeight}}px" data-link="class{merge:multiSelected toggle=\'multiSelected\'}">                        {^{if multiSelectEnabled}}                            <input id="thumb-checkbox-{{>id}}" type="checkbox" data-link="checked{:multiSelected ? \'checked\' : \'\'}" class="multiSelect" />                        {{/if}}                        </div>                        <span class="index">{{:#index + 1}}</span>                        <span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>                    </div>'}),$.views.helpers({className:function(){var className="thumb preLoad";return 0===this.data.index&&(className+=" first"),this.data.uri||(className+=" placeholder"),className}}),this._$main.on("scroll",function(){_this._updateThumbs()},this.options.scrollStopDuration),this.options.sizingEnabled||this._$sizeRange.hide(),this._updateMultiSelectState(),success},GalleryComponent.prototype._getDefaultOptions=function(){return{chunkedResizingEnabled:!0,chunkedResizingThreshold:400,helper:null,imageFadeInDuration:300,pageModeEnabled:!1,scrollStopDuration:100,sizingEnabled:!0,thumbLoadPadding:3}},GalleryComponent.prototype.databind=function(thumbs){this._thumbs=thumbs,this._reset(),this._createThumbs()},GalleryComponent.prototype._createThumbs=function(){var that=this;if(this._thumbs){this._isChunkedResizingEnabled()&&this._$thumbs.addClass("chunked");for(var heights=[],i=0;i<this._thumbs.length;i++){var thumb=this._thumbs[i],initialWidth=thumb.width,initialHeight=thumb.height;thumb.initialWidth=initialWidth,heights.push(initialHeight)}for(var medianHeight=Math.median(heights),j=0;j<this._thumbs.length;j++){var thumb=this._thumbs[j];thumb.initialHeight=medianHeight}this._$thumbs.link($.templates.galleryThumbsTemplate,this._thumbs),that._multiSelectState.isEnabled?$.each(this._$thumbs.find(".thumb"),function(index,thumb){var $thumb=$(thumb);$thumb.checkboxButton(function(checked){var thumb=$.view(this).data;that._setThumbMultiSelected(thumb,!thumb.multiSelected),that._emit(GalleryComponent.Events.THUMB_MULTISELECTED,thumb)})}):this._$thumbs.delegate(".thumb","click",function(e){e.preventDefault();var thumb=$.view(this).data;that._lastThumbClickedIndex=thumb.index,that._emit(GalleryComponent.Events.THUMB_SELECTED,thumb)}),this._selectIndex(this.options.helper.canvasIndex),this._setLabel(),this._updateThumbs()}},GalleryComponent.prototype._updateMultiSelectState=function(){this._multiSelectState=this.options.helper.getMultiSelectState()},GalleryComponent.prototype._sizeThumb=function($thumb){var $wrap=$thumb.find(".wrap"),width=Number($thumb.data().initialwidth),height=Number($thumb.data().initialheight),$label=$thumb.find(".label"),newWidth=Math.floor(width*this._range),newHeight=Math.floor(height*this._range);$wrap.outerWidth(newWidth),$wrap.outerHeight(newHeight),$label.outerWidth(newWidth)},GalleryComponent.prototype._loadThumb=function($thumb,cb){var $wrap=$thumb.find(".wrap");if(!$wrap.hasClass("loading")&&!$wrap.hasClass("loaded")){$thumb.removeClass("preLoad");var visible=$thumb.attr("data-visible"),fadeDuration=this.options.imageFadeInDuration;if("false"!==visible){$wrap.addClass("loading");var src=$thumb.attr("data-src"),img=$('<img class="thumbImage" src="'+src+'" />');$(img).hide().load(function(){$(this).fadeIn(fadeDuration,function(){$(this).parent().swapClass("loading","loaded")})}),$wrap.prepend(img),cb&&cb(img)}else $wrap.addClass("hidden")}},GalleryComponent.prototype._getThumbsByRange=function(range){for(var thumbs=[],i=0;i<this._thumbs.length;i++){var thumb=this._thumbs[i],canvas=thumb.data,r=this.options.helper.getCanvasRange(canvas,range.path);r&&r.id===range.id&&thumbs.push(thumb)}return thumbs},GalleryComponent.prototype._updateThumbs=function(){var debug=!1;this._setRange();var scrollTop=this._$main.scrollTop(),scrollHeight=this._$main.height(),scrollBottom=scrollTop+scrollHeight;debug&&console.log("scrollTop %s, scrollBottom %s",scrollTop,scrollBottom);for(var thumbs=this._getAllThumbs(),i=0;i<thumbs.length;i++){var $thumb=$(thumbs[i]),thumbTop=$thumb.position().top,thumbHeight=$thumb.outerHeight(),thumbBottom=thumbTop+thumbHeight;if(debug){var $label=$thumb.find("span:visible");$label.empty().append("t: "+thumbTop+", b: "+thumbBottom)}this._isChunkedResizingEnabled()||this._sizeThumb($thumb);var padding=thumbHeight*this.options.thumbLoadPadding;thumbTop<=scrollBottom+padding&&thumbBottom>=scrollTop-padding?(this._isChunkedResizingEnabled()&&this._sizeThumb($thumb),$thumb.removeClass("outsideScrollArea"),debug&&$label.append(", i: true"),this._loadThumb($thumb)):($thumb.addClass("outsideScrollArea"),debug&&$label.append(", i: false"))}},GalleryComponent.prototype._isChunkedResizingEnabled=function(){return!!(this.options.chunkedResizingEnabled&&this._thumbs.length>this.options.chunkedResizingThreshold)},GalleryComponent.prototype._getSelectedThumbIndex=function(){return Number(this._$selectedThumb.data("index"))},GalleryComponent.prototype._getAllThumbs=function(){return this._thumbsCache||(this._thumbsCache=this._$thumbs.find(".thumb")),this._thumbsCache},GalleryComponent.prototype._getThumbByIndex=function(canvasIndex){return this._$thumbs.find('[data-index="'+canvasIndex+'"]')},GalleryComponent.prototype._scrollToThumb=function(canvasIndex){var $thumb=this._getThumbByIndex(canvasIndex);this._$main.scrollTop($thumb.position().top)},GalleryComponent.prototype._searchPreviewStart=function(canvasIndex){this._scrollToThumb(canvasIndex);var $thumb=this._getThumbByIndex(canvasIndex);$thumb.addClass("searchpreview")},GalleryComponent.prototype._searchPreviewFinish=function(){this._scrollToThumb(this.options.helper.canvasIndex),this._getAllThumbs().removeClass("searchpreview")},GalleryComponent.prototype._selectIndex=function(index){this._thumbs&&this._thumbs.length&&(index=parseInt(index),this._getAllThumbs().removeClass("selected"),this._$selectedThumb=this._getThumbByIndex(index),this._$selectedThumb.addClass("selected"),this._updateThumbs())},GalleryComponent.prototype._setLabel=function(){this.options.pageModeEnabled?($(this._$thumbs).find("span.index").hide(),$(this._$thumbs).find("span.label").show()):($(this._$thumbs).find("span.index").show(),$(this._$thumbs).find("span.label").hide())},GalleryComponent.prototype._setRange=function(){var norm=Math.normalise(Number(this._$sizeRange.val()),0,10);this._range=Math.clamp(norm,.05,1)},GalleryComponent.prototype._setThumbMultiSelected=function(thumb,selected){$.observable(thumb).setProperty("multiSelected",selected)},GalleryComponent.prototype._setMultiSelectEnabled=function(enabled){for(var i=0;i<this._thumbs.length;i++){var thumb=this._thumbs[i];thumb.multiSelectEnabled=enabled}},GalleryComponent.prototype._reset=function(){this._$thumbs.undelegate(".thumb","click"),this._setMultiSelectEnabled(this._multiSelectState.isEnabled)},GalleryComponent.prototype._resize=function(){},GalleryComponent}(_Components.BaseComponent);IIIFComponents.GalleryComponent=GalleryComponent}(IIIFComponents||(IIIFComponents={}));var IIIFComponents;!function(IIIFComponents){var GalleryComponent;!function(GalleryComponent){var Events=function(){function Events(){}return Events.DECREASE_SIZE="decreaseSize",Events.INCREASE_SIZE="increaseSize",Events.THUMB_SELECTED="thumbSelected",Events.THUMB_MULTISELECTED="thumbMultiSelected",Events}();GalleryComponent.Events=Events}(GalleryComponent=IIIFComponents.GalleryComponent||(IIIFComponents.GalleryComponent={}))}(IIIFComponents||(IIIFComponents={})),function(w){w.IIIFComponents?w.IIIFComponents.GalleryComponent=IIIFComponents.GalleryComponent:w.IIIFComponents=IIIFComponents}(window)},{}]},{},[1])(1)});
+!function(f){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=f();else if("function"==typeof define&&define.amd)define([],f);else{var g;g="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,g.iiifGalleryComponent=f()}}(function(){return function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a="function"==typeof require&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}for(var i="function"==typeof require&&require,o=0;o<r.length;o++)s(r[o]);return s}({1:[function(require,module,exports){var IIIFComponents,__extends=this&&this.__extends||function(d,b){function __(){this.constructor=d}for(var p in b)b.hasOwnProperty(p)&&(d[p]=b[p]);d.prototype=null===b?Object.create(b):(__.prototype=b.prototype,new __)};!function(IIIFComponents){var GalleryComponent=function(_super){function GalleryComponent(options){_super.call(this,options),this._scrollStopDuration=100,this._init(),this._resize()}return __extends(GalleryComponent,_super),GalleryComponent.prototype._init=function(){var _this=this,success=_super.prototype._init.call(this);return success||console.error("Component failed to initialise"),this._$header=$('<div class="header"></div>'),this._$element.append(this._$header),this._$leftOptions=$('<div class="left"></div>'),this._$header.append(this._$leftOptions),this._$rightOptions=$('<div class="right"></div>'),this._$header.append(this._$rightOptions),this._$sizeDownButton=$('<input class="btn btn-default size-down" type="button" value="-" />'),this._$leftOptions.append(this._$sizeDownButton),this._$sizeRange=$('<input type="range" name="size" min="1" max="10" value="6" />'),this._$leftOptions.append(this._$sizeRange),this._$sizeUpButton=$('<input class="btn btn-default size-up" type="button" value="+" />'),this._$leftOptions.append(this._$sizeUpButton),this._$multiSelectOptions=$('<div class="multiSelectOptions"></div>'),this._$rightOptions.append(this._$multiSelectOptions),this._$selectAllButton=$('<div class="multiSelectAll"><input id="multiSelectAll" type="checkbox" tabindex="0" /><label for="multiSelectAll">'+this.options.content.selectAll+"</label></div>"),this._$multiSelectOptions.append(this._$selectAllButton),this._$selectAllButtonCheckbox=$(this._$selectAllButton.find("input:checkbox")),this._$selectButton=$('<a class="select" href="#">'+this.options.content.select+"</a>"),this._$multiSelectOptions.append(this._$selectButton),this._$main=$('<div class="main"></div>'),this._$element.append(this._$main),this._$thumbs=$('<div class="thumbs"></div>'),this._$main.append(this._$thumbs),this._$thumbs.addClass(this.options.helper.getViewingDirection().toString()),this._$sizeDownButton.on("click",function(){var val=Number(_this._$sizeRange.val())-1;val>=Number(_this._$sizeRange.attr("min"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this._emit(GalleryComponent.Events.DECREASE_SIZE))}),this._$sizeUpButton.on("click",function(){var val=Number(_this._$sizeRange.val())+1;val<=Number(_this._$sizeRange.attr("max"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this._emit(GalleryComponent.Events.INCREASE_SIZE))}),this._$sizeRange.on("change",function(){_this._updateThumbs(),_this._scrollToThumb(_this._getSelectedThumbIndex())}),this._$selectAllButton.checkboxButton(function(checked){checked?_this._getMultiSelectState().selectAll(!0):_this._getMultiSelectState().selectAll(!1),_this.databind()}),this._$selectButton.on("click",function(){var ids=_this._getMultiSelectState().getAllSelectedCanvases().map(function(canvas){return canvas.id});_this._emit(GalleryComponent.Events.MULTISELECTION_MADE,ids)}),this._setRange(),$.templates({galleryThumbsTemplate:'                    <div class="{{:~className()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">                        <div class="wrap" style="width:{{>initialWidth}}px; height:{{>initialHeight}}px" data-link="class{merge:multiSelected toggle=\'multiSelected\'}">                        {^{if multiSelectEnabled}}                            <input id="thumb-checkbox-{{>id}}" type="checkbox" data-link="checked{:multiSelected ? \'checked\' : \'\'}" class="multiSelect" />                        {{/if}}                        </div>                        <span class="index">{{:#index + 1}}</span>                        <span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>                    </div>'}),$.views.helpers({className:function(){var className="thumb preLoad";return 0===this.data.index&&(className+=" first"),this.data.uri||(className+=" placeholder"),className}}),this._$main.on("scroll",function(){_this._updateThumbs()},this.options.scrollStopDuration),this.options.sizingEnabled||this._$sizeRange.hide(),success},GalleryComponent.prototype._getDefaultOptions=function(){return{chunkedResizingEnabled:!0,chunkedResizingThreshold:400,content:{select:"Select",selectAll:"Select All"},debug:!1,helper:null,imageFadeInDuration:300,pageModeEnabled:!1,scrollStopDuration:100,sizingEnabled:!0,thumbHeight:320,thumbLoadPadding:3,thumbWidth:200}},GalleryComponent.prototype.databind=function(){this._thumbs=this.options.helper.getThumbs(this.options.thumbWidth,this.options.thumbHeight),this._thumbsCache=null,this._createThumbs(),this._selectIndex(this.options.helper.canvasIndex);var multiSelectState=this._getMultiSelectState();if(multiSelectState.isEnabled){this._$multiSelectOptions.show(),this._$thumbs.addClass("multiSelect");for(var j=0;j<multiSelectState.canvases.length;j++){var canvas=multiSelectState.canvases[j],thumb=this._getThumbByCanvas(canvas);this._setThumbMultiSelected(thumb,canvas.multiSelected)}for(var i=0;i<multiSelectState.ranges.length;i++)for(var range=multiSelectState.ranges[i],thumbs=this._getThumbsByRange(range),k=0;k<thumbs.length;k++){var thumb=thumbs[k];this._setThumbMultiSelected(thumb,range.multiSelected)}}else this._$multiSelectOptions.hide(),this._$thumbs.removeClass("multiSelect")},GalleryComponent.prototype._getMultiSelectState=function(){return this.options.helper.getMultiSelectState()},GalleryComponent.prototype._createThumbs=function(){var _this=this,that=this;if(this._thumbs){this._$thumbs.undelegate(".thumb","click"),this._$thumbs.empty(),this._isChunkedResizingEnabled()&&this._$thumbs.addClass("chunked");for(var multiSelectState=this._getMultiSelectState(),heights=[],i=0;i<this._thumbs.length;i++){var thumb=this._thumbs[i],initialWidth=thumb.width,initialHeight=thumb.height;thumb.initialWidth=initialWidth,heights.push(initialHeight),thumb.multiSelectEnabled=multiSelectState.isEnabled}for(var medianHeight=Math.median(heights),j=0;j<this._thumbs.length;j++){var thumb=this._thumbs[j];thumb.initialHeight=medianHeight}this._$thumbs.link($.templates.galleryThumbsTemplate,this._thumbs),multiSelectState.isEnabled?$.each(this._$thumbs.find(".thumb"),function(index,thumb){var that=_this,$thumb=$(thumb);$thumb.checkboxButton(function(checked){var thumb=$.view(this).data;that._setThumbMultiSelected(thumb,!thumb.multiSelected);var range=that.options.helper.getCanvasRange(thumb.data),multiSelectState=that._getMultiSelectState();range?multiSelectState.selectRange(range,thumb.multiSelected):multiSelectState.selectCanvas(thumb.data,thumb.multiSelected),that._emit(GalleryComponent.Events.THUMB_MULTISELECTED,thumb)})}):this._$thumbs.delegate(".thumb","click",function(e){e.preventDefault();var thumb=$.view(this).data;that._lastThumbClickedIndex=thumb.index,that._emit(GalleryComponent.Events.THUMB_SELECTED,thumb)}),this._setLabel(),this._updateThumbs()}},GalleryComponent.prototype._getThumbByCanvas=function(canvas){return this._thumbs.en().where(function(c){return c.data.id===canvas.id}).first()},GalleryComponent.prototype._sizeThumb=function($thumb){var $wrap=$thumb.find(".wrap"),width=Number($thumb.data().initialwidth),height=Number($thumb.data().initialheight),$label=$thumb.find(".label"),newWidth=Math.floor(width*this._range),newHeight=Math.floor(height*this._range);$wrap.outerWidth(newWidth),$wrap.outerHeight(newHeight),$label.outerWidth(newWidth)},GalleryComponent.prototype._loadThumb=function($thumb,cb){var $wrap=$thumb.find(".wrap");if(!$wrap.hasClass("loading")&&!$wrap.hasClass("loaded")){$thumb.removeClass("preLoad");var visible=$thumb.attr("data-visible"),fadeDuration=this.options.imageFadeInDuration;if("false"!==visible){$wrap.addClass("loading");var src=$thumb.attr("data-src"),img=$('<img class="thumbImage" src="'+src+'" />');$(img).hide().load(function(){$(this).fadeIn(fadeDuration,function(){$(this).parent().swapClass("loading","loaded")})}),$wrap.prepend(img),cb&&cb(img)}else $wrap.addClass("hidden")}},GalleryComponent.prototype._getThumbsByRange=function(range){for(var thumbs=[],i=0;i<this._thumbs.length;i++){var thumb=this._thumbs[i],canvas=thumb.data,r=this.options.helper.getCanvasRange(canvas,range.path);r&&r.id===range.id&&thumbs.push(thumb)}return thumbs},GalleryComponent.prototype._updateThumbs=function(){var debug=this.options.debug;this._setRange();var scrollTop=this._$main.scrollTop(),scrollHeight=this._$main.height(),scrollBottom=scrollTop+scrollHeight;debug&&console.log("scrollTop %s, scrollBottom %s",scrollTop,scrollBottom);for(var thumbs=this._getAllThumbs(),i=0;i<thumbs.length;i++){var $thumb=$(thumbs[i]),thumbTop=$thumb.position().top,thumbHeight=$thumb.outerHeight(),thumbBottom=thumbTop+thumbHeight;if(debug){var $label=$thumb.find("span:visible");$label.empty().append("t: "+thumbTop+", b: "+thumbBottom)}this._isChunkedResizingEnabled()||this._sizeThumb($thumb);var padding=thumbHeight*this.options.thumbLoadPadding;thumbTop<=scrollBottom+padding&&thumbBottom>=scrollTop-padding?(this._isChunkedResizingEnabled()&&this._sizeThumb($thumb),$thumb.removeClass("outsideScrollArea"),debug&&$label.append(", i: true"),this._loadThumb($thumb)):($thumb.addClass("outsideScrollArea"),debug&&$label.append(", i: false"))}},GalleryComponent.prototype._isChunkedResizingEnabled=function(){return!!(this.options.chunkedResizingEnabled&&this._thumbs.length>this.options.chunkedResizingThreshold)},GalleryComponent.prototype._getSelectedThumbIndex=function(){return Number(this._$selectedThumb.data("index"))},GalleryComponent.prototype._getAllThumbs=function(){return this._thumbsCache||(this._thumbsCache=this._$thumbs.find(".thumb")),this._thumbsCache},GalleryComponent.prototype._getThumbByIndex=function(canvasIndex){return this._$thumbs.find('[data-index="'+canvasIndex+'"]')},GalleryComponent.prototype._scrollToThumb=function(canvasIndex){var $thumb=this._getThumbByIndex(canvasIndex);this._$main.scrollTop($thumb.position().top)},GalleryComponent.prototype._searchPreviewStart=function(canvasIndex){this._scrollToThumb(canvasIndex);var $thumb=this._getThumbByIndex(canvasIndex);$thumb.addClass("searchpreview")},GalleryComponent.prototype._searchPreviewFinish=function(){this._scrollToThumb(this.options.helper.canvasIndex),this._getAllThumbs().removeClass("searchpreview")},GalleryComponent.prototype._selectIndex=function(index){this._thumbs&&this._thumbs.length&&(index=parseInt(index),this._getAllThumbs().removeClass("selected"),this._$selectedThumb=this._getThumbByIndex(index),this._$selectedThumb.addClass("selected"),this._updateThumbs())},GalleryComponent.prototype._setLabel=function(){this.options.pageModeEnabled?($(this._$thumbs).find("span.index").hide(),$(this._$thumbs).find("span.label").show()):($(this._$thumbs).find("span.index").show(),$(this._$thumbs).find("span.label").hide())},GalleryComponent.prototype._setRange=function(){var norm=Math.normalise(Number(this._$sizeRange.val()),0,10);this._range=Math.clamp(norm,.05,1)},GalleryComponent.prototype._setThumbMultiSelected=function(thumb,selected){$.observable(thumb).setProperty("multiSelected",selected)},GalleryComponent.prototype._resize=function(){},GalleryComponent}(_Components.BaseComponent);IIIFComponents.GalleryComponent=GalleryComponent}(IIIFComponents||(IIIFComponents={}));var IIIFComponents;!function(IIIFComponents){var GalleryComponent;!function(GalleryComponent){var Events=function(){function Events(){}return Events.DECREASE_SIZE="decreaseSize",Events.INCREASE_SIZE="increaseSize",Events.MULTISELECTION_MADE="multiSelectionMade",Events.THUMB_SELECTED="thumbSelected",Events.THUMB_MULTISELECTED="thumbMultiSelected",Events}();GalleryComponent.Events=Events}(GalleryComponent=IIIFComponents.GalleryComponent||(IIIFComponents.GalleryComponent={}))}(IIIFComponents||(IIIFComponents={})),function(w){w.IIIFComponents?w.IIIFComponents.GalleryComponent=IIIFComponents.GalleryComponent:w.IIIFComponents=IIIFComponents}(window)},{}]},{},[1])(1)});

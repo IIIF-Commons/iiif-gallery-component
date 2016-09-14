@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>component-boilerplate: test</title>
+    <title>iiif-gallery-component: test</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/iiif-gallery-component.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.2/es6-promise.min.js"></script>
     <script src="js/base-component.bundle.js"></script>
     <script src="js/iiif-gallery-component.js"></script>
     <script src="js/jquery-plugins.js"></script>
@@ -13,18 +14,23 @@
 </head>
 <body>
 
+    <div>
+        <input id="multiselect" type="checkbox" /><label for="multiselect">Multi-select</label>&nbsp;
+    </div>
+
     <div id="gallery" class="iiif-gallery-component">
         loading...
     </div>
 
     <script>
 
-        var helper, component, rootNode, multiSelectState;
+        var helper, component, multiSelectState;
         
         $(function() {
             
             // http://wellcomelibrary.org/iiif/b18035978/manifest (Biocrats)
             // http://wellcomelibrary.org/iiif/b18035723/manifest (Wunder der Vererbung)
+            // http://wellcomelibrary.org/iiif/b1948799x/manifest (Crick's Letter')
 
             Manifold.loadManifest({
                 iiifResourceUri: 'http://wellcomelibrary.org/iiif/b18035978/manifest',
@@ -49,12 +55,30 @@
                     console.log('increase size');
                 });
 
-                var thumbs = helper.getThumbs(200, 320);
+                component.on('multiSelectionMade', function(args) {
+                    var ids = args[0]; 
+                    console.log(ids);
+                });
 
-                component.databind(thumbs);
+                multiSelectState = helper.getMultiSelectState();
+
+                component.databind();
 
             }).catch(function() {
                 console.error('failed to load manifest');
+            });
+
+            $('#multiselect').on('click', function() {
+                var $this = $(this);
+                
+                if ($this.is(':checked')) {
+                    multiSelectState.setEnabled(true);
+                } else {
+                    multiSelectState.setEnabled(false);
+                }
+
+                component.databind();               
+                //console.log(multiSelectState.getAllSelectedCanvases());
             });
         });
 

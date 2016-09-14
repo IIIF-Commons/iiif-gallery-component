@@ -23,12 +23,23 @@ var IIIFComponents;
             }
             this._$header = $('<div class="header"></div>');
             this._$element.append(this._$header);
+            this._$leftOptions = $('<div class="left"></div>');
+            this._$header.append(this._$leftOptions);
+            this._$rightOptions = $('<div class="right"></div>');
+            this._$header.append(this._$rightOptions);
             this._$sizeDownButton = $('<input class="btn btn-default size-down" type="button" value="-" />');
-            this._$header.append(this._$sizeDownButton);
+            this._$leftOptions.append(this._$sizeDownButton);
             this._$sizeRange = $('<input type="range" name="size" min="1" max="10" value="6" />');
-            this._$header.append(this._$sizeRange);
+            this._$leftOptions.append(this._$sizeRange);
             this._$sizeUpButton = $('<input class="btn btn-default size-up" type="button" value="+" />');
-            this._$header.append(this._$sizeUpButton);
+            this._$leftOptions.append(this._$sizeUpButton);
+            this._$multiSelectOptions = $('<div class="multiSelectOptions"></div>');
+            this._$rightOptions.append(this._$multiSelectOptions);
+            this._$selectAllButton = $('<div class="multiSelectAll"><input id="multiSelectAll" type="checkbox" tabindex="0" /><label for="multiSelectAll">' + this.options.content.selectAll + '</label></div>');
+            this._$multiSelectOptions.append(this._$selectAllButton);
+            this._$selectAllButtonCheckbox = $(this._$selectAllButton.find('input:checkbox'));
+            this._$selectButton = $('<a class="select" href="#">' + this.options.content.select + '</a>');
+            this._$multiSelectOptions.append(this._$selectButton);
             this._$main = $('<div class="main"></div>');
             this._$element.append(this._$main);
             this._$thumbs = $('<div class="thumbs"></div>');
@@ -53,6 +64,21 @@ var IIIFComponents;
             this._$sizeRange.on('change', function () {
                 _this._updateThumbs();
                 _this._scrollToThumb(_this._getSelectedThumbIndex());
+            });
+            this._$selectAllButton.checkboxButton(function (checked) {
+                if (checked) {
+                    _this._getMultiSelectState().selectAll(true);
+                }
+                else {
+                    _this._getMultiSelectState().selectAll(false);
+                }
+                _this.databind();
+            });
+            this._$selectButton.on('click', function () {
+                var ids = _this._getMultiSelectState().getAllSelectedCanvases().map(function (canvas) {
+                    return canvas.id;
+                });
+                _this._emit(GalleryComponent.Events.MULTISELECTION_MADE, ids);
             });
             this._setRange();
             $.templates({
@@ -86,33 +112,70 @@ var IIIFComponents;
             if (!this.options.sizingEnabled) {
                 this._$sizeRange.hide();
             }
-            this._updateMultiSelectState();
             return success;
         };
         GalleryComponent.prototype._getDefaultOptions = function () {
             return {
                 chunkedResizingEnabled: true,
                 chunkedResizingThreshold: 400,
+                content: {
+                    select: "Select",
+                    selectAll: "Select All"
+                },
+                debug: false,
                 helper: null,
                 imageFadeInDuration: 300,
                 pageModeEnabled: false,
                 scrollStopDuration: 100,
                 sizingEnabled: true,
-                thumbLoadPadding: 3
+                thumbHeight: 320,
+                thumbLoadPadding: 3,
+                thumbWidth: 200
             };
         };
-        GalleryComponent.prototype.databind = function (thumbs) {
-            this._thumbs = thumbs;
-            this._reset();
+        GalleryComponent.prototype.databind = function () {
+            this._thumbs = this.options.helper.getThumbs(this.options.thumbWidth, this.options.thumbHeight);
+            this._thumbsCache = null; // delete cache
             this._createThumbs();
+            this._selectIndex(this.options.helper.canvasIndex);
+            var multiSelectState = this._getMultiSelectState();
+            if (multiSelectState.isEnabled) {
+                this._$multiSelectOptions.show();
+                this._$thumbs.addClass("multiSelect");
+                for (var j = 0; j < multiSelectState.canvases.length; j++) {
+                    var canvas = multiSelectState.canvases[j];
+                    var thumb = this._getThumbByCanvas(canvas);
+                    this._setThumbMultiSelected(thumb, canvas.multiSelected);
+                }
+                // range selections override canvas selections
+                for (var i = 0; i < multiSelectState.ranges.length; i++) {
+                    var range = multiSelectState.ranges[i];
+                    var thumbs = this._getThumbsByRange(range);
+                    for (var k = 0; k < thumbs.length; k++) {
+                        var thumb = thumbs[k];
+                        this._setThumbMultiSelected(thumb, range.multiSelected);
+                    }
+                }
+            }
+            else {
+                this._$multiSelectOptions.hide();
+                this._$thumbs.removeClass("multiSelect");
+            }
+        };
+        GalleryComponent.prototype._getMultiSelectState = function () {
+            return this.options.helper.getMultiSelectState();
         };
         GalleryComponent.prototype._createThumbs = function () {
+            var _this = this;
             var that = this;
             if (!this._thumbs)
                 return;
+            this._$thumbs.undelegate('.thumb', 'click');
+            this._$thumbs.empty();
             if (this._isChunkedResizingEnabled()) {
                 this._$thumbs.addClass("chunked");
             }
+            var multiSelectState = this._getMultiSelectState();
             // set initial thumb sizes
             var heights = [];
             for (var i = 0; i < this._thumbs.length; i++) {
@@ -122,6 +185,7 @@ var IIIFComponents;
                 thumb.initialWidth = initialWidth;
                 //thumb.initialHeight = initialHeight;
                 heights.push(initialHeight);
+                thumb.multiSelectEnabled = multiSelectState.isEnabled;
             }
             var medianHeight = Math.median(heights);
             for (var j = 0; j < this._thumbs.length; j++) {
@@ -129,7 +193,7 @@ var IIIFComponents;
                 thumb.initialHeight = medianHeight;
             }
             this._$thumbs.link($.templates.galleryThumbsTemplate, this._thumbs);
-            if (!that._multiSelectState.isEnabled) {
+            if (!multiSelectState.isEnabled) {
                 // add a selection click event to all thumbs
                 this._$thumbs.delegate('.thumb', 'click', function (e) {
                     e.preventDefault();
@@ -141,20 +205,28 @@ var IIIFComponents;
             else {
                 // make each thumb a checkboxButton
                 $.each(this._$thumbs.find('.thumb'), function (index, thumb) {
+                    var that = _this;
                     var $thumb = $(thumb);
                     $thumb.checkboxButton(function (checked) {
                         var thumb = $.view(this).data;
                         that._setThumbMultiSelected(thumb, !thumb.multiSelected);
+                        var range = that.options.helper.getCanvasRange(thumb.data);
+                        var multiSelectState = that._getMultiSelectState();
+                        if (range) {
+                            multiSelectState.selectRange(range, thumb.multiSelected);
+                        }
+                        else {
+                            multiSelectState.selectCanvas(thumb.data, thumb.multiSelected);
+                        }
                         that._emit(GalleryComponent.Events.THUMB_MULTISELECTED, thumb);
                     });
                 });
             }
-            this._selectIndex(this.options.helper.canvasIndex);
             this._setLabel();
             this._updateThumbs();
         };
-        GalleryComponent.prototype._updateMultiSelectState = function () {
-            this._multiSelectState = this.options.helper.getMultiSelectState();
+        GalleryComponent.prototype._getThumbByCanvas = function (canvas) {
+            return this._thumbs.en().where(function (c) { return c.data.id === canvas.id; }).first();
         };
         GalleryComponent.prototype._sizeThumb = function ($thumb) {
             var $wrap = $thumb.find('.wrap');
@@ -206,7 +278,7 @@ var IIIFComponents;
             return thumbs;
         };
         GalleryComponent.prototype._updateThumbs = function () {
-            var debug = false;
+            var debug = this.options.debug;
             // cache range size
             this._setRange();
             var scrollTop = this._$main.scrollTop();
@@ -309,16 +381,6 @@ var IIIFComponents;
         GalleryComponent.prototype._setThumbMultiSelected = function (thumb, selected) {
             $.observable(thumb).setProperty("multiSelected", selected);
         };
-        GalleryComponent.prototype._setMultiSelectEnabled = function (enabled) {
-            for (var i = 0; i < this._thumbs.length; i++) {
-                var thumb = this._thumbs[i];
-                thumb.multiSelectEnabled = enabled;
-            }
-        };
-        GalleryComponent.prototype._reset = function () {
-            this._$thumbs.undelegate('.thumb', 'click');
-            this._setMultiSelectEnabled(this._multiSelectState.isEnabled);
-        };
         GalleryComponent.prototype._resize = function () {
         };
         return GalleryComponent;
@@ -334,6 +396,7 @@ var IIIFComponents;
             }
             Events.DECREASE_SIZE = 'decreaseSize';
             Events.INCREASE_SIZE = 'increaseSize';
+            Events.MULTISELECTION_MADE = 'multiSelectionMade';
             Events.THUMB_SELECTED = 'thumbSelected';
             Events.THUMB_MULTISELECTED = 'thumbMultiSelected';
             return Events;
