@@ -192,7 +192,7 @@ namespace IIIFComponents {
 
             this._createThumbs();
 
-            this._selectIndex(this.options.helper.canvasIndex);
+            this.selectIndex(this.options.helper.canvasIndex);
 
             var multiSelectState: Manifold.MultiSelectState = this._getMultiSelectState();
 
@@ -476,7 +476,7 @@ namespace IIIFComponents {
             this._getAllThumbs().removeClass('searchpreview');
         }
 
-        private _selectIndex(index: number): void {
+        public selectIndex(index: number): void {
             if (!this._thumbs || !this._thumbs.length) return;
             this._getAllThumbs().removeClass('selected');
             this._$selectedThumb = this._getThumbByIndex(index);

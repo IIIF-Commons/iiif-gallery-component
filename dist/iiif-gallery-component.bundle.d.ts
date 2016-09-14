@@ -1,4 +1,4 @@
-// base-component v1.0.1 https://github.com/viewdir/base-component#readme
+// base-component v1.0.2 https://github.com/viewdir/base-component#readme
 interface Window {
     _Components: any;
 }
@@ -13,7 +13,7 @@ declare namespace _Components {
         protected _getDefaultOptions(): IBaseComponentOptions;
         protected _emit(event: string, ...args: any[]): void;
         protected _resize(): void;
-        databind(data: any): void;
+        databind(data?: any): void;
     }
     function applyMixins(derivedCtor: any, baseCtors: any[]): void;
 }
@@ -21,7 +21,7 @@ declare namespace _Components {
 declare namespace _Components {
     interface IBaseComponent {
         options: IBaseComponentOptions;
-        databind(data: any): void;
+        databind(data?: any): void;
     }
 }
 
@@ -1638,7 +1638,7 @@ declare namespace IIIFComponents {
         private _scrollToThumb(canvasIndex);
         private _searchPreviewStart(canvasIndex);
         private _searchPreviewFinish();
-        private _selectIndex(index);
+        selectIndex(index: number): void;
         private _setLabel();
         private _setRange();
         private _setThumbMultiSelected(thumb, selected);
@@ -1657,6 +1657,7 @@ declare namespace IIIFComponents.GalleryComponent {
 
 declare namespace IIIFComponents {
     interface IGalleryComponent extends _Components.IBaseComponent {
+        selectIndex(index: number): void;
     }
 }
 

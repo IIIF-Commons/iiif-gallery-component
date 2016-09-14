@@ -38,7 +38,7 @@ declare namespace IIIFComponents {
         private _scrollToThumb(canvasIndex);
         private _searchPreviewStart(canvasIndex);
         private _searchPreviewFinish();
-        private _selectIndex(index);
+        selectIndex(index: number): void;
         private _setLabel();
         private _setRange();
         private _setThumbMultiSelected(thumb, selected);
@@ -57,6 +57,7 @@ declare namespace IIIFComponents.GalleryComponent {
 
 declare namespace IIIFComponents {
     interface IGalleryComponent extends _Components.IBaseComponent {
+        selectIndex(index: number): void;
     }
 }
 

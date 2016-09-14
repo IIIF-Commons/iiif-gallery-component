@@ -141,7 +141,7 @@ var IIIFComponents;
             }
             this._thumbsCache = null; // delete cache
             this._createThumbs();
-            this._selectIndex(this.options.helper.canvasIndex);
+            this.selectIndex(this.options.helper.canvasIndex);
             var multiSelectState = this._getMultiSelectState();
             if (multiSelectState.isEnabled) {
                 this._$multiSelectOptions.show();
@@ -358,7 +358,7 @@ var IIIFComponents;
             this._scrollToThumb(this.options.helper.canvasIndex);
             this._getAllThumbs().removeClass('searchpreview');
         };
-        GalleryComponent.prototype._selectIndex = function (index) {
+        GalleryComponent.prototype.selectIndex = function (index) {
             if (!this._thumbs || !this._thumbs.length)
                 return;
             this._getAllThumbs().removeClass('selected');
