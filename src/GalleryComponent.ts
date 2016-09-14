@@ -175,13 +175,18 @@ namespace IIIFComponents {
                 sizingEnabled: true,
                 thumbHeight: 320,
                 thumbLoadPadding: 3,
-                thumbWidth: 200
+                thumbWidth: 200,
+                viewingDirection: manifesto.ViewingDirection.leftToRight()
             }
         }
         
         public databind(): void{
             
             this._thumbs = <Manifold.IThumb[]>this.options.helper.getThumbs(this.options.thumbWidth, this.options.thumbHeight);
+
+            if (this.options.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()){
+                thumbs.reverse();
+            }
 
             this._thumbsCache = null; // delete cache
 
@@ -471,12 +476,12 @@ namespace IIIFComponents {
             this._getAllThumbs().removeClass('searchpreview');
         }
 
-        private _selectIndex(index): void {
+        private _selectIndex(index: number): void {
             if (!this._thumbs || !this._thumbs.length) return;
-            index = parseInt(index);
             this._getAllThumbs().removeClass('selected');
             this._$selectedThumb = this._getThumbByIndex(index);
             this._$selectedThumb.addClass('selected');
+            this._scrollToThumb(index);
             // make sure visible images are loaded.
             this._updateThumbs();
         }

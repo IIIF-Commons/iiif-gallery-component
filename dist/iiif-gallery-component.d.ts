@@ -78,5 +78,6 @@ declare namespace IIIFComponents {
         thumbHeight: number;
         thumbLoadPadding: number;
         thumbWidth: number;
+        viewingDirection: Manifesto.ViewingDirection;
     }
 }

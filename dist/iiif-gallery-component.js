@@ -130,11 +130,15 @@ var IIIFComponents;
                 sizingEnabled: true,
                 thumbHeight: 320,
                 thumbLoadPadding: 3,
-                thumbWidth: 200
+                thumbWidth: 200,
+                viewingDirection: manifesto.ViewingDirection.leftToRight()
             };
         };
         GalleryComponent.prototype.databind = function () {
             this._thumbs = this.options.helper.getThumbs(this.options.thumbWidth, this.options.thumbHeight);
+            if (this.options.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()) {
+                thumbs.reverse();
+            }
             this._thumbsCache = null; // delete cache
             this._createThumbs();
             this._selectIndex(this.options.helper.canvasIndex);
@@ -357,10 +361,10 @@ var IIIFComponents;
         GalleryComponent.prototype._selectIndex = function (index) {
             if (!this._thumbs || !this._thumbs.length)
                 return;
-            index = parseInt(index);
             this._getAllThumbs().removeClass('selected');
             this._$selectedThumb = this._getThumbByIndex(index);
             this._$selectedThumb.addClass('selected');
+            this._scrollToThumb(index);
             // make sure visible images are loaded.
             this._updateThumbs();
         };
