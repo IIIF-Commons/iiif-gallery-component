@@ -137,7 +137,7 @@ var IIIFComponents;
         GalleryComponent.prototype.databind = function () {
             this._thumbs = this.options.helper.getThumbs(this.options.thumbWidth, this.options.thumbHeight);
             if (this.options.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()) {
-                thumbs.reverse();
+                this._thumbs.reverse();
             }
             this._thumbsCache = null; // delete cache
             this._createThumbs();

@@ -185,7 +185,7 @@ namespace IIIFComponents {
             this._thumbs = <Manifold.IThumb[]>this.options.helper.getThumbs(this.options.thumbWidth, this.options.thumbHeight);
 
             if (this.options.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()){
-                thumbs.reverse();
+                this._thumbs.reverse();
             }
 
             this._thumbsCache = null; // delete cache
