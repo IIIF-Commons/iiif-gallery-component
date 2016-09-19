@@ -1,0 +1,12 @@
+.loading(@img){
+    background-image: url(@img);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+.opacity(@opacity) {
+    opacity: @opacity;
+    // IE8 filter
+    @opacity-ie: (@opacity * 100);
+    filter: ~"alpha(opacity=@{opacity-ie})";
+}

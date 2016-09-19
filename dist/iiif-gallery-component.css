@@ -1,7 +1,3 @@
-body {
-  font-family: Sans-Serif;
-  padding: 20px;
-}
 .iiif-gallery-component .header {
   overflow: hidden;
   height: 45px;
@@ -133,4 +129,8 @@ body {
 }
 .iiif-gallery-component .main .thumbs.right-to-left .thumb {
   float: right;
+}
+body {
+  font-family: Sans-Serif;
+  padding: 20px;
 }
