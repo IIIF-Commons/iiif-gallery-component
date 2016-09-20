@@ -102,8 +102,8 @@
 .iiif-gallery-component .main .thumbs .thumb .wrap input {
   position: absolute;
   cursor: pointer;
-  top: 10px;
-  left: 10px;
+  top: 0px;
+  left: 0px;
 }
 .iiif-gallery-component .main .thumbs .thumb span {
   font-size: 11px;
