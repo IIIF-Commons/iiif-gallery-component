@@ -34,6 +34,7 @@
 }
 .iiif-gallery-component .main {
   overflow: auto;
+  overflow-x: hidden;
 }
 .iiif-gallery-component .main .thumbs {
   margin-right: 10px;

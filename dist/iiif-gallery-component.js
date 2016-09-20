@@ -29,7 +29,7 @@ var IIIFComponents;
             this._$header.append(this._$rightOptions);
             this._$sizeDownButton = $('<input class="btn btn-default size-down" type="button" value="-" />');
             this._$leftOptions.append(this._$sizeDownButton);
-            this._$sizeRange = $('<input type="range" name="size" min="1" max="10" value="6" />');
+            this._$sizeRange = $('<input type="range" name="size" min="1" max="10" value="' + this.options.initialZoom + '" />');
             this._$leftOptions.append(this._$sizeRange);
             this._$sizeUpButton = $('<input class="btn btn-default size-up" type="button" value="+" />');
             this._$leftOptions.append(this._$sizeUpButton);
@@ -125,6 +125,7 @@ var IIIFComponents;
                 debug: false,
                 helper: null,
                 imageFadeInDuration: 300,
+                initialZoom: 6,
                 pageModeEnabled: false,
                 scrollStopDuration: 100,
                 sizingEnabled: true,

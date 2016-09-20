@@ -1673,6 +1673,7 @@ declare namespace IIIFComponents {
         debug: boolean;
         helper: Manifold.IHelper;
         imageFadeInDuration: number;
+        initialZoom: number;
         pageModeEnabled: boolean;
         scrollStopDuration: number;
         sizingEnabled: boolean;
