@@ -16,8 +16,7 @@ var GulpConfig = (function () {
             // ts definitions to copy to the typings dir
             typings: [
                 'node_modules/base-component/dist/base-component.d.ts',
-                'node_modules/manifold/dist/manifold.bundle.d.ts',
-                'node_modules/utils/dist/utils.d.ts'
+                'node_modules/manifold/dist/manifold.bundle.d.ts'
             ]
         };
         this.fileNames = {
