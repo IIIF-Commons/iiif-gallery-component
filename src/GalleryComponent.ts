@@ -181,7 +181,7 @@ namespace IIIFComponents {
             }
         }
         
-        public databind(): void{
+        public databind(): void {
             
             this._thumbs = <Manifold.IThumb[]>this.options.helper.getThumbs(this.options.thumbWidth, this.options.thumbHeight);
 
@@ -228,7 +228,7 @@ namespace IIIFComponents {
             return this.options.helper.getMultiSelectState();
         }
 
-        private _createThumbs(): void{
+        private _createThumbs(): void {
             var that = this;
 
             if (!this._thumbs) return;
@@ -309,7 +309,7 @@ namespace IIIFComponents {
             return this._thumbs.en().where(c => c.data.id === canvas.id).first();
         }
 
-        private _sizeThumb($thumb: JQuery) : void {
+        private _sizeThumb($thumb: JQuery): void {
 
             var $wrap = $thumb.find('.wrap');
 
@@ -375,7 +375,7 @@ namespace IIIFComponents {
             return thumbs;
         }
 
-        _updateThumbs(): void {
+        private _updateThumbs(): void {
 
             var debug: boolean = this.options.debug;
 
@@ -386,7 +386,7 @@ namespace IIIFComponents {
             var scrollHeight: number = this._$main.height();
             var scrollBottom: number = scrollTop + scrollHeight;
 
-            if (debug){
+            if (debug) {
                 console.log('scrollTop %s, scrollBottom %s', scrollTop, scrollBottom);
             }
 
