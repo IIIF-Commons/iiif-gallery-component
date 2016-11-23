@@ -1,12 +1,23 @@
-var c = require('./gulpfile.config');
-var config = new c();
-var gulp = require('gulp');
-var requireDir = require('require-dir');
-var runSequence = require('run-sequence');
-var tasks = requireDir('./tasks');
+const gulp = require('gulp');
+const metadata = require('./package');
+const tasks = require('gulp-tasks');
 
-gulp.task('default', function(cb) {
-    runSequence('clean:dist', 'build', 'browserify', 'less', 'minify', 'bundle', 'bundle:typings', 'prependHeaders', 'sync', cb);
+tasks.init({
+    metadata: metadata,
+    // libs that MUST be included in a consuming app for this component to work
+    libs: [
+        'node_modules/base-component/dist/base-component.bundle.js',
+        'node_modules/jquery-plugins/dist/jquery-plugins.js',
+        'node_modules/manifold/dist/manifold.bundle.js'
+    ],
+    // libs that MAY be included in a consuming app but are used here for example purposes
+    examples: [],
+    // ts definitions to copy to the 'typings' dir
+    typings: [
+        'node_modules/base-component/dist/base-component.d.ts',
+        'node_modules/base-component/typings/corejs.d.ts',
+        'node_modules/base-component/typings/jquery.d.ts',
+        'node_modules/base-component/typings/node.d.ts',
+        'node_modules/manifold/dist/manifold.bundle.d.ts'
+    ]
 });
-
-gulp.task('sync', ['copy:bundle', 'copy:css', 'copy:img', 'copy:typings']);
