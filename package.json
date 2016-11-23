@@ -1,6 +1,6 @@
 {
   "name": "iiif-gallery-component",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,9 @@
   },
   "homepage": "https://github.com/viewdir/iiif-gallery-component#readme",
   "devDependencies": {
+    "base-component": "viewdir/base-component#v1.0.7",
     "gulp": "^3.9.1",
-    "gulp-tasks": "viewdir/gulp-tasks#v1.0.1",
+    "gulp-tasks": "viewdir/gulp-tasks#v1.0.2",
     "jquery-plugins": "edsilv/jquery-plugins",
     "manifold": "viewdir/manifold#v1.1.6"    
   },

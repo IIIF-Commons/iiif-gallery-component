@@ -1,3 +1,5 @@
+// component-specific definitions
+
 interface JQuery {
     // jsviews
     link: any;
