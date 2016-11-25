@@ -10029,6 +10029,7 @@ declare namespace Manifold {
     }
 }
 
+
 declare namespace IIIFComponents {
     class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
         options: IGalleryComponentOptions;
@@ -10085,6 +10086,8 @@ declare namespace IIIFComponents.GalleryComponent {
 
 declare namespace IIIFComponents {
     interface IGalleryComponent extends _Components.IBaseComponent {
+        searchPreviewStart(canvasIndex: number): void;
+        searchPreviewFinish(): void;
         selectIndex(index: number): void;
     }
 }
