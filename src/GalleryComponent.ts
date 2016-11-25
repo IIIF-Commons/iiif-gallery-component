@@ -156,10 +156,10 @@ namespace IIIFComponents {
                     if (searchResults) {
 
                         if (searchResults > 1) {
-                            return String.format(that.options.content.searchResults, this.data.data.searchResults);
+                            return String.format(that.options.content.searchResults, searchResults);
                         }
 
-                        return String.format(that.options.content.searchResult, this.data.data.searchResults);
+                        return String.format(that.options.content.searchResult, searchResults);
                     }
                     
                 }
@@ -516,13 +516,13 @@ namespace IIIFComponents {
             this._$main.scrollTop($thumb.position().top);
         }
 
-        private _searchPreviewStart(canvasIndex: number): void {
+        public searchPreviewStart(canvasIndex: number): void {
             this._scrollToThumb(canvasIndex);
             const $thumb: JQuery = this._getThumbByIndex(canvasIndex);
             $thumb.addClass('searchpreview');
         }
 
-        private _searchPreviewFinish(): void {
+        public searchPreviewFinish(): void {
             this._scrollToThumb(this.options.helper.canvasIndex);
             this._getAllThumbs().removeClass('searchpreview');
         }

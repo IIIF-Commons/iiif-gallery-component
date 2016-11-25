@@ -112,9 +112,9 @@ var IIIFComponents;
                     var searchResults = Number(this.data.data.searchResults);
                     if (searchResults) {
                         if (searchResults > 1) {
-                            return String.format(that.options.content.searchResults, this.data.data.searchResults);
+                            return String.format(that.options.content.searchResults, searchResults);
                         }
-                        return String.format(that.options.content.searchResult, this.data.data.searchResults);
+                        return String.format(that.options.content.searchResult, searchResults);
                     }
                 }
             });
@@ -388,12 +388,12 @@ var IIIFComponents;
             var $thumb = this._getThumbByIndex(canvasIndex);
             this._$main.scrollTop($thumb.position().top);
         };
-        GalleryComponent.prototype._searchPreviewStart = function (canvasIndex) {
+        GalleryComponent.prototype.searchPreviewStart = function (canvasIndex) {
             this._scrollToThumb(canvasIndex);
             var $thumb = this._getThumbByIndex(canvasIndex);
             $thumb.addClass('searchpreview');
         };
-        GalleryComponent.prototype._searchPreviewFinish = function () {
+        GalleryComponent.prototype.searchPreviewFinish = function () {
             this._scrollToThumb(this.options.helper.canvasIndex);
             this._getAllThumbs().removeClass('searchpreview');
         };

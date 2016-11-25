@@ -36,8 +36,8 @@ declare namespace IIIFComponents {
         private _getAllThumbs();
         private _getThumbByIndex(canvasIndex);
         private _scrollToThumb(canvasIndex);
-        private _searchPreviewStart(canvasIndex);
-        private _searchPreviewFinish();
+        searchPreviewStart(canvasIndex: number): void;
+        searchPreviewFinish(): void;
         selectIndex(index: number): void;
         private _setRange();
         private _setThumbMultiSelected(thumb, selected);
