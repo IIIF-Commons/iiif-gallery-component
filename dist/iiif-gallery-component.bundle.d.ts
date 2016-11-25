@@ -9989,6 +9989,31 @@ declare namespace Manifold {
 }
 
 declare namespace Manifold {
+    class SearchResult {
+        canvasIndex: number;
+        rects: SearchResultRect[];
+        constructor(resource: any, canvasIndex: number);
+        addRect(resource: any): void;
+    }
+}
+
+declare namespace Manifold {
+    class SearchResultRect {
+        canvasIndex: number;
+        chars: string;
+        height: number;
+        index: number;
+        isVisible: boolean;
+        viewportX: number;
+        viewportY: number;
+        width: number;
+        x: number;
+        y: number;
+        constructor(result: any);
+    }
+}
+
+declare namespace Manifold {
     class Translation {
         value: string;
         locale: string;
@@ -10036,7 +10061,6 @@ declare namespace IIIFComponents {
         private _loadThumb($thumb, cb?);
         private _getThumbsByRange(range);
         private _updateThumbs();
-        private _isChunkedResizingEnabled();
         private _getSelectedThumbIndex();
         private _getAllThumbs();
         private _getThumbByIndex(canvasIndex);
@@ -10044,7 +10068,6 @@ declare namespace IIIFComponents {
         private _searchPreviewStart(canvasIndex);
         private _searchPreviewFinish();
         selectIndex(index: number): void;
-        private _setLabel();
         private _setRange();
         private _setThumbMultiSelected(thumb, selected);
         protected _resize(): void;
@@ -10068,18 +10091,21 @@ declare namespace IIIFComponents {
 
 declare namespace IIIFComponents {
     interface IContent {
+        searchResult: string;
+        searchResults: string;
         select: string;
         selectAll: string;
     }
     interface IGalleryComponentOptions extends _Components.IBaseComponentOptions {
-        chunkedResizingEnabled: boolean;
         chunkedResizingThreshold: number;
         content: IContent;
         debug: boolean;
         helper: Manifold.IHelper;
         imageFadeInDuration: number;
         initialZoom: number;
+        minLabelWidth: number;
         pageModeEnabled: boolean;
+        searchResults: Manifold.SearchResult[];
         scrollStopDuration: number;
         sizingEnabled: boolean;
         thumbHeight: number;

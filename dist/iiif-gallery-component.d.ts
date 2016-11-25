@@ -51,7 +51,6 @@ declare namespace IIIFComponents {
         private _loadThumb($thumb, cb?);
         private _getThumbsByRange(range);
         private _updateThumbs();
-        private _isChunkedResizingEnabled();
         private _getSelectedThumbIndex();
         private _getAllThumbs();
         private _getThumbByIndex(canvasIndex);
@@ -59,7 +58,6 @@ declare namespace IIIFComponents {
         private _searchPreviewStart(canvasIndex);
         private _searchPreviewFinish();
         selectIndex(index: number): void;
-        private _setLabel();
         private _setRange();
         private _setThumbMultiSelected(thumb, selected);
         protected _resize(): void;
@@ -83,18 +81,21 @@ declare namespace IIIFComponents {
 
 declare namespace IIIFComponents {
     interface IContent {
+        searchResult: string;
+        searchResults: string;
         select: string;
         selectAll: string;
     }
     interface IGalleryComponentOptions extends _Components.IBaseComponentOptions {
-        chunkedResizingEnabled: boolean;
         chunkedResizingThreshold: number;
         content: IContent;
         debug: boolean;
         helper: Manifold.IHelper;
         imageFadeInDuration: number;
         initialZoom: number;
+        minLabelWidth: number;
         pageModeEnabled: boolean;
+        searchResults: Manifold.SearchResult[];
         scrollStopDuration: number;
         sizingEnabled: boolean;
         thumbHeight: number;

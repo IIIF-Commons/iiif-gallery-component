@@ -4,6 +4,15 @@
     <title>iiif-gallery-component: test</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/iiif-gallery-component.css" />
+    <style>
+        body {
+            font-family: Sans-Serif;
+            background: #211f1f;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.2/es6-promise.min.js"></script>
@@ -14,7 +23,7 @@
 </head>
 <body>
 
-    <div>
+    <div id="opts">
         <input id="multiselect" type="checkbox" /><label for="multiselect">Multi-select</label>&nbsp;
     </div>
 
@@ -26,11 +35,68 @@
 
         var helper, component, multiSelectState;
         
+        function resize() {
+            var height = window.innerHeight;
+            var $gallery = $('#gallery');
+            var $opts = $('#opts');
+            var $main = $gallery.find('.main');
+            var $header = $gallery.find('.header');
+            $gallery.height(height - $opts.height());
+            $main.height(height - $header.height() - $opts.height());
+        }
+
+        window.onresize = function() {
+            resize();
+        }
+
+        var searchResults = [
+            {
+                rects: [
+                    {
+                        isVisible: true,
+                        x: 885,
+                        y: 2553,
+                        width: 282,
+                        height: 46,
+                        chars: "gediegenen",
+                        canvasIndex: 1,
+                        index: 0
+                    }
+                ],
+                canvasIndex: 1
+            },{
+                rects: [
+                {
+                    isVisible: true,
+                    x: 909,
+                    y: 3067,
+                    width: 339,
+                    height: 50,
+                    chars: "Generation",
+                    canvasIndex: 3,
+                    index: 0
+                },
+                {
+                    isVisible: true,
+                    x: 1367,
+                    y: 3068,
+                    width: 342,
+                    height: 50,
+                    chars: "Generation",
+                    canvasIndex: 3,
+                    index: 1
+                }],
+                canvasIndex: 3
+            }
+        ];
+
         $(function() {
             
             // http://wellcomelibrary.org/iiif/b18035978/manifest (Biocrats)
             // http://wellcomelibrary.org/iiif/b18035723/manifest (Wunder der Vererbung)
             // http://wellcomelibrary.org/iiif/b1948799x/manifest (Crick's Letter')
+            // https://digital.library.villanova.edu/Item/vudl:60609/Manifest (Holy Bible)
+            // http://wellcomelibrary.org/iiif/b20641151/manifest (Completed Schedules from the International Health Exhibition)
 
             Manifold.loadManifest({
                 iiifResourceUri: 'http://wellcomelibrary.org/iiif/b18035978/manifest',
@@ -43,8 +109,13 @@
                 helper = h;
                 
                 component = new IIIFComponents.GalleryComponent({
+                    chunkedResizingThreshold: 50,
+                    debug: false,
                     element: "#gallery",
-                    helper: h
+                    helper: h,
+                    pageModeEnabled: false,
+                    thumbLoadPadding: 1,
+                    searchResults: searchResults
                 });
 
                 component.on('decreaseSize', function() {
@@ -64,8 +135,10 @@
 
                 component.databind();
 
-            }).catch(function() {
-                console.error('failed to load manifest');
+                resize();
+
+            }).catch(function(e) {
+                console.error(e);
             });
 
             $('#multiselect').on('click', function() {
@@ -80,8 +153,10 @@
                 component.databind();               
                 //console.log(multiSelectState.getAllSelectedCanvases());
             });
+
         });
 
+    
     </script>
 </body>
 </html>
