@@ -10029,7 +10029,6 @@ declare namespace Manifold {
     }
 }
 
-
 declare namespace IIIFComponents {
     class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
         options: IGalleryComponentOptions;

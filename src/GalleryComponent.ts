@@ -120,7 +120,7 @@ namespace IIIFComponents {
 
             $.templates({
                 galleryThumbsTemplate: '\
-                    <div class="{{:~className()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">\
+                    <div class="{{:~galleryThumbClassName()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">\
                         <div class="wrap" style="width:{{>initialWidth}}px; height:{{>initialHeight}}px" data-link="class{merge:multiSelected toggle=\'multiSelected\'}">\
                         {^{if multiSelectEnabled}}\
                             <input id="thumb-checkbox-{{>id}}" type="checkbox" data-link="checked{:multiSelected ? \'checked\' : \'\'}" class="multiSelect" />\
@@ -129,7 +129,7 @@ namespace IIIFComponents {
                         <div class="info">\
                             <span class="index" style="width:{{>initialWidth}}px">{{:#index + 1}}</span>\
                             <span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>\
-                            <span class="searchResults" title="{{:~searchResultsTitle()}}">{{>data.searchResults}}</span>\
+                            <span class="searchResults" title="{{:~galleryThumbSearchResultsTitle()}}">{{>data.searchResults}}</span>\
                         </div>\
                     </div>'
             });
@@ -137,7 +137,7 @@ namespace IIIFComponents {
             const that = this;
 
             $.views.helpers({
-                className: function() {
+                galleryThumbClassName: function() {
                     let className: string = "thumb preLoad";
 
                     if (this.data.index === 0){
@@ -150,7 +150,7 @@ namespace IIIFComponents {
 
                     return className;
                 },
-                searchResultsTitle: function() {
+                galleryThumbSearchResultsTitle: function() {
                     const searchResults = Number(this.data.data.searchResults);
                     
                     if (searchResults) {

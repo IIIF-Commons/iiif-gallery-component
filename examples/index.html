@@ -86,7 +86,7 @@
                     canvasIndex: 3,
                     index: 1
                 }],
-                canvasIndex: 3
+                canvasIndex: 101
             }
         ];
 
@@ -129,6 +129,12 @@
                 component.on('multiSelectionMade', function(args) {
                     var ids = args[0]; 
                     console.log(ids);
+                });
+
+                component.on('thumbSelected', function(args) {
+                    var thumb = args[0];
+                    component.selectIndex(thumb.index);
+                    console.log("selected " + (thumb.index + 1));
                 });
 
                 multiSelectState = helper.getMultiSelectState();

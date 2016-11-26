@@ -83,7 +83,7 @@ var IIIFComponents;
             this._setRange();
             $.templates({
                 galleryThumbsTemplate: '\
-                    <div class="{{:~className()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">\
+                    <div class="{{:~galleryThumbClassName()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">\
                         <div class="wrap" style="width:{{>initialWidth}}px; height:{{>initialHeight}}px" data-link="class{merge:multiSelected toggle=\'multiSelected\'}">\
                         {^{if multiSelectEnabled}}\
                             <input id="thumb-checkbox-{{>id}}" type="checkbox" data-link="checked{:multiSelected ? \'checked\' : \'\'}" class="multiSelect" />\
@@ -92,13 +92,13 @@ var IIIFComponents;
                         <div class="info">\
                             <span class="index" style="width:{{>initialWidth}}px">{{:#index + 1}}</span>\
                             <span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>\
-                            <span class="searchResults" title="{{:~searchResultsTitle()}}">{{>data.searchResults}}</span>\
+                            <span class="searchResults" title="{{:~galleryThumbSearchResultsTitle()}}">{{>data.searchResults}}</span>\
                         </div>\
                     </div>'
             });
             var that = this;
             $.views.helpers({
-                className: function () {
+                galleryThumbClassName: function () {
                     var className = "thumb preLoad";
                     if (this.data.index === 0) {
                         className += " first";
@@ -108,7 +108,7 @@ var IIIFComponents;
                     }
                     return className;
                 },
-                searchResultsTitle: function () {
+                galleryThumbSearchResultsTitle: function () {
                     var searchResults = Number(this.data.data.searchResults);
                     if (searchResults) {
                         if (searchResults > 1) {
