@@ -516,16 +516,18 @@ namespace IIIFComponents {
             this._$main.scrollTop($thumb.position().top);
         }
 
-        public searchPreviewStart(canvasIndex: number): void {
-            this._scrollToThumb(canvasIndex);
-            const $thumb: JQuery = this._getThumbByIndex(canvasIndex);
-            $thumb.addClass('searchpreview');
-        }
+        // these don't work well because thumbs are loaded in chunks
+        
+        // public searchPreviewStart(canvasIndex: number): void {
+        //     this._scrollToThumb(canvasIndex);
+        //     const $thumb: JQuery = this._getThumbByIndex(canvasIndex);
+        //     $thumb.addClass('searchpreview');
+        // }
 
-        public searchPreviewFinish(): void {
-            this._scrollToThumb(this.options.helper.canvasIndex);
-            this._getAllThumbs().removeClass('searchpreview');
-        }
+        // public searchPreviewFinish(): void {
+        //     this._scrollToThumb(this.options.helper.canvasIndex);
+        //     this._getAllThumbs().removeClass('searchpreview');
+        // }
 
         public selectIndex(index: number): void {
             if (!this._thumbs || !this._thumbs.length) return;

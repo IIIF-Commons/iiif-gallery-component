@@ -1,3 +1,10 @@
+.iiif-gallery-component *,
+.iiif-gallery-component *:before,
+.iiif-gallery-component *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .iiif-gallery-component .header {
   overflow: hidden;
   height: 45px;
@@ -133,7 +140,7 @@
 .iiif-gallery-component .main .thumbs .thumb .info .searchResults {
   display: none;
   float: right;
-  width: 18px;
+  width: 32px;
   padding-left: 14px;
 }
 .iiif-gallery-component .main .thumbs .thumb.placeholder .wrap {

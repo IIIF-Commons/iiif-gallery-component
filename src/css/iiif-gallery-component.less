@@ -1,5 +1,12 @@
 .iiif-gallery-component {
 
+    // Reset the box-sizing
+    *,
+    *:before,
+    *:after {
+        .box-sizing(border-box);
+    }
+
     .header {
         overflow: hidden;
         height: 45px;
@@ -187,7 +194,7 @@
                     .searchResults {
                         display: none;
                         float: right;
-                        width: 18px;
+                        width: 32px;
                         padding-left: 14px;
                     }
                 }
