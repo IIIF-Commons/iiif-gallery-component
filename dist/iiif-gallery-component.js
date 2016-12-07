@@ -1,4 +1,4 @@
-// iiif-gallery-component v1.0.2 https://github.com/viewdir/iiif-gallery-component#readme
+// iiif-gallery-component v1.0.3 https://github.com/viewdir/iiif-gallery-component#readme
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.iiifGalleryComponent = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -388,15 +388,16 @@ var IIIFComponents;
             var $thumb = this._getThumbByIndex(canvasIndex);
             this._$main.scrollTop($thumb.position().top);
         };
-        GalleryComponent.prototype.searchPreviewStart = function (canvasIndex) {
-            this._scrollToThumb(canvasIndex);
-            var $thumb = this._getThumbByIndex(canvasIndex);
-            $thumb.addClass('searchpreview');
-        };
-        GalleryComponent.prototype.searchPreviewFinish = function () {
-            this._scrollToThumb(this.options.helper.canvasIndex);
-            this._getAllThumbs().removeClass('searchpreview');
-        };
+        // these don't work well because thumbs are loaded in chunks
+        // public searchPreviewStart(canvasIndex: number): void {
+        //     this._scrollToThumb(canvasIndex);
+        //     const $thumb: JQuery = this._getThumbByIndex(canvasIndex);
+        //     $thumb.addClass('searchpreview');
+        // }
+        // public searchPreviewFinish(): void {
+        //     this._scrollToThumb(this.options.helper.canvasIndex);
+        //     this._getAllThumbs().removeClass('searchpreview');
+        // }
         GalleryComponent.prototype.selectIndex = function (index) {
             if (!this._thumbs || !this._thumbs.length)
                 return;

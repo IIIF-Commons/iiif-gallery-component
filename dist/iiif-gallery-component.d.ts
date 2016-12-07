@@ -1,4 +1,4 @@
-// iiif-gallery-component v1.0.2 https://github.com/viewdir/iiif-gallery-component#readme
+// iiif-gallery-component v1.0.3 https://github.com/viewdir/iiif-gallery-component#readme
 
 declare namespace IIIFComponents {
     class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
@@ -36,8 +36,6 @@ declare namespace IIIFComponents {
         private _getAllThumbs();
         private _getThumbByIndex(canvasIndex);
         private _scrollToThumb(canvasIndex);
-        searchPreviewStart(canvasIndex: number): void;
-        searchPreviewFinish(): void;
         selectIndex(index: number): void;
         private _setRange();
         private _setThumbMultiSelected(thumb, selected);
