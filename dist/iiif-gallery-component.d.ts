@@ -1,4 +1,4 @@
-// iiif-gallery-component v1.0.3 https://github.com/viewdir/iiif-gallery-component#readme
+// iiif-gallery-component v1.0.4 https://github.com/viewdir/iiif-gallery-component#readme
 
 declare namespace IIIFComponents {
     class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
@@ -54,8 +54,6 @@ declare namespace IIIFComponents.GalleryComponent {
 
 declare namespace IIIFComponents {
     interface IGalleryComponent extends _Components.IBaseComponent {
-        searchPreviewStart(canvasIndex: number): void;
-        searchPreviewFinish(): void;
         selectIndex(index: number): void;
     }
 }

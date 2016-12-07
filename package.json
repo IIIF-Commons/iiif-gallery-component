@@ -1,6 +1,6 @@
 {
   "name": "iiif-gallery-component",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "gulp": "^3.9.1",
     "gulp-tasks": "viewdir/gulp-tasks#v1.0.3",
     "jquery-plugins": "edsilv/jquery-plugins",
-    "manifold": "viewdir/manifold#search"    
+    "manifold": "viewdir/manifold#v1.1.7"    
   },
   "dependencies": {
     
