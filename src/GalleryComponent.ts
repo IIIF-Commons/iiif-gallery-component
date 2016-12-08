@@ -218,7 +218,10 @@ namespace IIIFComponents {
                     // find the thumb with the same canvasIndex and add the searchResult
                     let thumb: Manifold.IThumb = this._thumbs.en().where(t => t.index === searchResult.canvasIndex).first();
 
-                    thumb.data.searchResults = searchResult.rects.length;
+                    // clone the data so searchResults isn't persisted on the canvas.
+                    let data = $.extend(true, {}, thumb.data);
+                    data.searchResults = searchResult.rects.length;
+                    thumb.data = data;
                 }
 
             }
