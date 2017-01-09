@@ -75,7 +75,7 @@ namespace IIIFComponents {
             this._$sizeDownButton.on('click', () => {
                 var val = Number(this._$sizeRange.val()) - 1;
 
-                if (val >= Number(this._$sizeRange.attr('min'))){
+                if (val >= Number(this._$sizeRange.attr('min'))) {
                     this._$sizeRange.val(val.toString());
                     this._$sizeRange.trigger('change');
                     this._emit(GalleryComponent.Events.DECREASE_SIZE);
@@ -85,7 +85,7 @@ namespace IIIFComponents {
             this._$sizeUpButton.on('click', () => {
                 var val = Number(this._$sizeRange.val()) + 1;
 
-                if (val <= Number(this._$sizeRange.attr('max'))){
+                if (val <= Number(this._$sizeRange.attr('max'))) {
                     this._$sizeRange.val(val.toString());
                     this._$sizeRange.trigger('change');
                     this._emit(GalleryComponent.Events.INCREASE_SIZE);
@@ -140,11 +140,11 @@ namespace IIIFComponents {
                 galleryThumbClassName: function() {
                     let className: string = "thumb preLoad";
 
-                    if (this.data.index === 0){
+                    if (this.data.index === 0) {
                         className += " first";
                     }
 
-                    if (!this.data.uri){
+                    if (!this.data.uri) {
                         className += " placeholder";
                     }
 
@@ -245,7 +245,7 @@ namespace IIIFComponents {
                 }
 
                 // range selections override canvas selections
-                for (let i = 0; i < multiSelectState.ranges.length; i++){
+                for (let i = 0; i < multiSelectState.ranges.length; i++) {
                     const range: Manifold.IRange = multiSelectState.ranges[i];
                     const thumbs: Manifold.IThumb[] = this._getThumbsByRange(range);
 
@@ -258,6 +258,25 @@ namespace IIIFComponents {
             } else {
                 this._$multiSelectOptions.hide();
                 this._$thumbs.removeClass("multiSelect");
+            }
+
+            this._update();
+        }
+
+        private _update(): void {
+            var multiSelectState: Manifold.MultiSelectState = this._getMultiSelectState();
+
+            if (multiSelectState.isEnabled) {
+                // check/uncheck Select All checkbox
+                this._$selectAllButtonCheckbox.prop("checked", multiSelectState.allSelected());
+
+                const anySelected: boolean = multiSelectState.getAll().en().where(t => t.multiSelected).toArray().length > 0;
+
+                if (!anySelected) {
+                    this._$selectButton.hide();
+                } else {
+                    this._$selectButton.show();
+                }
             }
         }
 
@@ -324,6 +343,8 @@ namespace IIIFComponents {
                         } else {
                             multiSelectState.selectCanvas(<Manifold.ICanvas>thumb.data, thumb.multiSelected);
                         }
+
+                        that._update();
 
                         that._emit(GalleryComponent.Events.THUMB_MULTISELECTED, thumb);
                     });

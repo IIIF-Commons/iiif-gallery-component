@@ -193,6 +193,21 @@ var IIIFComponents;
                 this._$multiSelectOptions.hide();
                 this._$thumbs.removeClass("multiSelect");
             }
+            this._update();
+        };
+        GalleryComponent.prototype._update = function () {
+            var multiSelectState = this._getMultiSelectState();
+            if (multiSelectState.isEnabled) {
+                // check/uncheck Select All checkbox
+                this._$selectAllButtonCheckbox.prop("checked", multiSelectState.allSelected());
+                var anySelected = multiSelectState.getAll().en().where(function (t) { return t.multiSelected; }).toArray().length > 0;
+                if (!anySelected) {
+                    this._$selectButton.hide();
+                }
+                else {
+                    this._$selectButton.show();
+                }
+            }
         };
         GalleryComponent.prototype._getMultiSelectState = function () {
             return this.options.helper.getMultiSelectState();
@@ -247,6 +262,7 @@ var IIIFComponents;
                         else {
                             multiSelectState.selectCanvas(thumb.data, thumb.multiSelected);
                         }
+                        that._update();
                         that._emit(GalleryComponent.Events.THUMB_MULTISELECTED, thumb);
                     });
                 });
