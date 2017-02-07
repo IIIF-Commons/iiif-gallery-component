@@ -1,17 +1,17 @@
 namespace IIIFComponents{
     
-    export interface IContent {
+    export interface IGalleryComponentContent {
         searchResult: string;
         searchResults: string;
         select: string;
         selectAll: string;
     }
     
-    export interface IGalleryComponentOptions extends _Components.IBaseComponentOptions {
+    export interface IGalleryComponentData {
         chunkedResizingThreshold: number;
-        content: IContent;
+        content: IGalleryComponentContent;
         debug: boolean;
-        helper: Manifold.IHelper;
+        helper: Manifold.IHelper | null;
         imageFadeInDuration: number;
         initialZoom: number;
         minLabelWidth: number;

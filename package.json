@@ -17,11 +17,12 @@
   },
   "homepage": "https://github.com/viewdir/iiif-gallery-component#readme",
   "devDependencies": {
-    "base-component": "viewdir/base-component#v1.0.8",
+    "base-component": "viewdir/base-component#tsupdate",
     "gulp": "^3.9.1",
-    "gulp-tasks": "viewdir/gulp-tasks#v1.0.3",
+    "gulp-tasks": "viewdir/gulp-tasks#tsupdate",
     "jquery-plugins": "edsilv/jquery-plugins",
-    "manifold": "viewdir/manifold#v1.1.7"    
+    "manifold": "viewdir/manifold#v1.1.7",
+    "typings": "^2.1.0"
   },
   "dependencies": {
     

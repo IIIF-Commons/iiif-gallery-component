@@ -109,13 +109,15 @@
                 helper = h;
                 
                 component = new IIIFComponents.GalleryComponent({
-                    chunkedResizingThreshold: 50,
-                    debug: false,
-                    element: "#gallery",
-                    helper: h,
-                    pageModeEnabled: false,
-                    thumbLoadPadding: 1,
-                    searchResults: searchResults
+                    target: document.querySelector('#gallery'),
+                    data: {
+                        chunkedResizingThreshold: 50,
+                        debug: false,
+                        helper: h,
+                        pageModeEnabled: false,
+                        thumbLoadPadding: 1,
+                        searchResults: searchResults
+                    }
                 });
 
                 component.on('decreaseSize', function() {

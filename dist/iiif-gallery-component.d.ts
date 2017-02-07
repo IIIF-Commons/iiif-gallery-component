@@ -1,8 +1,21 @@
 // iiif-gallery-component v1.0.6 https://github.com/viewdir/iiif-gallery-component#readme
+interface JQuery {
+    link: any;
+    render: any;
+    on(events: string, handler: (eventObject: JQueryEventObject, ...args: any[]) => any, wait: Number): JQuery;
+    checkboxButton(onClicked: (checked: boolean) => void): void;
+    swapClass(removeClass: string, addClass: string): void;
+}
+interface JQueryStatic {
+    observable: any;
+    templates: any;
+    views: any;
+    view: any;
+}
 
 declare namespace IIIFComponents {
     class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
-        options: IGalleryComponentOptions;
+        options: _Components.IBaseComponentOptions;
         private _$header;
         private _$leftOptions;
         private _$main;
@@ -18,12 +31,11 @@ declare namespace IIIFComponents {
         private _$thumbs;
         private _lastThumbClickedIndex;
         private _range;
-        private _scrollStopDuration;
         private _thumbs;
         private _thumbsCache;
-        constructor(options: IGalleryComponentOptions);
+        constructor(options: _Components.IBaseComponentOptions);
         protected _init(): boolean;
-        protected _getDefaultOptions(): IGalleryComponentOptions;
+        data(): IGalleryComponentData;
         databind(): void;
         private _update();
         private _getMultiSelectState();
@@ -60,17 +72,17 @@ declare namespace IIIFComponents {
 }
 
 declare namespace IIIFComponents {
-    interface IContent {
+    interface IGalleryComponentContent {
         searchResult: string;
         searchResults: string;
         select: string;
         selectAll: string;
     }
-    interface IGalleryComponentOptions extends _Components.IBaseComponentOptions {
+    interface IGalleryComponentData {
         chunkedResizingThreshold: number;
-        content: IContent;
+        content: IGalleryComponentContent;
         debug: boolean;
-        helper: Manifold.IHelper;
+        helper: Manifold.IHelper | null;
         imageFadeInDuration: number;
         initialZoom: number;
         minLabelWidth: number;

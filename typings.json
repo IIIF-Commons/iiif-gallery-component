@@ -1,0 +1,10 @@
+{
+  "name": "iiif-gallery-component",
+  "dependencies": {},
+  "globalDependencies": {
+    "base-component": "github:viewdir/base-component/dist/base-component.d.ts#tsupdate",
+    "core-js": "registry:dt/core-js#0.9.7+20161130133742",
+    "jquery": "registry:dt/jquery#1.10.0+20170123093700",
+    "manifold.bundle": "github:viewdir/manifold/dist/manifold.bundle.d.ts"
+  }
+}
