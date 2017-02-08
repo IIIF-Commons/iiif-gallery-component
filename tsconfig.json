@@ -11,9 +11,7 @@
         "strictNullChecks": true
     },
     "files": [
-        "src/Definitions.ts",
-        "src/StringValue.ts",
-        "src/FileType.ts"
+        "src/Definitions.ts"
     ],
     "include": [
         "src/**/*",

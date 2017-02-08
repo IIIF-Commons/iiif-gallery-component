@@ -1,4 +1,4 @@
-// iiif-gallery-component v1.0.6 https://github.com/viewdir/iiif-gallery-component#readme
+// iiif-gallery-component v1.0.7 https://github.com/viewdir/iiif-gallery-component#readme
 interface JQuery {
     link: any;
     render: any;
