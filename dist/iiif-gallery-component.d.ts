@@ -36,7 +36,7 @@ declare namespace IIIFComponents {
         constructor(options: _Components.IBaseComponentOptions);
         protected _init(): boolean;
         data(): IGalleryComponentData;
-        databind(): void;
+        set(): void;
         private _update();
         private _getMultiSelectState();
         private _createThumbs();

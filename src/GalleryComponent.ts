@@ -103,7 +103,7 @@ namespace IIIFComponents {
                     this._getMultiSelectState().selectAll(false);
                 }
     
-                this.databind();
+                this.set();
             });
             
             this._$selectButton.on('click', () => {
@@ -202,7 +202,7 @@ namespace IIIFComponents {
             }
         }
         
-        public databind(): void {
+        public set(): void {
             
             this._thumbs = <Manifold.IThumb[]>this.options.data.helper.getThumbs(this.options.data.thumbWidth, this.options.data.thumbHeight);
 

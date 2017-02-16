@@ -74,7 +74,7 @@ var IIIFComponents;
                 else {
                     _this._getMultiSelectState().selectAll(false);
                 }
-                _this.databind();
+                _this.set();
             });
             this._$selectButton.on('click', function () {
                 var ids = _this._getMultiSelectState().getAllSelectedCanvases().map(function (canvas) {
@@ -154,7 +154,7 @@ var IIIFComponents;
                 viewingDirection: manifesto.ViewingDirection.leftToRight()
             };
         };
-        GalleryComponent.prototype.databind = function () {
+        GalleryComponent.prototype.set = function () {
             this._thumbs = this.options.data.helper.getThumbs(this.options.data.thumbWidth, this.options.data.thumbHeight);
             if (this.options.data.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()) {
                 this._thumbs.reverse();

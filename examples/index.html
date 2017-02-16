@@ -141,7 +141,7 @@
 
                 multiSelectState = helper.getMultiSelectState();
 
-                component.databind();
+                component.set();
 
                 resize();
 
@@ -158,7 +158,7 @@
                     multiSelectState.setEnabled(false);
                 }
 
-                component.databind();               
+                component.set();               
                 //console.log(multiSelectState.getAllSelectedCanvases());
             });
 
