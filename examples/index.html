@@ -15,8 +15,9 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.2/es6-promise.min.js"></script>
-    <script src="js/base-component.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.min.js"></script>
+    <script src="js/base-component.js"></script>
+    <script src="js/extensions.js"></script>
     <script src="js/iiif-gallery-component.js"></script>
     <script src="js/jquery-plugins.js"></script>
     <script src="js/manifold.bundle.js"></script>
@@ -128,13 +129,11 @@
                     console.log('increase size');
                 });
 
-                component.on('multiSelectionMade', function(args) {
-                    var ids = args[0]; 
+                component.on('multiSelectionMade', function(ids) {
                     console.log(ids);
                 });
 
-                component.on('thumbSelected', function(args) {
-                    var thumb = args[0];
+                component.on('thumbSelected', function(thumb) {
                     component.selectIndex(thumb.index);
                     console.log("selected " + (thumb.index + 1));
                 });

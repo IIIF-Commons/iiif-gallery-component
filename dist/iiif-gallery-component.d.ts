@@ -1,4 +1,6 @@
-// iiif-gallery-component v1.0.7 https://github.com/viewdir/iiif-gallery-component#readme
+// iiif-gallery-component v1.0.8 https://github.com/viewdir/iiif-gallery-component#readme
+/// <reference path="../node_modules/typescript/lib/lib.es6.d.ts" />
+/// <reference types="jquery" />
 interface JQuery {
     link: any;
     render: any;
