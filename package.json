@@ -21,7 +21,7 @@
     "extensions": "edsilv/extensions#es6",
     "gulp": "^3.9.1",
     "gulp-tasks": "viewdir/gulp-tasks#v1.0.5",
-    "jquery-plugins": "edsilv/jquery-plugins",
+    "jquery-plugins": "edsilv/jquery-plugins#es6",
     "manifold": "viewdir/manifold#es6",
     "typings": "^2.1.0"
   },

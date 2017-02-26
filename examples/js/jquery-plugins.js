@@ -1,3 +1,11 @@
+// jquery-plugins v0.0.25 https://github.com/edsilv/jquery-plugins
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jqueryPlugins = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+///<reference path="../node_modules/typescript/lib/lib.es6.d.ts"/> 
+// declare var Length: Length;
+// interface Length{
+//     toPx(elem, value, prop?, force?): number;
+// }
+
 (function ($) {
     $.fn.checkboxButton = function (onClick) {
         return this.each(function () {
@@ -42,55 +50,24 @@
             if (!textPassed)
                 text = $self.text();
             $self.empty();
-            $self.spanElem = $('<span title="' + text + '"></span>');
-            $self.append($self.spanElem);
+            var $spanElem = $('<span title="' + text + '"></span>');
+            $self.append($spanElem);
             $self.css('overflow', 'hidden');
-            $self.spanElem.css('white-space', 'nowrap');
-            $self.spanElem.html(text);
+            $spanElem.css('white-space', 'nowrap');
+            $spanElem.html(text);
             // get the width of the span.
             // if it's wider than the container, remove a word until it's not.
-            if ($self.spanElem.width() > $self.width()) {
-                var lastText;
-                while ($self.spanElem.width() > $self.width()) {
-                    var t = $self.spanElem.html();
+            if ($spanElem.width() > $self.width()) {
+                var lastText = null;
+                while ($spanElem.width() > $self.width()) {
+                    var t = $spanElem.html();
                     t = t.substring(0, t.lastIndexOf(' ')) + '&hellip;';
                     if (t === lastText)
                         break;
-                    $self.spanElem.html(t);
+                    $spanElem.html(t);
                     lastText = t;
                 }
             }
-        });
-    };
-    $.fn.ellipsisFixed = function (chars, buttonText) {
-        return this.each(function () {
-            var $self = $(this);
-            var text = $self.text();
-            $self.empty();
-            var $span = $('<span></span>');
-            var $ellipsis = $('<a href="#" title="more" class="ellipsis"></a>');
-            if (buttonText) {
-                $ellipsis.html(buttonText);
-            }
-            else {
-                $ellipsis.html('&hellip;');
-            }
-            $ellipsis.click(function (e) {
-                e.preventDefault();
-                var $this = $(this);
-                $span.html(text);
-                $this.remove();
-            });
-            if (text.length > chars) {
-                var trimmedText = text.substr(0, chars);
-                trimmedText = trimmedText.substr(0, Math.min(trimmedText.length, trimmedText.lastIndexOf(" ")));
-                $span.html(trimmedText + "&nbsp;");
-                $span.append($ellipsis);
-            }
-            else {
-                $span.html(text);
-            }
-            $self.append($span);
         });
     };
     // Truncates to a certain number of letters, while ignoring and preserving HTML
@@ -136,9 +113,9 @@
     };
     $.fn.enable = function () {
         return this.each(function () {
-            var $this = $(this);
-            $this.removeClass('disabled');
-            $this.attr('tabindex', $this.data('tabindex'));
+            var $self = $(this);
+            $self.removeClass('disabled');
+            $self.attr('tabindex', $self.data('tabindex'));
         });
     };
     $.fn.equaliseHeight = function (reset, average) {
@@ -170,7 +147,7 @@
         var $self = $(this);
         var maxTabIndex = 0;
         var $elementWithGreatestTabIndex = null;
-        $self.find('*:visible[tabindex]').each(function (idx, el) {
+        $self.find('*:visible[tabindex]').each(function (index, el) {
             var $el = $(el);
             var tabIndex = parseInt($el.attr('tabindex'));
             if (tabIndex > maxTabIndex) {
@@ -211,7 +188,7 @@
         $current.find("iframe").load(documentHandler);
     }
     $(documentHandler);
-    $.fn.ismouseover = function (overThis) {
+    $.fn.ismouseover = function () {
         var result = false;
         this.eq(0).each(function () {
             var $current = $(this).is("iframe") ? $(this).contents().find("body") : $(this);
@@ -221,7 +198,8 @@
         });
         return result;
     };
-    var on = $.fn.on, timer;
+    var on = $.fn.on;
+    var timer;
     $.fn.on = function () {
         var args = Array.apply(null, arguments);
         var last = args[args.length - 1];
@@ -230,7 +208,8 @@
         var delay = args.pop();
         var fn = args.pop();
         args.push(function () {
-            var self = this, params = arguments;
+            var self = this;
+            var params = arguments;
             clearTimeout(timer);
             timer = setTimeout(function () {
                 fn.apply(self, params);
@@ -266,10 +245,8 @@
     };
     // Recursively removes the last empty element (img, audio, etc) or word in an element
     $.fn.removeLastWord = function (chars, depth) {
-        if ('undefined' === typeof chars)
-            chars = 8;
-        if ('undefined' === typeof depth)
-            depth = 0;
+        if (chars === void 0) { chars = 8; }
+        if (depth === void 0) { depth = 0; }
         return this.each(function () {
             var $self = $(this);
             if ($self.contents().length > 0) {
@@ -404,8 +381,8 @@
     };
     $.fn.toggleText = function (text1, text2) {
         return this.each(function () {
-            var $this = $(this);
-            if ($this.text() === text1) {
+            var $self = $(this);
+            if ($self.text() === text1) {
                 $(this).text(text2);
             }
             else {
@@ -415,11 +392,11 @@
     };
     $.fn.updateAttr = function (attrName, oldVal, newVal) {
         return this.each(function () {
-            var $this = $(this);
-            var attr = $this.attr(attrName);
+            var $self = $(this);
+            var attr = $self.attr(attrName);
             if (attr && attr.indexOf(oldVal) === 0) {
                 attr = attr.replace(oldVal, newVal);
-                $this.attr(attrName, attr);
+                $self.attr(attrName, attr);
             }
         });
     };
@@ -432,3 +409,6 @@
         return parseInt($self.css('paddingTop')) + parseInt($self.css('paddingBottom'));
     };
 })(jQuery);
+
+},{}]},{},[1])(1)
+});
