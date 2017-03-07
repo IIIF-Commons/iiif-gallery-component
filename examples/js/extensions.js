@@ -5,6 +5,11 @@
 Array.prototype.clone = function () {
     return this.slice(0);
 };
+if (!Array.prototype.includes) {
+    Array.prototype.includes = function (val) {
+        return this.indexOf(val) !== -1;
+    };
+}
 Array.prototype.insert = function (item, index) {
     this.splice(index, 0, item);
 };
@@ -92,6 +97,11 @@ String.format = function () {
     }
     return s;
 };
+if (!String.prototype.includes) {
+    String.prototype.includes = function (str) {
+        return this.indexOf(str) !== -1;
+    };
+}
 String.prototype.isAlphanumeric = function () {
     return /^[a-zA-Z0-9]*$/.test(this);
 };
