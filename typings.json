@@ -5,7 +5,7 @@
     "base-component": "github:viewdir/base-component/dist/base-component.d.ts#es6",
     "exjs": "github:BSick7/exjs/dist/ex.d.ts#0.5.0",
     "extensions": "github:edsilv/extensions/dist/extensions.d.ts#es6",
-    "manifesto": "github:viewdir/manifesto/dist/manifesto.d.ts#es6",
-    "manifold": "github:viewdir/manifold/dist/manifold.d.ts#es6"
+    "manifesto.js": "github:viewdir/manifesto/dist/manifesto.d.ts#auth1",
+    "manifold": "github:viewdir/manifold/dist/manifold.d.ts#auth1"
   }
 }

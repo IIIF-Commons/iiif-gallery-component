@@ -89,7 +89,7 @@ declare namespace IIIFComponents {
         initialZoom: number;
         minLabelWidth: number;
         pageModeEnabled: boolean;
-        searchResults: Manifold.SearchResult[];
+        searchResults: Manifold.AnnotationGroup[];
         scrollStopDuration: number;
         sizingEnabled: boolean;
         thumbHeight: number;

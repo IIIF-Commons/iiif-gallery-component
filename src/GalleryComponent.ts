@@ -213,7 +213,7 @@ namespace IIIFComponents {
             if (this.options.data.searchResults && this.options.data.searchResults.length) {
 
                 for (let i = 0; i < this.options.data.searchResults.length; i++) {
-                    var searchResult: Manifold.SearchResult = this.options.data.searchResults[i];
+                    var searchResult: Manifold.AnnotationGroup = this.options.data.searchResults[i];
 
                     // find the thumb with the same canvasIndex and add the searchResult
                     let thumb: Manifold.IThumb = this._thumbs.en().where(t => t.index === searchResult.canvasIndex).first();
@@ -327,10 +327,12 @@ namespace IIIFComponents {
                 });
             } else {
                 // make each thumb a checkboxButton
-                $.each(this._$thumbs.find('.thumb'), (index: number, thumb: any) => {
-                    
+                const thumbs: JQuery = this._$thumbs.find('.thumb');
+
+                for (var i = 0; i < thumbs.length; i++) {
+ 
                     const that = this;                    
-                    const $thumb = $(thumb);
+                    const $thumb = $(thumbs[i]);
 
                     $thumb.checkboxButton(function(checked: boolean) {
                         const thumb: Manifold.IThumb = $.view(this).data;
@@ -348,7 +350,7 @@ namespace IIIFComponents {
 
                         that.fire(GalleryComponent.Events.THUMB_MULTISELECTED, thumb);
                     });
-                })
+                }
             }
         }
 

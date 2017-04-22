@@ -222,7 +222,6 @@ var IIIFComponents;
             return this.options.data.helper.getMultiSelectState();
         };
         GalleryComponent.prototype._createThumbs = function () {
-            var _this = this;
             var that = this;
             if (!this._thumbs)
                 return;
@@ -231,8 +230,8 @@ var IIIFComponents;
             var multiSelectState = this._getMultiSelectState();
             // set initial thumb sizes
             var heights = [];
-            for (var i = 0; i < this._thumbs.length; i++) {
-                var thumb = this._thumbs[i];
+            for (var i_2 = 0; i_2 < this._thumbs.length; i_2++) {
+                var thumb = this._thumbs[i_2];
                 var initialWidth = thumb.width;
                 var initialHeight = thumb.height;
                 thumb.initialWidth = initialWidth;
@@ -241,8 +240,8 @@ var IIIFComponents;
                 thumb.multiSelectEnabled = multiSelectState.isEnabled;
             }
             var medianHeight = Math.median(heights);
-            for (var i = 0; i < this._thumbs.length; i++) {
-                var thumb = this._thumbs[i];
+            for (var i_3 = 0; i_3 < this._thumbs.length; i_3++) {
+                var thumb = this._thumbs[i_3];
                 thumb.initialHeight = medianHeight;
             }
             this._$thumbs.link($.templates.galleryThumbsTemplate, this._thumbs);
@@ -257,24 +256,29 @@ var IIIFComponents;
             }
             else {
                 // make each thumb a checkboxButton
-                $.each(this._$thumbs.find('.thumb'), function (index, thumb) {
-                    var that = _this;
-                    var $thumb = $(thumb);
+                var thumbs = this._$thumbs.find('.thumb');
+                var _loop_1 = function () {
+                    var that_1 = this_1;
+                    var $thumb = $(thumbs[i]);
                     $thumb.checkboxButton(function (checked) {
                         var thumb = $.view(this).data;
-                        that._setThumbMultiSelected(thumb, !thumb.multiSelected);
-                        var range = that.options.data.helper.getCanvasRange(thumb.data);
-                        var multiSelectState = that._getMultiSelectState();
+                        that_1._setThumbMultiSelected(thumb, !thumb.multiSelected);
+                        var range = that_1.options.data.helper.getCanvasRange(thumb.data);
+                        var multiSelectState = that_1._getMultiSelectState();
                         if (range) {
                             multiSelectState.selectRange(range, thumb.multiSelected);
                         }
                         else {
                             multiSelectState.selectCanvas(thumb.data, thumb.multiSelected);
                         }
-                        that._update();
-                        that.fire(GalleryComponent.Events.THUMB_MULTISELECTED, thumb);
+                        that_1._update();
+                        that_1.fire(GalleryComponent.Events.THUMB_MULTISELECTED, thumb);
                     });
-                });
+                };
+                var this_1 = this;
+                for (var i = 0; i < thumbs.length; i++) {
+                    _loop_1();
+                }
             }
         };
         GalleryComponent.prototype._getThumbByCanvas = function (canvas) {
