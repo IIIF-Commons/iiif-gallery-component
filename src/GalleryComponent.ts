@@ -44,13 +44,13 @@ namespace IIIFComponents {
             this._$rightOptions = $('<div class="right"></div>');
             this._$header.append(this._$rightOptions);
 
-            this._$sizeDownButton = $('<input class="btn btn-default size-down" type="button" value="-" />');
+            this._$sizeDownButton = $('<input class="btn btn-default size-down" type="button" value="-" aria-label="Reduce Thumbnail Size"/>');
             this._$leftOptions.append(this._$sizeDownButton);
 
-            this._$sizeRange = $('<input type="range" name="size" min="1" max="10" value="' + this.options.data.initialZoom + '" />');
+            this._$sizeRange = $('<input type="range" name="size" min="1" max="10" value="' + this.options.data.initialZoom + '" aria-label="Change Thumbnail Size"/>');
             this._$leftOptions.append(this._$sizeRange);
 
-            this._$sizeUpButton = $('<input class="btn btn-default size-up" type="button" value="+" />');
+            this._$sizeUpButton = $('<input class="btn btn-default size-up" type="button" value="+" aria-label="Increase Thumbnail Size"/>');
             this._$leftOptions.append(this._$sizeUpButton);
 
             this._$multiSelectOptions = $('<div class="multiSelectOptions"></div>');
@@ -422,7 +422,7 @@ namespace IIIFComponents {
             if (visible !== "false") {
                 $wrap.addClass('loading');
                 const src: string = $thumb.attr('data-src');
-                const $img: JQuery = $('<img class="thumbImage" src="' + src + '" />');
+                const $img: JQuery = $('<img class="thumbImage" src="' + src + '" alt=""/>');
                 // fade in on load.
                 $img.hide().load(function () {
                     $(this).fadeIn(fadeDuration, function () {
