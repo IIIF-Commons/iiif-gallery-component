@@ -422,7 +422,7 @@ namespace IIIFComponents {
             if (visible !== "false") {
                 $wrap.addClass('loading');
                 const src: string = $thumb.attr('data-src');
-                const $img: JQuery = $('<img class="thumbImage" src="' + src + '" />');
+                const $img: JQuery = $('<img class="thumbImage" src="' + src + '" alt=""/>');
                 // fade in on load.
                 $img.hide().load(function () {
                     $(this).fadeIn(fadeDuration, function () {
