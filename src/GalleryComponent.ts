@@ -382,7 +382,7 @@ namespace IIIFComponents {
 
                 $searchResults.show();
 
-                newLabelWidth = newWidth - $searchResults.outerWidth();
+                newLabelWidth = newWidth - (<any>$searchResults).outerWidth();
 
                 if (newLabelWidth < this.options.data.minLabelWidth) {
                     $searchResults.hide(); 
@@ -416,15 +416,15 @@ namespace IIIFComponents {
 
             // if no img has been added yet
 
-            const visible: string = $thumb.attr('data-visible');
+            const visible: string | undefined = $thumb.attr('data-visible');
             const fadeDuration: number = this.options.data.imageFadeInDuration;
 
             if (visible !== "false") {
                 $wrap.addClass('loading');
-                const src: string = $thumb.attr('data-src');
+                const src: string | undefined = $thumb.attr('data-src');
                 const $img: JQuery = $('<img class="thumbImage" src="' + src + '" />');
                 // fade in on load.
-                $img.hide().load(function () {
+                (<any>$img.hide()).load(function () {
                     $(this).fadeIn(fadeDuration, function () {
                         $(this).parent().swapClass('loading', 'loaded');
                     });
@@ -461,9 +461,9 @@ namespace IIIFComponents {
             // cache range size
             this._setRange();
 
-            const scrollTop: number = this._$main.scrollTop();
-            const scrollHeight: number = this._$main.height();
-            const scrollBottom: number = scrollTop + scrollHeight;
+            const scrollTop: number | undefined = this._$main.scrollTop();
+            const scrollHeight: number | undefined = this._$main.height();
+            const scrollBottom: number = (scrollTop as number) + (scrollHeight as number);
 
             if (debug) {
                 console.log('scrollTop %s, scrollBottom %s', scrollTop, scrollBottom);
@@ -478,13 +478,13 @@ namespace IIIFComponents {
 
                 const $thumb: JQuery = $(thumbs[i]);
                 const thumbTop: number = $thumb.position().top;
-                const thumbHeight: number = $thumb.outerHeight();
-                const thumbBottom: number = thumbTop + thumbHeight;
+                const thumbHeight: number | undefined = $thumb.outerHeight();
+                const thumbBottom: number = thumbTop + (thumbHeight as number);
 
-                const padding: number = thumbHeight * this.options.data.thumbLoadPadding;
+                const padding: number = (thumbHeight as number) * this.options.data.thumbLoadPadding;
 
                 // check all thumbs to see if they are within the scroll area plus padding
-                if (thumbTop <= scrollBottom + padding && thumbBottom >= scrollTop - padding) {
+                if (thumbTop <= scrollBottom + padding && thumbBottom >= (scrollTop as number) - padding) {
 
                     numToUpdate += 1;
 

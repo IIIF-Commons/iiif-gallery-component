@@ -1,5 +1,4 @@
-// iiif-gallery-component v1.1.0 https://github.com/viewdir/iiif-gallery-component#readme
-/// <reference path="../node_modules/typescript/lib/lib.es6.d.ts" />
+// iiif-gallery-component v1.1.0 https://github.com/iiif-commons/iiif-gallery-component#readme
 /// <reference types="jquery" />
 interface JQuery {
     link: any;
@@ -15,6 +14,7 @@ interface JQueryStatic {
     view: any;
 }
 
+/// <reference types="base-component" />
 declare namespace IIIFComponents {
     class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
         options: _Components.IBaseComponentOptions;
@@ -73,6 +73,8 @@ declare namespace IIIFComponents {
     }
 }
 
+/// <reference types="manifold" />
+/// <reference types="manifesto.js" />
 declare namespace IIIFComponents {
     interface IGalleryComponentContent {
         searchResult: string;

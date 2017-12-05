@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "types": "./dist/iiif-gallery-component.d.ts",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/iiif-commons/iiif-gallery-component.git"
@@ -21,9 +20,12 @@
     "gulp-tasks": "iiif-commons/gulp-tasks#v1.0.7"
   },
   "dependencies": {
-    "base-component": "iiif-commons/base-component#v1.1.1",
+    "@types/jquery": "^3.2.16",
+    "base-component": "iiif-commons/base-component#v1.1.2",
+    "exjs": "BSick7/exjs#0.5.0",
     "extensions": "edsilv/extensions#v0.2.2",
     "jquery-plugins": "edsilv/jquery-plugins#v1.0.0",
-    "manifold": "iiif-commons/manifold#v1.2.11"
+    "manifesto.js": "^2.2.1",
+    "manifold": "iiif-commons/manifold#removetypings"
   }
 }
