@@ -3,29 +3,27 @@
   "version": "1.1.0",
   "description": "",
   "main": "index.js",
+  "types": "./dist/iiif-gallery-component.d.ts",
   "scripts": {
-    "postinstall": "typings install"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/viewdir/iiif-gallery-component.git"
+    "url": "git+https://github.com/iiif-commons/iiif-gallery-component.git"
   },
-  "author": "Edward Silverton <e.silverton@gmail.com> (http://edsilv.com)",
+  "author": "@edsilv",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/viewdir/iiif-gallery-component/issues"
+    "url": "https://github.com/iiif-commons/iiif-gallery-component/issues"
   },
-  "homepage": "https://github.com/viewdir/iiif-gallery-component#readme",
+  "homepage": "https://github.com/iiif-commons/iiif-gallery-component#readme",
   "devDependencies": {
-    "base-component": "viewdir/base-component#v1.1.0",
-    "extensions": "edsilv/extensions#v0.2.0",
     "gulp": "^3.9.1",
-    "gulp-tasks": "viewdir/gulp-tasks#v1.0.5",
-    "jquery-plugins": "edsilv/jquery-plugins#v0.1.0",
-    "manifold": "viewdir/manifold#v1.2.0",
-    "typings": "^2.1.0"
+    "gulp-tasks": "iiif-commons/gulp-tasks#v1.0.7"
   },
   "dependencies": {
-    
+    "base-component": "iiif-commons/base-component#v1.1.1",
+    "extensions": "edsilv/extensions#v0.2.2",
+    "jquery-plugins": "edsilv/jquery-plugins#v1.0.0",
+    "manifold": "iiif-commons/manifold#v1.2.11"
   }
 }
