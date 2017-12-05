@@ -1,6 +1,6 @@
 {
   "name": "iiif-gallery-component",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "",
   "main": "index.js",
   "types": "./dist/iiif-gallery-component.d.ts",
@@ -25,7 +25,7 @@
     "exjs": "BSick7/exjs#0.5.0",
     "extensions": "edsilv/extensions#v0.2.2",
     "jquery-plugins": "edsilv/jquery-plugins#v1.0.0",
-    "manifesto.js": "^2.2.1",
-    "manifold": "iiif-commons/manifold#removetypings"
+    "manifesto.js": "2.2.2",
+    "manifold": "iiif-commons/manifold#v1.2.13"
   }
 }

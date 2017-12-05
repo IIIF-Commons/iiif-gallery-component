@@ -1,4 +1,4 @@
-// iiif-gallery-component v1.1.1 https://github.com/iiif-commons/iiif-gallery-component#readme
+// iiif-gallery-component v1.1.2 https://github.com/iiif-commons/iiif-gallery-component#readme
 /// <reference types="jquery" />
 interface JQuery {
     link: any;
