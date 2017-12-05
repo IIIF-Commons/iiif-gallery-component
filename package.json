@@ -1,6 +1,6 @@
 {
   "name": "iiif-gallery-component",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "index.js",
   "types": "./dist/iiif-gallery-component.d.ts",
