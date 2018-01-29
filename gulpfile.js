@@ -8,6 +8,6 @@ tasks.init({
         'node_modules/base-component/dist/base-component.js',
         'node_modules/extensions/dist/extensions.js',
         'node_modules/jquery-plugins/dist/jquery-plugins.js',
-        'node_modules/manifold/dist/manifold.bundle.js'
+        'node_modules/@iiif/manifold/dist/@iiif/manifold.bundle.js'
     ]
 });

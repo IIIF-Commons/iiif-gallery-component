@@ -1,4 +1,4 @@
-// iiif-gallery-component v1.1.2 https://github.com/iiif-commons/iiif-gallery-component#readme
+// iiif-gallery-component v1.1.3 https://github.com/iiif-commons/iiif-gallery-component#readme
 /// <reference types="jquery" />
 interface JQuery {
     link: any;
@@ -73,7 +73,7 @@ declare namespace IIIFComponents {
     }
 }
 
-/// <reference types="manifold" />
+/// <reference types="@iiif/manifold" />
 /// <reference types="manifesto.js" />
 declare namespace IIIFComponents {
     interface IGalleryComponentContent {

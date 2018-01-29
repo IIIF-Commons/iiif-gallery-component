@@ -11,18 +11,17 @@
         "strictNullChecks": true,
         "lib": ["es6", "dom"],
         "types": [
-            "manifesto.js",
-            "manifold",
+            "@iiif/manifold",
             "base-component",
             "extensions",
-            "jquery-plugins"
+            "jquery-plugins",
+            "manifesto.js"
         ]
     },
     "files": [
         "src/Definitions.ts"
     ],
     "include": [
-        "src/**/*",
-        "typings/**/*"
+        "src/**/*"
     ]
 }
