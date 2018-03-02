@@ -155,10 +155,10 @@ namespace IIIFComponents {
                     if (searchResults) {
 
                         if (searchResults > 1) {
-                            return String.format(that.options.data.content.searchResults, searchResults);
+                            return Utils.Strings.format(that.options.data.content.searchResults, searchResults.toString());
                         }
 
-                        return String.format(that.options.data.content.searchResult, searchResults);
+                        return Utils.Strings.format(that.options.data.content.searchResult, searchResults.toString());
                     }
                     
                     return null;
@@ -308,7 +308,7 @@ namespace IIIFComponents {
                 thumb.multiSelectEnabled = multiSelectState.isEnabled;
             }
 
-            const medianHeight: number = Math.median(heights);
+            const medianHeight: number = Utils.Maths.median(heights);
 
             for (let i = 0; i < this._thumbs.length; i++) {
                 const thumb: Manifold.IThumb = this._thumbs[i];
@@ -566,8 +566,8 @@ namespace IIIFComponents {
         }
 
         private _setRange(): void {
-            const norm = Math.normalise(Number(this._$sizeRange.val()), 0, 10);
-            this._range = Math.clamp(norm, 0.05, 1);
+            const norm = Utils.Maths.normalise(Number(this._$sizeRange.val()), 0, 10);
+            this._range = Utils.Maths.clamp(norm, 0.05, 1);
         }
 
         private _setThumbMultiSelected(thumb: Manifold.IThumb, selected: boolean): void {

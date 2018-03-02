@@ -60,135 +60,704 @@ var _Components;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1])(1)
 });
-// extensions v0.2.1 https://github.com/edsilv/extensions
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.extensions = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// utils v0.2.1 https://github.com/edsilv/utils
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.utils = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (global){
 
-Array.prototype.clone = function () {
-    return this.slice(0);
-};
-if (!Array.prototype.includes) {
-    Array.prototype.includes = function (val) {
-        return this.indexOf(val) !== -1;
-    };
-}
-Array.prototype.insert = function (item, index) {
-    this.splice(index, 0, item);
-};
-Array.prototype.move = function (fromIndex, toIndex) {
-    this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
-};
-Array.prototype.remove = function (item) {
-    var index = this.indexOf(item);
-    if (index > -1) {
-        this.splice(index, 1);
-    }
-};
-Array.prototype.removeAt = function (index) {
-    this.splice(index, 1);
-};
+var Utils;
+(function (Utils) {
+    var Async = /** @class */ (function () {
+        function Async() {
+        }
+        Async.waitFor = function (test, successCallback, failureCallback, interval, maxTries, numTries) {
+            if (!interval)
+                interval = 200;
+            if (!maxTries)
+                maxTries = 100; // try 100 times over 20 seconds
+            if (!numTries)
+                numTries = 0;
+            numTries += 1;
+            if (numTries > maxTries) {
+                if (failureCallback)
+                    failureCallback();
+            }
+            else if (test()) {
+                successCallback();
+            }
+            else {
+                setTimeout(function () {
+                    Async.waitFor(test, successCallback, failureCallback, interval, maxTries, numTries);
+                }, interval);
+            }
+        };
+        return Async;
+    }());
+    Utils.Async = Async;
+})(Utils || (Utils = {}));
 
-if (!Math.clamp) {
-    Math.clamp = function (value, min, max) {
-        return Math.min(Math.max(value, min), max);
-    };
-}
-if (!Math.radians) {
-    Math.radians = function (degrees) {
-        return Math.TAU * (degrees / 360);
-    };
-}
-Math.distanceBetween = function (x1, y1, x2, y2) {
-    return Math.sqrt(((x2 - x1) * 2) + ((y2 - y1) * 2));
-};
-Math.lerp = function (start, stop, amount) {
-    return start + (stop - start) * amount;
-};
-Math.mag = function (a, b, c) {
-    return Math.sqrt(a * a + b * b + c * c);
-};
-Math.map = function (value, start1, stop1, start2, stop2) {
-    return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-};
-Math.median = function (values) {
-    values.sort(function (a, b) { return a - b; });
-    var half = Math.floor(values.length / 2);
-    if (values.length % 2) {
-        return values[half];
-    }
-    else {
-        return (values[half - 1] + values[half]) / 2.0;
-    }
-};
-Math.normalise = function (num, min, max) {
-    return (num - min) / (max - min);
-};
-if (!Math.degrees) {
-    Math.degrees = function (radians) {
-        return (radians * 360) / Math.TAU;
-    };
-}
-/**
- * Get a random number between two numbers.
- * If 'high' isn't passed, get a number from 0 to 'low'.
- * @param {Number} low The low number.
- * @param {Number} [high] The high number.
- */
-Math.randomBetween = function (low, high) {
-    if (!high) {
-        high = low;
-        low = 0;
-    }
-    if (low >= high)
-        return low;
-    return low + (high - low) * Math.random();
-};
-Math.roundToDecimalPlace = function (num, dec) {
-    return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
-};
-Math.TAU = Math.PI * 2;
+var Utils;
+(function (Utils) {
+    var Bools = /** @class */ (function () {
+        function Bools() {
+        }
+        Bools.getBool = function (val, defaultVal) {
+            if (val === null || typeof (val) === 'undefined') {
+                return defaultVal;
+            }
+            return val;
+        };
+        return Bools;
+    }());
+    Utils.Bools = Bools;
+})(Utils || (Utils = {}));
 
-String.prototype.b64_to_utf8 = function () {
-    return decodeURIComponent(escape(window.atob(this)));
-};
-String.format = function () {
-    var s = arguments[0];
-    for (var i = 0; i < arguments.length - 1; i++) {
-        var reg = new RegExp("\\{" + i + "\\}", "gm");
-        s = s.replace(reg, arguments[i + 1]);
-    }
-    return s;
-};
-if (!String.prototype.includes) {
-    String.prototype.includes = function (str) {
-        return this.indexOf(str) !== -1;
-    };
-}
-String.prototype.isAlphanumeric = function () {
-    return /^[a-zA-Z0-9]*$/.test(this);
-};
-String.prototype.ltrim = function () {
-    return this.replace(/^\s+/, '');
-};
-String.prototype.rtrim = function () {
-    return this.replace(/\s+$/, '');
-};
-String.prototype.toCssClass = function () {
-    return this.replace(/[^a-z0-9]/g, function (s) {
-        var c = s.charCodeAt(0);
-        if (c == 32)
-            return '-';
-        if (c >= 65 && c <= 90)
-            return '_' + s.toLowerCase();
-        return '__' + ('000' + c.toString(16)).slice(-4);
-    });
-};
-String.prototype.toFileName = function () {
-    return this.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-};
-String.prototype.utf8_to_b64 = function () {
-    return window.btoa(unescape(encodeURIComponent(this)));
-};
+var Utils;
+(function (Utils) {
+    var Clipboard = /** @class */ (function () {
+        function Clipboard() {
+        }
+        Clipboard.copy = function (text) {
+            var $tempDiv = $("<div style='position:absolute;left:-9999px'>");
+            var brRegex = /<br\s*[\/]?>/gi;
+            text = text.replace(brRegex, "\n");
+            $("body").append($tempDiv);
+            $tempDiv.append(text);
+            var $tempInput = $("<textarea>");
+            $tempDiv.append($tempInput);
+            $tempInput.val($tempDiv.text()).select();
+            document.execCommand("copy");
+            $tempDiv.remove();
+        };
+        Clipboard.supportsCopy = function () {
+            return document.queryCommandSupported && document.queryCommandSupported('copy');
+        };
+        return Clipboard;
+    }());
+    Utils.Clipboard = Clipboard;
+})(Utils || (Utils = {}));
 
+var Utils;
+(function (Utils) {
+    var Colors = /** @class */ (function () {
+        function Colors() {
+        }
+        Colors.float32ColorToARGB = function (float32Color) {
+            var a = (float32Color & 0xff000000) >>> 24;
+            var r = (float32Color & 0xff0000) >>> 16;
+            var g = (float32Color & 0xff00) >>> 8;
+            var b = float32Color & 0xff;
+            var result = [a, r, g, b];
+            return result;
+        };
+        Colors._componentToHex = function (c) {
+            var hex = c.toString(16);
+            return hex.length == 1 ? "0" + hex : hex;
+        };
+        Colors.rgbToHexString = function (rgb) {
+            Colors.coalesce(rgb);
+            return "#" + Colors._componentToHex(rgb[0]) + Colors._componentToHex(rgb[1]) + Colors._componentToHex(rgb[2]);
+        };
+        Colors.argbToHexString = function (argb) {
+            return "#" + Colors._componentToHex(argb[0]) + Colors._componentToHex(argb[1]) + Colors._componentToHex(argb[2]) + Colors._componentToHex(argb[3]);
+        };
+        Colors.coalesce = function (arr) {
+            for (var i = 1; i < arr.length; i++) {
+                if (typeof (arr[i]) === 'undefined')
+                    arr[i] = arr[i - 1];
+            }
+        };
+        return Colors;
+    }());
+    Utils.Colors = Colors;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Dates = /** @class */ (function () {
+        function Dates() {
+        }
+        Dates.getTimeStamp = function () {
+            return new Date().getTime();
+        };
+        return Dates;
+    }());
+    Utils.Dates = Dates;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Device = /** @class */ (function () {
+        function Device() {
+        }
+        Device.getPixelRatio = function (ctx) {
+            var dpr = window.devicePixelRatio || 1;
+            var bsr = ctx.webkitBackingStorePixelRatio ||
+                ctx.mozBackingStorePixelRatio ||
+                ctx.msBackingStorePixelRatio ||
+                ctx.oBackingStorePixelRatio ||
+                ctx.backingStorePixelRatio || 1;
+            return dpr / bsr;
+        };
+        Device.isTouch = function () {
+            return !!("ontouchstart" in window) || window.navigator.msMaxTouchPoints > 0;
+        };
+        return Device;
+    }());
+    Utils.Device = Device;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Documents = /** @class */ (function () {
+        function Documents() {
+        }
+        Documents.isInIFrame = function () {
+            // see http://stackoverflow.com/questions/326069/how-to-identify-if-a-webpage-is-being-loaded-inside-an-iframe-or-directly-into-t
+            try {
+                return window.self !== window.top;
+            }
+            catch (e) {
+                return true;
+            }
+        };
+        Documents.supportsFullscreen = function () {
+            var doc = document.documentElement;
+            var support = doc.requestFullscreen || doc.mozRequestFullScreen ||
+                doc.webkitRequestFullScreen || doc.msRequestFullscreen;
+            return support !== undefined;
+        };
+        Documents.isHidden = function () {
+            var prop = Documents.getHiddenProp();
+            if (!prop)
+                return false;
+            return true;
+            //return document[prop];
+        };
+        Documents.getHiddenProp = function () {
+            var prefixes = ['webkit', 'moz', 'ms', 'o'];
+            // if 'hidden' is natively supported just return it
+            if ('hidden' in document)
+                return 'hidden';
+            // otherwise loop over all the known prefixes until we find one
+            for (var i = 0; i < prefixes.length; i++) {
+                if ((prefixes[i] + 'Hidden') in document) {
+                    return prefixes[i] + 'Hidden';
+                }
+            }
+            // otherwise it's not supported
+            return null;
+        };
+        return Documents;
+    }());
+    Utils.Documents = Documents;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Events = /** @class */ (function () {
+        function Events() {
+        }
+        Events.debounce = function (fn, debounceDuration) {
+            // summary:
+            //      Returns a debounced function that will make sure the given
+            //      function is not triggered too much.
+            // fn: Function
+            //      Function to debounce.
+            // debounceDuration: Number
+            //      OPTIONAL. The amount of time in milliseconds for which we
+            //      will debounce the function. (defaults to 100ms)
+            debounceDuration = debounceDuration || 100;
+            return function () {
+                if (!fn.debouncing) {
+                    var args = Array.prototype.slice.apply(arguments);
+                    fn.lastReturnVal = fn.apply(window, args);
+                    fn.debouncing = true;
+                }
+                clearTimeout(fn.debounceTimeout);
+                fn.debounceTimeout = setTimeout(function () {
+                    fn.debouncing = false;
+                }, debounceDuration);
+                return fn.lastReturnVal;
+            };
+        };
+        return Events;
+    }());
+    Utils.Events = Events;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Files = /** @class */ (function () {
+        function Files() {
+        }
+        Files.simplifyMimeType = function (mime) {
+            switch (mime) {
+                case 'text/plain':
+                    return 'txt';
+                case 'image/jpeg':
+                    return 'jpg';
+                case 'application/msword':
+                    return 'doc';
+                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                    return 'docx';
+                default:
+                    var parts = mime.split('/');
+                    return parts[parts.length - 1];
+            }
+        };
+        return Files;
+    }());
+    Utils.Files = Files;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Keyboard = /** @class */ (function () {
+        function Keyboard() {
+        }
+        Keyboard.getCharCode = function (e) {
+            var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+            return charCode;
+        };
+        return Keyboard;
+    }());
+    Utils.Keyboard = Keyboard;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Maths = /** @class */ (function () {
+        function Maths() {
+        }
+        Maths.normalise = function (num, min, max) {
+            return (num - min) / (max - min);
+        };
+        Maths.median = function (values) {
+            values.sort(function (a, b) {
+                return a - b;
+            });
+            var half = Math.floor(values.length / 2);
+            if (values.length % 2) {
+                return values[half];
+            }
+            else {
+                return (values[half - 1] + values[half]) / 2.0;
+            }
+        };
+        Maths.clamp = function (value, min, max) {
+            return Math.min(Math.max(value, min), max);
+        };
+        return Maths;
+    }());
+    Utils.Maths = Maths;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Measurements;
+    (function (Measurements) {
+        var Size = /** @class */ (function () {
+            function Size(width, height) {
+                this.width = width;
+                this.height = height;
+            }
+            return Size;
+        }());
+        Measurements.Size = Size;
+        var Dimensions = /** @class */ (function () {
+            function Dimensions() {
+            }
+            Dimensions.fitRect = function (width1, height1, width2, height2) {
+                var ratio1 = height1 / width1;
+                var ratio2 = height2 / width2;
+                var width = 0;
+                var height = 0;
+                var scale;
+                if (ratio1 < ratio2) {
+                    scale = width2 / width1;
+                    width = width1 * scale;
+                    height = height1 * scale;
+                }
+                if (ratio2 < ratio1) {
+                    scale = height2 / height1;
+                    width = width1 * scale;
+                    height = height1 * scale;
+                }
+                return new Size(Math.floor(width), Math.floor(height));
+            };
+            Dimensions.hitRect = function (x, y, w, h, mx, my) {
+                if (mx > x && mx < (x + w) && my > y && my < (y + h)) {
+                    return true;
+                }
+                return false;
+            };
+            return Dimensions;
+        }());
+        Measurements.Dimensions = Dimensions;
+    })(Measurements = Utils.Measurements || (Utils.Measurements = {}));
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Numbers = /** @class */ (function () {
+        function Numbers() {
+        }
+        Numbers.numericalInput = function (event) {
+            // Allow: backspace, delete, tab and escape
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return true;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                    return false;
+                }
+                return true;
+            }
+        };
+        return Numbers;
+    }());
+    Utils.Numbers = Numbers;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Objects = /** @class */ (function () {
+        function Objects() {
+        }
+        Objects.toPlainObject = function (value) {
+            value = Object(value);
+            var result = {};
+            for (var key in value) {
+                result[key] = value[key];
+            }
+            return result;
+        };
+        return Objects;
+    }());
+    Utils.Objects = Objects;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Storage = /** @class */ (function () {
+        function Storage() {
+        }
+        Storage.clear = function (storageType) {
+            if (storageType === void 0) { storageType = Utils.StorageType.memory; }
+            switch (storageType.value) {
+                case Utils.StorageType.memory.value:
+                    this._memoryStorage = {};
+                    break;
+                case Utils.StorageType.session.value:
+                    sessionStorage.clear();
+                    break;
+                case Utils.StorageType.local.value:
+                    localStorage.clear();
+                    break;
+            }
+        };
+        Storage.clearExpired = function (storageType) {
+            if (storageType === void 0) { storageType = Utils.StorageType.memory; }
+            var items = this.getItems(storageType);
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (this._isExpired(item)) {
+                    this.remove(item.key);
+                }
+            }
+        };
+        Storage.get = function (key, storageType) {
+            if (storageType === void 0) { storageType = Utils.StorageType.memory; }
+            var data = null;
+            switch (storageType.value) {
+                case Utils.StorageType.memory.value:
+                    data = this._memoryStorage[key];
+                    break;
+                case Utils.StorageType.session.value:
+                    data = sessionStorage.getItem(key);
+                    break;
+                case Utils.StorageType.local.value:
+                    data = localStorage.getItem(key);
+                    break;
+            }
+            if (!data)
+                return null;
+            var item = null;
+            try {
+                item = JSON.parse(data);
+            }
+            catch (error) {
+                return null;
+            }
+            if (!item)
+                return null;
+            if (this._isExpired(item))
+                return null;
+            // useful reference
+            item.key = key;
+            return item;
+        };
+        Storage._isExpired = function (item) {
+            if (new Date().getTime() < item.expiresAt) {
+                return false;
+            }
+            return true;
+        };
+        Storage.getItems = function (storageType) {
+            if (storageType === void 0) { storageType = Utils.StorageType.memory; }
+            var items = [];
+            switch (storageType.value) {
+                case Utils.StorageType.memory.value:
+                    var keys = Object.keys(this._memoryStorage);
+                    for (var i = 0; i < keys.length; i++) {
+                        var item = this.get(keys[i], Utils.StorageType.memory);
+                        if (item) {
+                            items.push(item);
+                        }
+                    }
+                    break;
+                case Utils.StorageType.session.value:
+                    for (var i = 0; i < sessionStorage.length; i++) {
+                        var key = sessionStorage.key(i);
+                        if (key) {
+                            var item = this.get(key, Utils.StorageType.session);
+                            if (item) {
+                                items.push(item);
+                            }
+                        }
+                    }
+                    break;
+                case Utils.StorageType.local.value:
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var key = localStorage.key(i);
+                        if (key) {
+                            var item = this.get(key, Utils.StorageType.local);
+                            if (item) {
+                                items.push(item);
+                            }
+                        }
+                    }
+                    break;
+            }
+            return items;
+        };
+        Storage.remove = function (key, storageType) {
+            if (storageType === void 0) { storageType = Utils.StorageType.memory; }
+            switch (storageType.value) {
+                case Utils.StorageType.memory.value:
+                    delete this._memoryStorage[key];
+                    break;
+                case Utils.StorageType.session.value:
+                    sessionStorage.removeItem(key);
+                    break;
+                case Utils.StorageType.local.value:
+                    localStorage.removeItem(key);
+                    break;
+            }
+        };
+        Storage.set = function (key, value, expirationSecs, storageType) {
+            if (storageType === void 0) { storageType = Utils.StorageType.memory; }
+            var expirationMS = expirationSecs * 1000;
+            var record = new Utils.StorageItem();
+            record.value = value;
+            record.expiresAt = new Date().getTime() + expirationMS;
+            switch (storageType.value) {
+                case Utils.StorageType.memory.value:
+                    this._memoryStorage[key] = JSON.stringify(record);
+                    break;
+                case Utils.StorageType.session.value:
+                    sessionStorage.setItem(key, JSON.stringify(record));
+                    break;
+                case Utils.StorageType.local.value:
+                    localStorage.setItem(key, JSON.stringify(record));
+                    break;
+            }
+            return record;
+        };
+        Storage._memoryStorage = {};
+        return Storage;
+    }());
+    Utils.Storage = Storage;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var StorageItem = /** @class */ (function () {
+        function StorageItem() {
+        }
+        return StorageItem;
+    }());
+    Utils.StorageItem = StorageItem;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var StorageType = /** @class */ (function () {
+        function StorageType(value) {
+            this.value = value;
+        }
+        StorageType.prototype.toString = function () {
+            return this.value;
+        };
+        StorageType.memory = new StorageType("memory");
+        StorageType.session = new StorageType("session");
+        StorageType.local = new StorageType("local");
+        return StorageType;
+    }());
+    Utils.StorageType = StorageType;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Strings = /** @class */ (function () {
+        function Strings() {
+        }
+        Strings.ellipsis = function (text, chars) {
+            if (text.length <= chars)
+                return text;
+            var trimmedText = text.substr(0, chars);
+            var lastSpaceIndex = trimmedText.lastIndexOf(" ");
+            if (lastSpaceIndex != -1) {
+                trimmedText = trimmedText.substr(0, Math.min(trimmedText.length, lastSpaceIndex));
+            }
+            return trimmedText + "&hellip;";
+        };
+        Strings.htmlDecode = function (encoded) {
+            var div = document.createElement('div');
+            div.innerHTML = encoded;
+            return div.firstChild.nodeValue;
+        };
+        Strings.format = function (str) {
+            var values = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                values[_i - 1] = arguments[_i];
+            }
+            for (var i = 0; i < values.length; i++) {
+                var reg = new RegExp("\\{" + i + "\\}", "gm");
+                str = str.replace(reg, values[i]);
+            }
+            return str;
+        };
+        Strings.isAlphanumeric = function (str) {
+            return /^[a-zA-Z0-9]*$/.test(str);
+        };
+        Strings.toCssClass = function (str) {
+            return str.replace(/[^a-z0-9]/g, function (s) {
+                var c = s.charCodeAt(0);
+                if (c == 32)
+                    return '-';
+                if (c >= 65 && c <= 90)
+                    return '_' + s.toLowerCase();
+                return '__' + ('000' + c.toString(16)).slice(-4);
+            });
+        };
+        Strings.toFileName = function (str) {
+            return str.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        };
+        Strings.utf8_to_b64 = function (str) {
+            return window.btoa(unescape(encodeURIComponent(str)));
+        };
+        return Strings;
+    }());
+    Utils.Strings = Strings;
+})(Utils || (Utils = {}));
+
+var Utils;
+(function (Utils) {
+    var Urls = /** @class */ (function () {
+        function Urls() {
+        }
+        Urls.getHashParameter = function (key, doc) {
+            if (!doc)
+                doc = window.document;
+            var regex = new RegExp("#.*[?&]" + key + "=([^&]+)(&|$)");
+            var match = regex.exec(doc.location.hash);
+            return (match ? decodeURIComponent(match[1].replace(/\+/g, " ")) : null);
+        };
+        Urls.setHashParameter = function (key, value, doc) {
+            if (!doc)
+                doc = window.document;
+            var kvp = this.updateURIKeyValuePair(doc.location.hash.replace('#?', ''), key, value);
+            var newHash = "#?" + kvp;
+            var url = doc.URL;
+            // remove hash value (if present).
+            var index = url.indexOf('#');
+            if (index != -1) {
+                url = url.substr(0, url.indexOf('#'));
+            }
+            doc.location.replace(url + newHash);
+        };
+        Urls.getQuerystringParameter = function (key, w) {
+            if (!w)
+                w = window;
+            return this.getQuerystringParameterFromString(key, w.location.search);
+        };
+        Urls.getQuerystringParameterFromString = function (key, querystring) {
+            key = key.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regex = new RegExp("[\\?&]" + key + "=([^&#]*)");
+            var match = regex.exec(querystring);
+            return (match ? decodeURIComponent(match[1].replace(/\+/g, " ")) : null);
+        };
+        Urls.setQuerystringParameter = function (key, value, doc) {
+            if (!doc)
+                doc = window.document;
+            var kvp = this.updateURIKeyValuePair(doc.location.hash.replace('#?', ''), key, value);
+            // redirects.
+            window.location.search = kvp;
+        };
+        Urls.updateURIKeyValuePair = function (uriSegment, key, value) {
+            key = encodeURIComponent(key);
+            value = encodeURIComponent(value);
+            var kvp = uriSegment.split('&');
+            // Array.split() returns an array with a single "" item
+            // if the target string is empty. remove if present.
+            if (kvp[0] == "")
+                kvp.shift();
+            var i = kvp.length;
+            var x;
+            // replace if already present.
+            while (i--) {
+                x = kvp[i].split('=');
+                if (x[0] == key) {
+                    x[1] = value;
+                    kvp[i] = x.join('=');
+                    break;
+                }
+            }
+            // not found, so append.
+            if (i < 0) {
+                kvp[kvp.length] = [key, value].join('=');
+            }
+            return kvp.join('&');
+        };
+        Urls.getUrlParts = function (url) {
+            var a = document.createElement('a');
+            a.href = url;
+            return a;
+        };
+        Urls.convertToRelativeUrl = function (url) {
+            var parts = this.getUrlParts(url);
+            var relUri = parts.pathname + parts.searchWithin;
+            if (!relUri.startsWith("/")) {
+                relUri = "/" + relUri;
+            }
+            return relUri;
+        };
+        return Urls;
+    }());
+    Utils.Urls = Urls;
+})(Utils || (Utils = {}));
+
+global.Utils = module.exports = Utils;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1])(1)
 });
 // jquery-plugins v0.1.0 https://github.com/edsilv/jquery-plugins
@@ -11465,4 +12034,4 @@ function extend() {
 
 },{}]},{},[1])(1)
 });
-!function(f){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=f();else if("function"==typeof define&&define.amd)define([],f);else{var g;g="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,g.iiifGalleryComponent=f()}}(function(){return function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a="function"==typeof require&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}for(var i="function"==typeof require&&require,o=0;o<r.length;o++)s(r[o]);return s}({1:[function(require,module,exports){(function(global){var IIIFComponents,__extends=this&&this.__extends||function(){var extendStatics=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(d,b){d.__proto__=b}||function(d,b){for(var p in b)b.hasOwnProperty(p)&&(d[p]=b[p])};return function(d,b){function __(){this.constructor=d}extendStatics(d,b),d.prototype=null===b?Object.create(b):(__.prototype=b.prototype,new __)}}();!function(IIIFComponents){var GalleryComponent=function(_super){function GalleryComponent(options){var _this=_super.call(this,options)||this;return _this._init(),_this._resize(),_this}return __extends(GalleryComponent,_super),GalleryComponent.prototype._init=function(){var _this=this,success=_super.prototype._init.call(this);success||console.error("Component failed to initialise"),this._$header=$('<div class="header"></div>'),this._$element.append(this._$header),this._$leftOptions=$('<div class="left"></div>'),this._$header.append(this._$leftOptions),this._$rightOptions=$('<div class="right"></div>'),this._$header.append(this._$rightOptions),this._$sizeDownButton=$('<input class="btn btn-default size-down" type="button" value="-" />'),this._$leftOptions.append(this._$sizeDownButton),this._$sizeRange=$('<input type="range" name="size" min="1" max="10" value="'+this.options.data.initialZoom+'" />'),this._$leftOptions.append(this._$sizeRange),this._$sizeUpButton=$('<input class="btn btn-default size-up" type="button" value="+" />'),this._$leftOptions.append(this._$sizeUpButton),this._$multiSelectOptions=$('<div class="multiSelectOptions"></div>'),this._$rightOptions.append(this._$multiSelectOptions),this._$selectAllButton=$('<div class="multiSelectAll"><input id="multiSelectAll" type="checkbox" tabindex="0" /><label for="multiSelectAll">'+this.options.data.content.selectAll+"</label></div>"),this._$multiSelectOptions.append(this._$selectAllButton),this._$selectAllButtonCheckbox=$(this._$selectAllButton.find("input:checkbox")),this._$selectButton=$('<a class="select" href="#">'+this.options.data.content.select+"</a>"),this._$multiSelectOptions.append(this._$selectButton),this._$main=$('<div class="main"></div>'),this._$element.append(this._$main),this._$thumbs=$('<div class="thumbs"></div>'),this._$main.append(this._$thumbs),this._$thumbs.addClass(this.options.data.helper.getViewingDirection().toString()),this._$sizeDownButton.on("click",function(){var val=Number(_this._$sizeRange.val())-1;val>=Number(_this._$sizeRange.attr("min"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this.fire(GalleryComponent.Events.DECREASE_SIZE))}),this._$sizeUpButton.on("click",function(){var val=Number(_this._$sizeRange.val())+1;val<=Number(_this._$sizeRange.attr("max"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this.fire(GalleryComponent.Events.INCREASE_SIZE))}),this._$sizeRange.on("change",function(){_this._updateThumbs(),_this._scrollToThumb(_this._getSelectedThumbIndex())}),this._$selectAllButton.checkboxButton(function(checked){checked?_this._getMultiSelectState().selectAll(!0):_this._getMultiSelectState().selectAll(!1),_this.set()}),this._$selectButton.on("click",function(){var ids=_this._getMultiSelectState().getAllSelectedCanvases().map(function(canvas){return canvas.id});_this.fire(GalleryComponent.Events.MULTISELECTION_MADE,ids)}),this._setRange(),$.templates({galleryThumbsTemplate:'                    <div class="{{:~galleryThumbClassName()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">                        <div class="wrap" style="width:{{>initialWidth}}px; height:{{>initialHeight}}px" data-link="class{merge:multiSelected toggle=\'multiSelected\'}">                        {^{if multiSelectEnabled}}                            <input id="thumb-checkbox-{{>id}}" type="checkbox" data-link="checked{:multiSelected ? \'checked\' : \'\'}" class="multiSelect" />                        {{/if}}                        </div>                        <div class="info">                            <span class="index" style="width:{{>initialWidth}}px">{{:#index + 1}}</span>                            <span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>                            <span class="searchResults" title="{{:~galleryThumbSearchResultsTitle()}}">{{>data.searchResults}}</span>                        </div>                    </div>'});var that=this;return $.views.helpers({galleryThumbClassName:function(){var className="thumb preLoad";return 0===this.data.index&&(className+=" first"),this.data.uri||(className+=" placeholder"),className},galleryThumbSearchResultsTitle:function(){var searchResults=Number(this.data.data.searchResults);return searchResults?searchResults>1?String.format(that.options.data.content.searchResults,searchResults):String.format(that.options.data.content.searchResult,searchResults):null}}),this._$main.on("scroll",function(){_this._updateThumbs()},this.options.data.scrollStopDuration),this.options.data.sizingEnabled||this._$sizeRange.hide(),success},GalleryComponent.prototype.data=function(){return{chunkedResizingThreshold:400,content:{searchResult:"{0} search result",searchResults:"{0} search results",select:"Select",selectAll:"Select All"},debug:!1,helper:null,imageFadeInDuration:300,initialZoom:6,minLabelWidth:20,pageModeEnabled:!1,scrollStopDuration:100,searchResults:[],sizingEnabled:!0,thumbHeight:320,thumbLoadPadding:3,thumbWidth:200,viewingDirection:manifesto.ViewingDirection.leftToRight()}},GalleryComponent.prototype.set=function(){if(this._thumbs=this.options.data.helper.getThumbs(this.options.data.thumbWidth,this.options.data.thumbHeight),this.options.data.viewingDirection.toString()===manifesto.ViewingDirection.bottomToTop().toString()&&this._thumbs.reverse(),this.options.data.searchResults&&this.options.data.searchResults.length)for(var i=0;i<this.options.data.searchResults.length;i++){var searchResult=this.options.data.searchResults[i],thumb=this._thumbs.en().where(function(t){return t.index===searchResult.canvasIndex}).first(),data=$.extend(!0,{},thumb.data);data.searchResults=searchResult.rects.length,thumb.data=data}this._thumbsCache=null,this._createThumbs(),this.selectIndex(this.options.data.helper.canvasIndex);var multiSelectState=this._getMultiSelectState();if(multiSelectState.isEnabled){this._$multiSelectOptions.show(),this._$thumbs.addClass("multiSelect");for(var i=0;i<multiSelectState.canvases.length;i++){var canvas=multiSelectState.canvases[i],thumb=this._getThumbByCanvas(canvas);this._setThumbMultiSelected(thumb,canvas.multiSelected)}for(var i=0;i<multiSelectState.ranges.length;i++)for(var range=multiSelectState.ranges[i],thumbs=this._getThumbsByRange(range),i_1=0;i_1<thumbs.length;i_1++){var thumb=thumbs[i_1];this._setThumbMultiSelected(thumb,range.multiSelected)}}else this._$multiSelectOptions.hide(),this._$thumbs.removeClass("multiSelect");this._update()},GalleryComponent.prototype._update=function(){var multiSelectState=this._getMultiSelectState();if(multiSelectState.isEnabled){this._$selectAllButtonCheckbox.prop("checked",multiSelectState.allSelected());var anySelected=multiSelectState.getAll().en().where(function(t){return t.multiSelected}).toArray().length>0;anySelected?this._$selectButton.show():this._$selectButton.hide()}},GalleryComponent.prototype._getMultiSelectState=function(){return this.options.data.helper.getMultiSelectState()},GalleryComponent.prototype._createThumbs=function(){var that=this;if(this._thumbs){this._$thumbs.undelegate(".thumb","click"),this._$thumbs.empty();for(var multiSelectState=this._getMultiSelectState(),heights=[],i_2=0;i_2<this._thumbs.length;i_2++){var thumb=this._thumbs[i_2],initialWidth=thumb.width,initialHeight=thumb.height;thumb.initialWidth=initialWidth,heights.push(initialHeight),thumb.multiSelectEnabled=multiSelectState.isEnabled}for(var medianHeight=Math.median(heights),i_3=0;i_3<this._thumbs.length;i_3++){var thumb=this._thumbs[i_3];thumb.initialHeight=medianHeight}if(this._$thumbs.link($.templates.galleryThumbsTemplate,this._thumbs),multiSelectState.isEnabled)for(var thumbs=this._$thumbs.find(".thumb"),_loop_1=function(){var that_1=this_1,$thumb=$(thumbs[i]);$thumb.checkboxButton(function(checked){var thumb=$.view(this).data;that_1._setThumbMultiSelected(thumb,!thumb.multiSelected);var range=that_1.options.data.helper.getCanvasRange(thumb.data),multiSelectState=that_1._getMultiSelectState();range?multiSelectState.selectRange(range,thumb.multiSelected):multiSelectState.selectCanvas(thumb.data,thumb.multiSelected),that_1._update(),that_1.fire(GalleryComponent.Events.THUMB_MULTISELECTED,thumb)})},this_1=this,i=0;i<thumbs.length;i++)_loop_1();else this._$thumbs.delegate(".thumb","click",function(e){e.preventDefault();var thumb=$.view(this).data;that._lastThumbClickedIndex=thumb.index,that.fire(GalleryComponent.Events.THUMB_SELECTED,thumb)})}},GalleryComponent.prototype._getThumbByCanvas=function(canvas){return this._thumbs.en().where(function(c){return c.data.id===canvas.id}).first()},GalleryComponent.prototype._sizeThumb=function($thumb){var initialWidth=$thumb.data().initialwidth,initialHeight=$thumb.data().initialheight,width=Number(initialWidth),height=Number(initialHeight),newWidth=Math.floor(width*this._range),newHeight=Math.floor(height*this._range),$wrap=$thumb.find(".wrap"),$label=$thumb.find(".label"),$index=$thumb.find(".index"),$searchResults=$thumb.find(".searchResults"),newLabelWidth=newWidth;this.options.data.searchResults&&this.options.data.searchResults.length&&($searchResults.show(),newLabelWidth=newWidth-$searchResults.outerWidth(),newLabelWidth<this.options.data.minLabelWidth?($searchResults.hide(),newLabelWidth=newWidth):$searchResults.show()),this.options.data.pageModeEnabled?($index.hide(),$label.show()):($index.show(),$label.hide()),$wrap.outerWidth(newWidth),$wrap.outerHeight(newHeight),$index.outerWidth(newLabelWidth),$label.outerWidth(newLabelWidth)},GalleryComponent.prototype._loadThumb=function($thumb,cb){var $wrap=$thumb.find(".wrap");if(!$wrap.hasClass("loading")&&!$wrap.hasClass("loaded")){$thumb.removeClass("preLoad");var visible=$thumb.attr("data-visible"),fadeDuration=this.options.data.imageFadeInDuration;if("false"!==visible){$wrap.addClass("loading");var src=$thumb.attr("data-src"),$img=$('<img class="thumbImage" src="'+src+'" />');$img.hide().load(function(){$(this).fadeIn(fadeDuration,function(){$(this).parent().swapClass("loading","loaded")})}),$wrap.prepend($img),cb&&cb($img)}else $wrap.addClass("hidden")}},GalleryComponent.prototype._getThumbsByRange=function(range){for(var thumbs=[],i=0;i<this._thumbs.length;i++){var thumb=this._thumbs[i],canvas=thumb.data,r=this.options.data.helper.getCanvasRange(canvas,range.path);r&&r.id===range.id&&thumbs.push(thumb)}return thumbs},GalleryComponent.prototype._updateThumbs=function(){var debug=this.options.data.debug;this._setRange();var scrollTop=this._$main.scrollTop(),scrollHeight=this._$main.height(),scrollBottom=scrollTop+scrollHeight;debug&&console.log("scrollTop %s, scrollBottom %s",scrollTop,scrollBottom);for(var thumbs=this._getAllThumbs(),numToUpdate=0,i=0;i<thumbs.length;i++){var $thumb=$(thumbs[i]),thumbTop=$thumb.position().top,thumbHeight=$thumb.outerHeight(),thumbBottom=thumbTop+thumbHeight,padding=thumbHeight*this.options.data.thumbLoadPadding;thumbTop<=scrollBottom+padding&&thumbBottom>=scrollTop-padding?(numToUpdate+=1,this._sizeThumb($thumb),$thumb.addClass("insideScrollArea"),this._loadThumb($thumb)):$thumb.removeClass("insideScrollArea")}debug&&console.log("number of thumbs to update: "+numToUpdate)},GalleryComponent.prototype._getSelectedThumbIndex=function(){return Number(this._$selectedThumb.data("index"))},GalleryComponent.prototype._getAllThumbs=function(){return this._thumbsCache||(this._thumbsCache=this._$thumbs.find(".thumb")),this._thumbsCache},GalleryComponent.prototype._getThumbByIndex=function(canvasIndex){return this._$thumbs.find('[data-index="'+canvasIndex+'"]')},GalleryComponent.prototype._scrollToThumb=function(canvasIndex){var $thumb=this._getThumbByIndex(canvasIndex);this._$main.scrollTop($thumb.position().top)},GalleryComponent.prototype.selectIndex=function(index){this._thumbs&&this._thumbs.length&&(this._getAllThumbs().removeClass("selected"),this._$selectedThumb=this._getThumbByIndex(index),this._$selectedThumb.addClass("selected"),this._scrollToThumb(index),this._updateThumbs())},GalleryComponent.prototype._setRange=function(){var norm=Math.normalise(Number(this._$sizeRange.val()),0,10);this._range=Math.clamp(norm,.05,1)},GalleryComponent.prototype._setThumbMultiSelected=function(thumb,selected){$.observable(thumb).setProperty("multiSelected",selected)},GalleryComponent.prototype._resize=function(){},GalleryComponent}(_Components.BaseComponent);IIIFComponents.GalleryComponent=GalleryComponent}(IIIFComponents||(IIIFComponents={})),function(IIIFComponents){var GalleryComponent;!function(GalleryComponent){var Events=function(){function Events(){}return Events.DECREASE_SIZE="decreaseSize",Events.INCREASE_SIZE="increaseSize",Events.MULTISELECTION_MADE="multiSelectionMade",Events.THUMB_SELECTED="thumbSelected",Events.THUMB_MULTISELECTED="thumbMultiSelected",Events}();GalleryComponent.Events=Events}(GalleryComponent=IIIFComponents.GalleryComponent||(IIIFComponents.GalleryComponent={}))}(IIIFComponents||(IIIFComponents={})),function(g){g.IIIFComponents?g.IIIFComponents.GalleryComponent=IIIFComponents.GalleryComponent:g.IIIFComponents=IIIFComponents}(global)}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[1])(1)});
+!function(f){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=f();else if("function"==typeof define&&define.amd)define([],f);else{var g;g="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,g.iiifGalleryComponent=f()}}(function(){return function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a="function"==typeof require&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}for(var i="function"==typeof require&&require,o=0;o<r.length;o++)s(r[o]);return s}return e}()({1:[function(require,module,exports){(function(global){var IIIFComponents,__extends=this&&this.__extends||function(){var extendStatics=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(d,b){d.__proto__=b}||function(d,b){for(var p in b)b.hasOwnProperty(p)&&(d[p]=b[p])};return function(d,b){function __(){this.constructor=d}extendStatics(d,b),d.prototype=null===b?Object.create(b):(__.prototype=b.prototype,new __)}}();!function(IIIFComponents){var GalleryComponent=function(_super){function GalleryComponent(options){var _this=_super.call(this,options)||this;return _this._init(),_this._resize(),_this}return __extends(GalleryComponent,_super),GalleryComponent.prototype._init=function(){var _this=this,success=_super.prototype._init.call(this);success||console.error("Component failed to initialise"),this._$header=$('<div class="header"></div>'),this._$element.append(this._$header),this._$leftOptions=$('<div class="left"></div>'),this._$header.append(this._$leftOptions),this._$rightOptions=$('<div class="right"></div>'),this._$header.append(this._$rightOptions),this._$sizeDownButton=$('<input class="btn btn-default size-down" type="button" value="-" />'),this._$leftOptions.append(this._$sizeDownButton),this._$sizeRange=$('<input type="range" name="size" min="1" max="10" value="'+this.options.data.initialZoom+'" />'),this._$leftOptions.append(this._$sizeRange),this._$sizeUpButton=$('<input class="btn btn-default size-up" type="button" value="+" />'),this._$leftOptions.append(this._$sizeUpButton),this._$multiSelectOptions=$('<div class="multiSelectOptions"></div>'),this._$rightOptions.append(this._$multiSelectOptions),this._$selectAllButton=$('<div class="multiSelectAll"><input id="multiSelectAll" type="checkbox" tabindex="0" /><label for="multiSelectAll">'+this.options.data.content.selectAll+"</label></div>"),this._$multiSelectOptions.append(this._$selectAllButton),this._$selectAllButtonCheckbox=$(this._$selectAllButton.find("input:checkbox")),this._$selectButton=$('<a class="select" href="#">'+this.options.data.content.select+"</a>"),this._$multiSelectOptions.append(this._$selectButton),this._$main=$('<div class="main"></div>'),this._$element.append(this._$main),this._$thumbs=$('<div class="thumbs"></div>'),this._$main.append(this._$thumbs),this._$thumbs.addClass(this.options.data.helper.getViewingDirection().toString()),this._$sizeDownButton.on("click",function(){var val=Number(_this._$sizeRange.val())-1;val>=Number(_this._$sizeRange.attr("min"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this.fire(GalleryComponent.Events.DECREASE_SIZE))}),this._$sizeUpButton.on("click",function(){var val=Number(_this._$sizeRange.val())+1;val<=Number(_this._$sizeRange.attr("max"))&&(_this._$sizeRange.val(val.toString()),_this._$sizeRange.trigger("change"),_this.fire(GalleryComponent.Events.INCREASE_SIZE))}),this._$sizeRange.on("change",function(){_this._updateThumbs(),_this._scrollToThumb(_this._getSelectedThumbIndex())}),this._$selectAllButton.checkboxButton(function(checked){checked?_this._getMultiSelectState().selectAll(!0):_this._getMultiSelectState().selectAll(!1),_this.set()}),this._$selectButton.on("click",function(){var ids=_this._getMultiSelectState().getAllSelectedCanvases().map(function(canvas){return canvas.id});_this.fire(GalleryComponent.Events.MULTISELECTION_MADE,ids)}),this._setRange(),$.templates({galleryThumbsTemplate:'                    <div class="{{:~galleryThumbClassName()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">                        <div class="wrap" style="width:{{>initialWidth}}px; height:{{>initialHeight}}px" data-link="class{merge:multiSelected toggle=\'multiSelected\'}">                        {^{if multiSelectEnabled}}                            <input id="thumb-checkbox-{{>id}}" type="checkbox" data-link="checked{:multiSelected ? \'checked\' : \'\'}" class="multiSelect" />                        {{/if}}                        </div>                        <div class="info">                            <span class="index" style="width:{{>initialWidth}}px">{{:#index + 1}}</span>                            <span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>                            <span class="searchResults" title="{{:~galleryThumbSearchResultsTitle()}}">{{>data.searchResults}}</span>                        </div>                    </div>'});var that=this;return $.views.helpers({galleryThumbClassName:function(){var className="thumb preLoad";return 0===this.data.index&&(className+=" first"),this.data.uri||(className+=" placeholder"),className},galleryThumbSearchResultsTitle:function(){var searchResults=Number(this.data.data.searchResults);return searchResults?searchResults>1?Utils.Strings.format(that.options.data.content.searchResults,searchResults.toString()):Utils.Strings.format(that.options.data.content.searchResult,searchResults.toString()):null}}),this._$main.on("scroll",function(){_this._updateThumbs()},this.options.data.scrollStopDuration),this.options.data.sizingEnabled||this._$sizeRange.hide(),success},GalleryComponent.prototype.data=function(){return{chunkedResizingThreshold:400,content:{searchResult:"{0} search result",searchResults:"{0} search results",select:"Select",selectAll:"Select All"},debug:!1,helper:null,imageFadeInDuration:300,initialZoom:6,minLabelWidth:20,pageModeEnabled:!1,scrollStopDuration:100,searchResults:[],sizingEnabled:!0,thumbHeight:320,thumbLoadPadding:3,thumbWidth:200,viewingDirection:manifesto.ViewingDirection.leftToRight()}},GalleryComponent.prototype.set=function(){if(this._thumbs=this.options.data.helper.getThumbs(this.options.data.thumbWidth,this.options.data.thumbHeight),this.options.data.viewingDirection.toString()===manifesto.ViewingDirection.bottomToTop().toString()&&this._thumbs.reverse(),this.options.data.searchResults&&this.options.data.searchResults.length)for(var i=0;i<this.options.data.searchResults.length;i++){var searchResult=this.options.data.searchResults[i],thumb=this._thumbs.en().where(function(t){return t.index===searchResult.canvasIndex}).first(),data=$.extend(!0,{},thumb.data);data.searchResults=searchResult.rects.length,thumb.data=data}this._thumbsCache=null,this._createThumbs(),this.selectIndex(this.options.data.helper.canvasIndex);var multiSelectState=this._getMultiSelectState();if(multiSelectState.isEnabled){this._$multiSelectOptions.show(),this._$thumbs.addClass("multiSelect");for(var i=0;i<multiSelectState.canvases.length;i++){var canvas=multiSelectState.canvases[i],thumb=this._getThumbByCanvas(canvas);this._setThumbMultiSelected(thumb,canvas.multiSelected)}for(var i=0;i<multiSelectState.ranges.length;i++)for(var range=multiSelectState.ranges[i],thumbs=this._getThumbsByRange(range),i_1=0;i_1<thumbs.length;i_1++){var thumb=thumbs[i_1];this._setThumbMultiSelected(thumb,range.multiSelected)}}else this._$multiSelectOptions.hide(),this._$thumbs.removeClass("multiSelect");this._update()},GalleryComponent.prototype._update=function(){var multiSelectState=this._getMultiSelectState();if(multiSelectState.isEnabled){this._$selectAllButtonCheckbox.prop("checked",multiSelectState.allSelected());var anySelected=multiSelectState.getAll().en().where(function(t){return t.multiSelected}).toArray().length>0;anySelected?this._$selectButton.show():this._$selectButton.hide()}},GalleryComponent.prototype._getMultiSelectState=function(){return this.options.data.helper.getMultiSelectState()},GalleryComponent.prototype._createThumbs=function(){var that=this;if(this._thumbs){this._$thumbs.undelegate(".thumb","click"),this._$thumbs.empty();for(var multiSelectState=this._getMultiSelectState(),heights=[],i_2=0;i_2<this._thumbs.length;i_2++){var thumb=this._thumbs[i_2],initialWidth=thumb.width,initialHeight=thumb.height;thumb.initialWidth=initialWidth,heights.push(initialHeight),thumb.multiSelectEnabled=multiSelectState.isEnabled}for(var medianHeight=Utils.Maths.median(heights),i_3=0;i_3<this._thumbs.length;i_3++){var thumb=this._thumbs[i_3];thumb.initialHeight=medianHeight}if(this._$thumbs.link($.templates.galleryThumbsTemplate,this._thumbs),multiSelectState.isEnabled)for(var thumbs=this._$thumbs.find(".thumb"),_loop_1=function(){var that_1=this_1,$thumb=$(thumbs[i]);$thumb.checkboxButton(function(checked){var thumb=$.view(this).data;that_1._setThumbMultiSelected(thumb,!thumb.multiSelected);var range=that_1.options.data.helper.getCanvasRange(thumb.data),multiSelectState=that_1._getMultiSelectState();range?multiSelectState.selectRange(range,thumb.multiSelected):multiSelectState.selectCanvas(thumb.data,thumb.multiSelected),that_1._update(),that_1.fire(GalleryComponent.Events.THUMB_MULTISELECTED,thumb)})},this_1=this,i=0;i<thumbs.length;i++)_loop_1();else this._$thumbs.delegate(".thumb","click",function(e){e.preventDefault();var thumb=$.view(this).data;that._lastThumbClickedIndex=thumb.index,that.fire(GalleryComponent.Events.THUMB_SELECTED,thumb)})}},GalleryComponent.prototype._getThumbByCanvas=function(canvas){return this._thumbs.en().where(function(c){return c.data.id===canvas.id}).first()},GalleryComponent.prototype._sizeThumb=function($thumb){var initialWidth=$thumb.data().initialwidth,initialHeight=$thumb.data().initialheight,width=Number(initialWidth),height=Number(initialHeight),newWidth=Math.floor(width*this._range),newHeight=Math.floor(height*this._range),$wrap=$thumb.find(".wrap"),$label=$thumb.find(".label"),$index=$thumb.find(".index"),$searchResults=$thumb.find(".searchResults"),newLabelWidth=newWidth;this.options.data.searchResults&&this.options.data.searchResults.length&&($searchResults.show(),newLabelWidth=newWidth-$searchResults.outerWidth(),newLabelWidth<this.options.data.minLabelWidth?($searchResults.hide(),newLabelWidth=newWidth):$searchResults.show()),this.options.data.pageModeEnabled?($index.hide(),$label.show()):($index.show(),$label.hide()),$wrap.outerWidth(newWidth),$wrap.outerHeight(newHeight),$index.outerWidth(newLabelWidth),$label.outerWidth(newLabelWidth)},GalleryComponent.prototype._loadThumb=function($thumb,cb){var $wrap=$thumb.find(".wrap");if(!$wrap.hasClass("loading")&&!$wrap.hasClass("loaded")){$thumb.removeClass("preLoad");var visible=$thumb.attr("data-visible"),fadeDuration=this.options.data.imageFadeInDuration;if("false"!==visible){$wrap.addClass("loading");var src=$thumb.attr("data-src"),$img=$('<img class="thumbImage" src="'+src+'" />');$img.hide().load(function(){$(this).fadeIn(fadeDuration,function(){$(this).parent().swapClass("loading","loaded")})}),$wrap.prepend($img),cb&&cb($img)}else $wrap.addClass("hidden")}},GalleryComponent.prototype._getThumbsByRange=function(range){for(var thumbs=[],i=0;i<this._thumbs.length;i++){var thumb=this._thumbs[i],canvas=thumb.data,r=this.options.data.helper.getCanvasRange(canvas,range.path);r&&r.id===range.id&&thumbs.push(thumb)}return thumbs},GalleryComponent.prototype._updateThumbs=function(){var debug=this.options.data.debug;this._setRange();var scrollTop=this._$main.scrollTop(),scrollHeight=this._$main.height(),scrollBottom=scrollTop+scrollHeight;debug&&console.log("scrollTop %s, scrollBottom %s",scrollTop,scrollBottom);for(var thumbs=this._getAllThumbs(),numToUpdate=0,i=0;i<thumbs.length;i++){var $thumb=$(thumbs[i]),thumbTop=$thumb.position().top,thumbHeight=$thumb.outerHeight(),thumbBottom=thumbTop+thumbHeight,padding=thumbHeight*this.options.data.thumbLoadPadding;thumbTop<=scrollBottom+padding&&thumbBottom>=scrollTop-padding?(numToUpdate+=1,this._sizeThumb($thumb),$thumb.addClass("insideScrollArea"),this._loadThumb($thumb)):$thumb.removeClass("insideScrollArea")}debug&&console.log("number of thumbs to update: "+numToUpdate)},GalleryComponent.prototype._getSelectedThumbIndex=function(){return Number(this._$selectedThumb.data("index"))},GalleryComponent.prototype._getAllThumbs=function(){return this._thumbsCache||(this._thumbsCache=this._$thumbs.find(".thumb")),this._thumbsCache},GalleryComponent.prototype._getThumbByIndex=function(canvasIndex){return this._$thumbs.find('[data-index="'+canvasIndex+'"]')},GalleryComponent.prototype._scrollToThumb=function(canvasIndex){var $thumb=this._getThumbByIndex(canvasIndex);this._$main.scrollTop($thumb.position().top)},GalleryComponent.prototype.selectIndex=function(index){this._thumbs&&this._thumbs.length&&(this._getAllThumbs().removeClass("selected"),this._$selectedThumb=this._getThumbByIndex(index),this._$selectedThumb.addClass("selected"),this._scrollToThumb(index),this._updateThumbs())},GalleryComponent.prototype._setRange=function(){var norm=Utils.Maths.normalise(Number(this._$sizeRange.val()),0,10);this._range=Utils.Maths.clamp(norm,.05,1)},GalleryComponent.prototype._setThumbMultiSelected=function(thumb,selected){$.observable(thumb).setProperty("multiSelected",selected)},GalleryComponent.prototype._resize=function(){},GalleryComponent}(_Components.BaseComponent);IIIFComponents.GalleryComponent=GalleryComponent}(IIIFComponents||(IIIFComponents={})),function(IIIFComponents){var GalleryComponent;!function(GalleryComponent){var Events=function(){function Events(){}return Events.DECREASE_SIZE="decreaseSize",Events.INCREASE_SIZE="increaseSize",Events.MULTISELECTION_MADE="multiSelectionMade",Events.THUMB_SELECTED="thumbSelected",Events.THUMB_MULTISELECTED="thumbMultiSelected",Events}();GalleryComponent.Events=Events}(GalleryComponent=IIIFComponents.GalleryComponent||(IIIFComponents.GalleryComponent={}))}(IIIFComponents||(IIIFComponents={})),function(g){g.IIIFComponents?g.IIIFComponents.GalleryComponent=IIIFComponents.GalleryComponent:g.IIIFComponents=IIIFComponents}(global)}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[1])(1)});
