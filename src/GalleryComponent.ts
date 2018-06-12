@@ -69,7 +69,9 @@ namespace IIIFComponents {
             this._$thumbs = $('<div class="thumbs"></div>');
             this._$main.append(this._$thumbs);
 
-            this._$thumbs.addClass(this.options.data.helper.getViewingDirection().toString()); // defaults to "left-to-right"
+            const viewingDirection: Manifesto.ViewingDirection = this.options.data.helper.getViewingDirection() || manifesto.ViewingDirection.leftToRight();
+
+            this._$thumbs.addClass(viewingDirection.toString()); // defaults to "left-to-right"
 
             this._$sizeDownButton.on('click', () => {
                 var val = Number(this._$sizeRange.val()) - 1;
