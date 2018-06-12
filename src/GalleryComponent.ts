@@ -208,7 +208,7 @@ namespace IIIFComponents {
             
             this._thumbs = <Manifold.IThumb[]>this.options.data.helper.getThumbs(this.options.data.thumbWidth, this.options.data.thumbHeight);
 
-            if (this.options.data.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()){
+            if (this.options.data.viewingDirection && this.options.data.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()){
                 this._thumbs.reverse();
             }
 
