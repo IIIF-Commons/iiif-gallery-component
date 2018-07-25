@@ -1,6 +1,6 @@
 # iiif-gallery-component
 
-http://viewdir.github.io/iiif-gallery-component/examples/
+https://iiif-commons.github.io/iiif-gallery-component/examples/
 
 **Ensure you have the [typings](https://github.com/typings/typings) CLI installed**
 
