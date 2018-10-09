@@ -5,7 +5,6 @@ interface JQuery {
     render: any;
     on(events: string, handler: (eventObject: JQueryEventObject, ...args: any[]) => any, wait: Number): JQuery;
     checkboxButton(onClicked: (checked: boolean) => void): void;
-    swapClass(removeClass: string, addClass: string): void;
 }
 interface JQueryStatic {
     observable: any;

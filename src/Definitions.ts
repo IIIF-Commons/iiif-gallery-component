@@ -6,7 +6,6 @@ interface JQuery {
     on(events: string, handler: (eventObject: JQueryEventObject, ...args: any[]) => any, wait: Number): JQuery;
     // plugins
     checkboxButton(onClicked: (checked: boolean) => void): void;
-    swapClass(removeClass: string, addClass: string): void;
 }
 
 interface JQueryStatic {

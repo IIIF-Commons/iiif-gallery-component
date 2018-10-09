@@ -338,7 +338,7 @@ var IIIFComponents;
                 $img.hide();
                 $img.on('load', function () {
                     $(this).fadeIn(fadeDuration, function () {
-                        $(this).parent().swapClass('loading', 'loaded');
+                        $(this).parent().switchClass('loading', 'loaded');
                     });
                 });
                 $wrap.prepend($img);
