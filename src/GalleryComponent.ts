@@ -421,19 +421,23 @@ namespace IIIFComponents {
             const visible: string | undefined = $thumb.attr('data-visible');
             const fadeDuration: number = this.options.data.imageFadeInDuration;
 
-            if (visible !== "false") {
+            if (visible !== 'false') {
                 $wrap.addClass('loading');
                 const src: string | undefined = $thumb.attr('data-src');
                 const $img: JQuery = $('<img class="thumbImage" src="' + src + '" />');
                 // fade in on load.
-                (<any>$img.hide()).load(function () {
+                $img.hide();
+                
+                $img.on('load', function () {
                     $(this).fadeIn(fadeDuration, function () {
                         $(this).parent().swapClass('loading', 'loaded');
                     });
                 });
 
                 $wrap.prepend($img);
+
                 if (cb) cb($img);
+
             } else {
                 $wrap.addClass('hidden');
             }
