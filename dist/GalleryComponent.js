@@ -478,4 +478,4 @@ var IIIFComponents;
     else {
         g.IIIFComponents.GalleryComponent = IIIFComponents.GalleryComponent;
     }
-})(global);
+})(window);

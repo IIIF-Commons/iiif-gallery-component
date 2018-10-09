@@ -626,7 +626,7 @@ namespace IIIFComponents.GalleryComponent {
     } else {
         g.IIIFComponents.GalleryComponent = IIIFComponents.GalleryComponent;
     }
-})(global);
+})(window);
 
 interface JQuery {
     // jsviews

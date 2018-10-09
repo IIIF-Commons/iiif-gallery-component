@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "./dist/iiif-gallery-component.d.ts",
   "scripts": {
-    "build": "rimraf ./dist && tsc && lessc ./src/assets/css/styles.less > ./dist/styles.css && cpx src/assets dist/"
+    "build": "rimraf ./dist && tsc && lessc ./src/assets/css/styles.less > ./dist/styles.css"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "@types/jquery": "3.3.14",
     "base-component": "iiif-commons/base-component#gh-pages",
     "exjs": "BSick7/exjs#0.5.0",
-    "jquery-plugins": "edsilv/jquery-plugins#v1.0.2",
+    "jquery-plugins": "edsilv/jquery-plugins#gh-pages",
     "manifesto.js": "2.2.25",
     "@iiif/manifold": "1.2.26",
     "utils": "edsilv/utils#v0.2.1"
