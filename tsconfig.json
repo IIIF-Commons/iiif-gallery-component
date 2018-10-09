@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "declaration": true,
+        "declarationDir": "./dist/",
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": false,
@@ -16,11 +17,9 @@
             "jquery-plugins",
             "manifesto.js",
             "utils"
-        ]
+        ],
+        "outDir": "./dist/"
     },
-    "files": [
-        "src/Definitions.ts"
-    ],
     "include": [
         "src/**/*"
     ]

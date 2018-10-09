@@ -1,5 +1,31 @@
 namespace IIIFComponents {
-    export class GalleryComponent extends _Components.BaseComponent implements IGalleryComponent {
+
+    export interface IGalleryComponentContent {
+        searchResult: string;
+        searchResults: string;
+        select: string;
+        selectAll: string;
+    }
+    
+    export interface IGalleryComponentData {
+        chunkedResizingThreshold: number;
+        content: IGalleryComponentContent;
+        debug: boolean;
+        helper: Manifold.IHelper | null;
+        imageFadeInDuration: number;
+        initialZoom: number;
+        minLabelWidth: number;
+        pageModeEnabled: boolean;
+        searchResults: Manifold.AnnotationGroup[];
+        scrollStopDuration: number;
+        sizingEnabled: boolean;
+        thumbHeight: number;
+        thumbLoadPadding: number;
+        thumbWidth: number;
+        viewingDirection: Manifesto.ViewingDirection;
+    }
+
+    export class GalleryComponent extends _Components.BaseComponent {
 
         public options: _Components.IBaseComponentOptions;
 
@@ -16,7 +42,6 @@ namespace IIIFComponents {
         private _$sizeRange: JQuery;
         private _$sizeUpButton: JQuery;
         private _$thumbs: JQuery;
-        private _lastThumbClickedIndex: number;
         private _range: number;
         private _thumbs: Manifold.IThumb[];
         private _thumbsCache: JQuery | null;
@@ -324,7 +349,6 @@ namespace IIIFComponents {
                 this._$thumbs.delegate('.thumb', 'click', function (e) {
                     e.preventDefault();
                     const thumb = $.view(this).data;
-                    that._lastThumbClickedIndex = thumb.index;
                     that.fire(GalleryComponent.Events.THUMB_SELECTED, thumb);
                 });
             } else {
@@ -430,7 +454,7 @@ namespace IIIFComponents {
                 
                 $img.on('load', function () {
                     $(this).fadeIn(fadeDuration, function () {
-                        $(this).parent().switchClass('loading', 'loaded');
+                        (<any>$(this).parent()).switchClass('loading', 'loaded');
                     });
                 });
 
@@ -603,3 +627,21 @@ namespace IIIFComponents.GalleryComponent {
         g.IIIFComponents.GalleryComponent = IIIFComponents.GalleryComponent;
     }
 })(global);
+
+interface JQuery {
+    // jsviews
+    link: any;
+    render: any;
+    // unevent
+    on(events: string, handler: (eventObject: JQueryEventObject, ...args: any[]) => any, wait: Number): JQuery;
+    // plugins
+    checkboxButton(onClicked: (checked: boolean) => void): void;
+}
+
+interface JQueryStatic {
+    // jsviews
+    observable: any;
+    templates: any;
+    views: any;
+    view: any;
+}
