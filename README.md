@@ -1,7 +1,7 @@
 # iiif-gallery-component
 
-https://iiif-commons.github.io/iiif-gallery-component/examples/
+https://iiif-gallery-component.netlify.com
 
     npm i
     npm run build
-    npx serve
+    npm start

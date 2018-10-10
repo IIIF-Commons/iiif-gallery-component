@@ -5,7 +5,8 @@
   "main": "index.js",
   "types": "./dist/iiif-gallery-component.d.ts",
   "scripts": {
-    "build": "rimraf ./dist && tsc && lessc ./src/assets/css/styles.less > ./dist/styles.css"
+    "build": "rimraf ./dist && tsc && lessc ./src/assets/css/styles.less > ./dist/styles.css",
+    "start": "npx serve ./examples"
   },
   "repository": {
     "type": "git",
