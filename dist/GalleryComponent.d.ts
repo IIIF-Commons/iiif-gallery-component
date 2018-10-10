@@ -1,6 +1,6 @@
 /// <reference types="@iiif/manifold" />
 /// <reference types="manifesto.js" />
-/// <reference types="base-component" />
+/// <reference types="@iiif/base-component" />
 /// <reference types="jquery" />
 declare namespace IIIFComponents {
     interface IGalleryComponentContent {

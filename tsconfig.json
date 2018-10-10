@@ -13,10 +13,10 @@
         "lib": ["es6", "dom"],
         "types": [
             "@iiif/manifold",
-            "base-component",
-            "jquery-plugins",
+            "@iiif/base-component",
+            "@edsilv/jquery-plugins",
             "manifesto.js",
-            "utils"
+            "@edsilv/utils"
         ],
         "outDir": "./dist/"
     },
