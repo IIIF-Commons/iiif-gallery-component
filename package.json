@@ -5,8 +5,12 @@
   "main": "index.js",
   "types": "./dist/iiif-gallery-component.d.ts",
   "scripts": {
-    "build": "rimraf ./dist && tsc && lessc ./src/assets/css/styles.less > ./dist/styles.css",
-    "start": "npx serve ./examples"
+    "clean": "npx rimraf ./dist",
+    "build-ts": "npx tsc",
+    "minify-js": "npx uglify-js ./dist/GalleryComponent.js > ./dist/GalleryComponent.min.js",
+    "build-css": "npx lessc ./src/css/styles.less > ./dist/styles.css",
+    "build": "npm run clean && npm run build-ts && npm run minify-js && npm run build-css",
+    "start": "npx serve"
   },
   "repository": {
     "type": "git",
@@ -22,7 +26,9 @@
     "cpx": "^1.5.0",
     "less": "^3.8.1",
     "rimraf": "^2.6.2",
-    "typescript": "^3.1.1"
+    "serve": "^10.0.2",
+    "typescript": "^3.1.1",
+    "uglify-js": "^3.4.9"
   },
   "dependencies": {
     "@types/jquery": "3.3.14",
