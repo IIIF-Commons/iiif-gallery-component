@@ -1,9 +1,9 @@
 {
   "name": "@iiif/iiif-gallery-component",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "",
-  "main": "index.js",
-  "types": "./dist/iiif-gallery-component.d.ts",
+  "main": "./dist/GalleryComponent.js",
+  "types": "./dist/GalleryComponent.d.ts",
   "scripts": {
     "clean": "npx rimraf ./dist",
     "build-ts": "npx tsc",
