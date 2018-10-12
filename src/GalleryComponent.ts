@@ -8,21 +8,21 @@ namespace IIIFComponents {
     }
     
     export interface IGalleryComponentData {
-        chunkedResizingThreshold: number;
-        content: IGalleryComponentContent;
-        debug: boolean;
-        helper: Manifold.IHelper | null;
-        imageFadeInDuration: number;
-        initialZoom: number;
-        minLabelWidth: number;
-        pageModeEnabled: boolean;
-        searchResults: Manifold.AnnotationGroup[];
-        scrollStopDuration: number;
-        sizingEnabled: boolean;
-        thumbHeight: number;
-        thumbLoadPadding: number;
-        thumbWidth: number;
-        viewingDirection: Manifesto.ViewingDirection;
+        chunkedResizingThreshold?: number;
+        content?: IGalleryComponentContent;
+        debug?: boolean;
+        helper?: Manifold.IHelper | null;
+        imageFadeInDuration?: number;
+        initialZoom?: number;
+        minLabelWidth?: number;
+        pageModeEnabled?: boolean;
+        searchResults?: Manifold.AnnotationGroup[];
+        scrollStopDuration?: number;
+        sizingEnabled?: boolean;
+        thumbHeight?: number;
+        thumbLoadPadding?: number;
+        thumbWidth?: number;
+        viewingDirection?: Manifesto.ViewingDirection;
     }
 
     export class GalleryComponent extends _Components.BaseComponent {
@@ -42,13 +42,14 @@ namespace IIIFComponents {
         private _$sizeRange: JQuery;
         private _$sizeUpButton: JQuery;
         private _$thumbs: JQuery;
+        private _data: IGalleryComponentData = this.data();
         private _range: number;
         private _thumbs: Manifold.IThumb[];
         private _thumbsCache: JQuery | null;
 
         constructor(options: _Components.IBaseComponentOptions) {
             super(options);
-            
+            this._data = this.options.data;
             this._init();
             this._resize();
         }
@@ -94,10 +95,6 @@ namespace IIIFComponents {
             this._$thumbs = $('<div class="thumbs"></div>');
             this._$main.append(this._$thumbs);
 
-            const viewingDirection: Manifesto.ViewingDirection = this.options.data.helper.getViewingDirection() || manifesto.ViewingDirection.leftToRight();
-
-            this._$thumbs.addClass(viewingDirection.toString()); // defaults to "left-to-right"
-
             this._$sizeDownButton.on('click', () => {
                 var val = Number(this._$sizeRange.val()) - 1;
 
@@ -124,22 +121,32 @@ namespace IIIFComponents {
             });
 
             this._$selectAllButton.checkboxButton((checked: boolean) => {
-                if (checked) {
-                    this._getMultiSelectState().selectAll(true);
-                } else {
-                    this._getMultiSelectState().selectAll(false);
+
+                const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
+
+                if (multiSelectState) {
+                    if (checked) {
+                        multiSelectState.selectAll(true);
+                    } else {
+                        multiSelectState.selectAll(false);
+                    }
                 }
-    
-                this.set();
+
+                this.set(this.options.data);
             });
             
             this._$selectButton.on('click', () => {
 
-                var ids: string[] = this._getMultiSelectState().getAllSelectedCanvases().map((canvas: Manifold.ICanvas) => {
-                    return canvas.id;
-                });
+                const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
 
-                this.fire(GalleryComponent.Events.MULTISELECTION_MADE, ids);
+                if (multiSelectState) {
+                    var ids: string[] = multiSelectState.getAllSelectedCanvases().map((canvas: Manifold.ICanvas) => {
+                        return canvas.id;
+                    });
+    
+                    this.fire(GalleryComponent.Events.MULTISELECTION_MADE, ids);
+                }
+
             });
 
             this._setRange();
@@ -229,18 +236,26 @@ namespace IIIFComponents {
             }
         }
         
-        public set(): void {
+        public set(data: IGalleryComponentData): void {
             
-            this._thumbs = <Manifold.IThumb[]>this.options.data.helper.getThumbs(this.options.data.thumbWidth, this.options.data.thumbHeight);
+            this._data = Object.assign(this._data, data);
 
-            if (this.options.data.viewingDirection && this.options.data.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()){
-                this._thumbs.reverse();
+            if (this._data.helper && this._data.thumbWidth !== undefined && this._data.thumbHeight !== undefined) {
+                this._thumbs = <Manifold.IThumb[]>this._data.helper.getThumbs(this._data.thumbWidth, this._data.thumbHeight);
             }
 
-            if (this.options.data.searchResults && this.options.data.searchResults.length) {
+            if (this._data.viewingDirection) {
+                if (this._data.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()) {
+                    this._thumbs.reverse();
+                }
+    
+                this._$thumbs.addClass(this._data.viewingDirection.toString()); // defaults to "left-to-right"
+            }
 
-                for (let i = 0; i < this.options.data.searchResults.length; i++) {
-                    var searchResult: Manifold.AnnotationGroup = this.options.data.searchResults[i];
+            if (this._data.searchResults && this._data.searchResults.length) {
+
+                for (let i = 0; i < this._data.searchResults.length; i++) {
+                    var searchResult: Manifold.AnnotationGroup = this._data.searchResults[i];
 
                     // find the thumb with the same canvasIndex and add the searchResult
                     let thumb: Manifold.IThumb = this._thumbs.en().where(t => t.index === searchResult.canvasIndex).first();
@@ -257,11 +272,13 @@ namespace IIIFComponents {
 
             this._createThumbs();
 
-            this.selectIndex(this.options.data.helper.canvasIndex);
+            if (this._data.helper) {
+                this.selectIndex(this._data.helper.canvasIndex);
+            }
 
-            var multiSelectState: Manifold.MultiSelectState = this._getMultiSelectState();
+            const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
 
-            if (multiSelectState.isEnabled) {
+            if (multiSelectState && multiSelectState.isEnabled) {
                 this._$multiSelectOptions.show();
                 this._$thumbs.addClass("multiSelect");
 
@@ -291,9 +308,9 @@ namespace IIIFComponents {
         }
 
         private _update(): void {
-            var multiSelectState: Manifold.MultiSelectState = this._getMultiSelectState();
+            var multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
 
-            if (multiSelectState.isEnabled) {
+            if (multiSelectState && multiSelectState.isEnabled) {
                 // check/uncheck Select All checkbox
                 this._$selectAllButtonCheckbox.prop("checked", multiSelectState.allSelected());
 
@@ -307,8 +324,13 @@ namespace IIIFComponents {
             }
         }
 
-        private _getMultiSelectState(): Manifold.MultiSelectState {
-            return this.options.data.helper.getMultiSelectState();
+        private _getMultiSelectState(): Manifold.MultiSelectState | null {
+            
+            if (this._data.helper) {
+                return this._data.helper.getMultiSelectState();
+            }
+            
+            return null;
         }
 
         private _createThumbs(): void {
@@ -320,7 +342,7 @@ namespace IIIFComponents {
 
             this._$thumbs.empty();
 
-            const multiSelectState: Manifold.MultiSelectState = this._getMultiSelectState();
+            const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
 
             // set initial thumb sizes
             const heights = [];
@@ -332,7 +354,7 @@ namespace IIIFComponents {
                 thumb.initialWidth = initialWidth;
                 //thumb.initialHeight = initialHeight;
                 heights.push(initialHeight);
-                thumb.multiSelectEnabled = multiSelectState.isEnabled;
+                thumb.multiSelectEnabled = (multiSelectState) ? multiSelectState.isEnabled : false;
             }
 
             const medianHeight: number = Utils.Maths.median(heights);
@@ -344,7 +366,7 @@ namespace IIIFComponents {
 
             this._$thumbs.link($.templates.galleryThumbsTemplate, this._thumbs);
 
-            if (!multiSelectState.isEnabled) {
+            if (multiSelectState && !multiSelectState.isEnabled) {
                 // add a selection click event to all thumbs
                 this._$thumbs.delegate('.thumb', 'click', function (e) {
                     e.preventDefault();
@@ -364,12 +386,14 @@ namespace IIIFComponents {
                         const thumb: Manifold.IThumb = $.view(this).data;
                         that._setThumbMultiSelected(thumb, !thumb.multiSelected);
                         const range: Manifold.IRange = <Manifold.IRange>that.options.data.helper.getCanvasRange(thumb.data);
-                        const multiSelectState: Manifold.MultiSelectState = that._getMultiSelectState();
+                        const multiSelectState: Manifold.MultiSelectState | null = that._getMultiSelectState();
 
-                        if (range) {
-                            multiSelectState.selectRange(<Manifold.IRange>range, thumb.multiSelected);
-                        } else {
-                            multiSelectState.selectCanvas(<Manifold.ICanvas>thumb.data, thumb.multiSelected);
+                        if (multiSelectState) {
+                            if (range) {
+                                multiSelectState.selectRange(<Manifold.IRange>range, thumb.multiSelected);
+                            } else {
+                                multiSelectState.selectCanvas(<Manifold.ICanvas>thumb.data, thumb.multiSelected);
+                            }
                         }
 
                         that._update();
@@ -404,13 +428,13 @@ namespace IIIFComponents {
 
             // if search results are visible, size index/label to accommodate it.
             // if the resulting size is below options.minLabelWidth, hide search results.
-            if (this.options.data.searchResults && this.options.data.searchResults.length) {
+            if (this._data.searchResults && this._data.searchResults.length) {
 
                 $searchResults.show();
 
                 newLabelWidth = newWidth - (<any>$searchResults).outerWidth();
 
-                if (newLabelWidth < this.options.data.minLabelWidth) {
+                if (this._data.minLabelWidth !== undefined && newLabelWidth < this._data.minLabelWidth) {
                     $searchResults.hide(); 
                     newLabelWidth = newWidth;      
                 } else {
@@ -419,7 +443,7 @@ namespace IIIFComponents {
 
             } 
 
-            if (this.options.data.pageModeEnabled) {
+            if (this._data.pageModeEnabled) {
                 $index.hide();
                 $label.show();
             } else {
@@ -443,7 +467,7 @@ namespace IIIFComponents {
             // if no img has been added yet
 
             const visible: string | undefined = $thumb.attr('data-visible');
-            const fadeDuration: number = this.options.data.imageFadeInDuration;
+            const fadeDuration: number = this._data.imageFadeInDuration || 0;
 
             if (visible !== 'false') {
                 $wrap.addClass('loading');
@@ -469,12 +493,17 @@ namespace IIIFComponents {
         }
 
         private _getThumbsByRange(range: Manifold.IRange): Manifold.IThumb[] {
+
             let thumbs: Manifold.IThumb[] = [];
+
+            if (!this._data.helper) {
+                return thumbs;
+            }
 
             for (let i = 0; i < this._thumbs.length; i++) {
                 const thumb: Manifold.IThumb = this._thumbs[i];
                 const canvas: Manifold.ICanvas = thumb.data;
-                const r: Manifold.IRange = <Manifold.IRange>this.options.data.helper.getCanvasRange(canvas, range.path);
+                const r: Manifold.IRange = <Manifold.IRange>this._data.helper.getCanvasRange(canvas, range.path);
 
                 if (r && r.id === range.id){
                     thumbs.push(thumb);
@@ -486,7 +515,7 @@ namespace IIIFComponents {
 
         private _updateThumbs(): void {
 
-            const debug: boolean = this.options.data.debug;
+            const debug: boolean = !!this._data.debug;
 
             // cache range size
             this._setRange();
@@ -511,7 +540,7 @@ namespace IIIFComponents {
                 const thumbHeight: number | undefined = $thumb.outerHeight();
                 const thumbBottom: number = thumbTop + (thumbHeight as number);
 
-                const padding: number = (thumbHeight as number) * this.options.data.thumbLoadPadding;
+                const padding: number = (thumbHeight as number) * (this._data.thumbLoadPadding as number);
 
                 // check all thumbs to see if they are within the scroll area plus padding
                 if (thumbTop <= scrollBottom + padding && thumbBottom >= (scrollTop as number) - padding) {
@@ -581,7 +610,7 @@ namespace IIIFComponents {
         // }
 
         // public searchPreviewFinish(): void {
-        //     this._scrollToThumb(this.options.data.helper.canvasIndex);
+        //     this._scrollToThumb(this._data.helper.canvasIndex);
         //     this._getAllThumbs().removeClass('searchpreview');
         // }
 

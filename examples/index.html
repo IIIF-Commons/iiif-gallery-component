@@ -19,7 +19,7 @@
     <script src="https://unpkg.com/manifesto.js/dist/client/manifesto.bundle.js"></script>
     <script src="https://unpkg.com/@iiif/manifold/dist/manifold.js"></script>
     <script src="https://unpkg.com/@iiif/base-component/dist/BaseComponent.js"></script>
-    <script src="https://unpkg.com/@edsilv/utils/dist/utils.js"></script>
+    <script src="https://unpkg.com/@edsilv/utils/dist/Utils.js"></script>
     <script src="https://unpkg.com/@edsilv/jquery-plugins/dist/jquery-plugins.js"></script>
     <script src="../dist/GalleryComponent.js"></script>
 </head>
@@ -111,15 +111,7 @@
                 helper = h;
                 
                 component = new IIIFComponents.GalleryComponent({
-                    target: document.querySelector('#gallery'),
-                    data: {
-                        chunkedResizingThreshold: 50,
-                        debug: false,
-                        helper: h,
-                        pageModeEnabled: false,
-                        thumbLoadPadding: 1,
-                        searchResults: searchResults
-                    }
+                    target: document.querySelector('#gallery')
                 });
 
                 component.on('decreaseSize', function() {
@@ -141,7 +133,14 @@
 
                 multiSelectState = helper.getMultiSelectState();
 
-                component.set();
+                component.set({
+                    chunkedResizingThreshold: 50,
+                    debug: false,
+                    helper: h,
+                    pageModeEnabled: false,
+                    thumbLoadPadding: 1,
+                    searchResults: searchResults
+                });
 
                 resize();
 
