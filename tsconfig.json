@@ -12,11 +12,11 @@
         "strictNullChecks": true,
         "lib": ["es6", "dom"],
         "types": [
-            "@iiif/manifold",
-            "@iiif/base-component",
             "@edsilv/jquery-plugins",
-            "manifesto.js",
-            "@edsilv/utils"
+            "@edsilv/utils",
+            "@iiif/base-component",
+            "@iiif/manifold",
+            "manifesto.js"
         ],
         "outDir": "./dist/"
     },

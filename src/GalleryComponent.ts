@@ -1,5 +1,15 @@
 namespace IIIFComponents {
 
+    type AnnotationGroup = manifold.AnnotationGroup;
+    type Canvas = manifesto.Canvas;
+    type MultiSelectableCanvas = manifold.MultiSelectableCanvas;
+    type MultiSelectableRange = manifold.MultiSelectableRange;
+    type MultiSelectableThumb = manifold.MultiSelectableThumb;
+    type MultiSelectState = manifold.MultiSelectState;
+    type Range = manifesto.Range;
+    type Thumb = manifesto.Thumb;
+    type ViewingDirection = manifesto.ViewingDirection;
+
     export interface IGalleryComponentContent {
         searchResult: string;
         searchResults: string;
@@ -11,18 +21,18 @@ namespace IIIFComponents {
         chunkedResizingThreshold?: number;
         content?: IGalleryComponentContent;
         debug?: boolean;
-        helper?: Manifold.IHelper | null;
+        helper?: manifold.Helper | null;
         imageFadeInDuration?: number;
         initialZoom?: number;
         minLabelWidth?: number;
         pageModeEnabled?: boolean;
-        searchResults?: Manifold.AnnotationGroup[];
+        searchResults?: AnnotationGroup[];
         scrollStopDuration?: number;
         sizingEnabled?: boolean;
         thumbHeight?: number;
         thumbLoadPadding?: number;
         thumbWidth?: number;
-        viewingDirection?: Manifesto.ViewingDirection;
+        viewingDirection?: ViewingDirection;
     }
 
     export class GalleryComponent extends _Components.BaseComponent {
@@ -44,7 +54,7 @@ namespace IIIFComponents {
         private _$thumbs: JQuery;
         private _data: IGalleryComponentData = this.data();
         private _range: number;
-        private _thumbs: Manifold.IThumb[];
+        private _thumbs: MultiSelectableThumb[];
         private _thumbsCache: JQuery | null;
 
         constructor(options: _Components.IBaseComponentOptions) {
@@ -122,7 +132,7 @@ namespace IIIFComponents {
 
             this._$selectAllButton.checkboxButton((checked: boolean) => {
 
-                const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
+                const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
 
                 if (multiSelectState) {
                     if (checked) {
@@ -137,10 +147,10 @@ namespace IIIFComponents {
             
             this._$selectButton.on('click', () => {
 
-                const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
+                const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
 
                 if (multiSelectState) {
-                    var ids: string[] = multiSelectState.getAllSelectedCanvases().map((canvas: Manifold.ICanvas) => {
+                    var ids: string[] = multiSelectState.getAllSelectedCanvases().map((canvas: Canvas) => {
                         return canvas.id;
                     });
     
@@ -232,7 +242,7 @@ namespace IIIFComponents {
                 thumbHeight: 320,
                 thumbLoadPadding: 3,
                 thumbWidth: 200,
-                viewingDirection: manifesto.ViewingDirection.leftToRight()
+                viewingDirection: manifesto.ViewingDirection.LEFT_TO_RIGHT
             }
         }
         
@@ -241,11 +251,11 @@ namespace IIIFComponents {
             this._data = Object.assign(this._data, data);
 
             if (this._data.helper && this._data.thumbWidth !== undefined && this._data.thumbHeight !== undefined) {
-                this._thumbs = <Manifold.IThumb[]>this._data.helper.getThumbs(this._data.thumbWidth, this._data.thumbHeight);
+                this._thumbs = <MultiSelectableThumb[]>this._data.helper.getThumbs(this._data.thumbWidth, this._data.thumbHeight);
             }
 
             if (this._data.viewingDirection) {
-                if (this._data.viewingDirection.toString() === manifesto.ViewingDirection.bottomToTop().toString()) {
+                if (this._data.viewingDirection.toString() === manifesto.ViewingDirection.BOTTOM_TO_TOP) {
                     this._thumbs.reverse();
                 }
     
@@ -255,10 +265,10 @@ namespace IIIFComponents {
             if (this._data.searchResults && this._data.searchResults.length) {
 
                 for (let i = 0; i < this._data.searchResults.length; i++) {
-                    var searchResult: Manifold.AnnotationGroup = this._data.searchResults[i];
+                    var searchResult: AnnotationGroup = this._data.searchResults[i];
 
                     // find the thumb with the same canvasIndex and add the searchResult
-                    let thumb: Manifold.IThumb = this._thumbs.en().where(t => t.index === searchResult.canvasIndex).first();
+                    let thumb: Thumb = this._thumbs.filter(t => t.index === searchResult.canvasIndex)[0];
 
                     // clone the data so searchResults isn't persisted on the canvas.
                     let data = $.extend(true, {}, thumb.data);
@@ -276,25 +286,25 @@ namespace IIIFComponents {
                 this.selectIndex(this._data.helper.canvasIndex);
             }
 
-            const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
+            const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
 
             if (multiSelectState && multiSelectState.isEnabled) {
                 this._$multiSelectOptions.show();
                 this._$thumbs.addClass("multiSelect");
 
                 for (let i = 0; i < multiSelectState.canvases.length; i++) {
-                    const canvas: Manifold.ICanvas = multiSelectState.canvases[i];
-                    const thumb: Manifold.IThumb = this._getThumbByCanvas(canvas);
+                    const canvas: MultiSelectableCanvas = multiSelectState.canvases[i];
+                    const thumb: Thumb = this._getThumbByCanvas(canvas);
                     this._setThumbMultiSelected(thumb, canvas.multiSelected);
                 }
 
                 // range selections override canvas selections
                 for (let i = 0; i < multiSelectState.ranges.length; i++) {
-                    const range: Manifold.IRange = multiSelectState.ranges[i];
-                    const thumbs: Manifold.IThumb[] = this._getThumbsByRange(range);
+                    const range: MultiSelectableRange = multiSelectState.ranges[i];
+                    const thumbs: Thumb[] = this._getThumbsByRange(range);
 
                     for (let i = 0; i < thumbs.length; i++){
-                        const thumb: Manifold.IThumb = thumbs[i];
+                        const thumb: Thumb = thumbs[i];
                         this._setThumbMultiSelected(thumb, range.multiSelected);
                     }
                 }
@@ -308,13 +318,13 @@ namespace IIIFComponents {
         }
 
         private _update(): void {
-            var multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
+            var multiSelectState: MultiSelectState | null = this._getMultiSelectState();
 
             if (multiSelectState && multiSelectState.isEnabled) {
                 // check/uncheck Select All checkbox
                 this._$selectAllButtonCheckbox.prop("checked", multiSelectState.allSelected());
 
-                const anySelected: boolean = multiSelectState.getAll().en().where(t => t.multiSelected).toArray().length > 0;
+                const anySelected: boolean = multiSelectState.getAll().filter(t => t.multiSelected).length > 0;
 
                 if (!anySelected) {
                     this._$selectButton.hide();
@@ -324,7 +334,7 @@ namespace IIIFComponents {
             }
         }
 
-        private _getMultiSelectState(): Manifold.MultiSelectState | null {
+        private _getMultiSelectState(): MultiSelectState | null {
             
             if (this._data.helper) {
                 return this._data.helper.getMultiSelectState();
@@ -342,13 +352,13 @@ namespace IIIFComponents {
 
             this._$thumbs.empty();
 
-            const multiSelectState: Manifold.MultiSelectState | null = this._getMultiSelectState();
+            const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
 
             // set initial thumb sizes
             const heights = [];
 
             for (let i = 0; i < this._thumbs.length; i++) {
-                const thumb: Manifold.IThumb = this._thumbs[i];
+                const thumb: MultiSelectableThumb = this._thumbs[i];
                 const initialWidth: number = thumb.width;
                 const initialHeight: number = thumb.height;
                 thumb.initialWidth = initialWidth;
@@ -360,7 +370,7 @@ namespace IIIFComponents {
             const medianHeight: number = Utils.Maths.median(heights);
 
             for (let i = 0; i < this._thumbs.length; i++) {
-                const thumb: Manifold.IThumb = this._thumbs[i];
+                const thumb: MultiSelectableThumb = this._thumbs[i];
                 thumb.initialHeight = medianHeight;
             }
 
@@ -383,16 +393,16 @@ namespace IIIFComponents {
                     const $thumb = $(thumbs[i]);
 
                     $thumb.checkboxButton(function(checked: boolean) {
-                        const thumb: Manifold.IThumb = $.view(this).data;
+                        const thumb: MultiSelectableThumb = $.view(this).data;
                         that._setThumbMultiSelected(thumb, !thumb.multiSelected);
-                        const range: Manifold.IRange = <Manifold.IRange>that.options.data.helper.getCanvasRange(thumb.data);
-                        const multiSelectState: Manifold.MultiSelectState | null = that._getMultiSelectState();
+                        const range: MultiSelectableRange = <MultiSelectableRange>that.options.data.helper.getCanvasRange(thumb.data);
+                        const multiSelectState: MultiSelectState | null = that._getMultiSelectState();
 
                         if (multiSelectState) {
                             if (range) {
-                                multiSelectState.selectRange(<Manifold.IRange>range, thumb.multiSelected);
+                                multiSelectState.selectRange(<MultiSelectableRange>range, thumb.multiSelected);
                             } else {
-                                multiSelectState.selectCanvas(<Manifold.ICanvas>thumb.data, thumb.multiSelected);
+                                multiSelectState.selectCanvas(<MultiSelectableCanvas>thumb.data, thumb.multiSelected);
                             }
                         }
 
@@ -404,8 +414,8 @@ namespace IIIFComponents {
             }
         }
 
-        private _getThumbByCanvas(canvas: Manifold.ICanvas): Manifold.IThumb {
-            return this._thumbs.en().where(c => c.data.id === canvas.id).first();
+        private _getThumbByCanvas(canvas: Canvas): Thumb {
+            return this._thumbs.filter(c => c.data.id === canvas.id)[0];
         }
 
         private _sizeThumb($thumb: JQuery): void {
@@ -492,18 +502,18 @@ namespace IIIFComponents {
 
         }
 
-        private _getThumbsByRange(range: Manifold.IRange): Manifold.IThumb[] {
+        private _getThumbsByRange(range: Range): Thumb[] {
 
-            let thumbs: Manifold.IThumb[] = [];
+            let thumbs: Thumb[] = [];
 
             if (!this._data.helper) {
                 return thumbs;
             }
 
             for (let i = 0; i < this._thumbs.length; i++) {
-                const thumb: Manifold.IThumb = this._thumbs[i];
-                const canvas: Manifold.ICanvas = thumb.data;
-                const r: Manifold.IRange = <Manifold.IRange>this._data.helper.getCanvasRange(canvas, range.path);
+                const thumb: Thumb = this._thumbs[i];
+                const canvas: Canvas = thumb.data;
+                const r: Range = <Range>this._data.helper.getCanvasRange(canvas, range.path);
 
                 if (r && r.id === range.id){
                     thumbs.push(thumb);
@@ -629,7 +639,7 @@ namespace IIIFComponents {
             this._range = Utils.Maths.clamp(norm, 0.05, 1);
         }
 
-        private _setThumbMultiSelected(thumb: Manifold.IThumb, selected: boolean): void {
+        private _setThumbMultiSelected(thumb: Thumb, selected: boolean): void {
             $.observable(thumb).setProperty("multiSelected", selected);
         }
 

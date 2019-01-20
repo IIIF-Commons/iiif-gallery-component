@@ -16,8 +16,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.min.js"></script>
-    <script src="https://unpkg.com/manifesto.js/dist/client/manifesto.bundle.js"></script>
-    <script src="https://unpkg.com/@iiif/manifold/dist/manifold.js"></script>
+    <script src="https://unpkg.com/manifesto.js@4.0.0-pre.5/dist-umd/manifesto.js"></script>
+    <script src="https://unpkg.com/@iiif/manifold@2.0.0-pre.9/dist-umd/manifold.js"></script>
     <script src="https://unpkg.com/@iiif/base-component/dist/BaseComponent.js"></script>
     <script src="https://unpkg.com/@edsilv/utils/dist/Utils.js"></script>
     <script src="https://unpkg.com/@edsilv/jquery-plugins/dist/jquery-plugins.js"></script>
@@ -100,8 +100,8 @@
             // https://digital.library.villanova.edu/Item/vudl:60609/Manifest (Holy Bible)
             // http://wellcomelibrary.org/iiif/b20641151/manifest (Completed Schedules from the International Health Exhibition)
 
-            Manifold.loadManifest({
-                iiifResourceUri: 'http://wellcomelibrary.org/iiif/b18035978/manifest',
+            manifold.loadManifest({
+                manifestUri: 'http://wellcomelibrary.org/iiif/b18035978/manifest',
                 collectionIndex: 0,
                 manifestIndex: 0,
                 sequenceIndex: 0,
