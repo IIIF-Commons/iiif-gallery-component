@@ -1,6 +1,6 @@
 {
   "name": "@iiif/iiif-gallery-component",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "description": "",
   "main": "./dist/GalleryComponent.js",
   "types": "./dist/GalleryComponent.d.ts",
@@ -33,8 +33,8 @@
     "@edsilv/jquery-plugins": "1.0.3",
     "@edsilv/utils": "0.2.2",
     "@iiif/base-component": "1.1.3",
-    "@iiif/manifold": "2.0.0-pre.4",
+    "@iiif/manifold": "2.0.0-pre.10",
     "@types/jquery": "3.3.14",
-    "manifesto.js": "4.0.0-pre.5"
+    "manifesto.js": "4.0.0-pre.6"
   }
 }
