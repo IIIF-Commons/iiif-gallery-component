@@ -1,4 +1,4 @@
-import { ViewingDirection } from "@iiif/vocabulary";
+import { ViewingDirection } from "@iiif/vocabulary"; // todo: including this means an empty definition file is generated. Will have to use webpack
 
 namespace IIIFComponents {
 
@@ -370,7 +370,7 @@ namespace IIIFComponents {
 
             if (multiSelectState && !multiSelectState.isEnabled) {
                 // add a selection click event to all thumbs
-                this._$thumbs.delegate('.thumb', 'click', function (e) {
+                this._$thumbs.delegate('.thumb', 'click', function (e: any) {
                     e.preventDefault();
                     const thumb = $.view(this).data;
                     that.fire(GalleryComponent.Events.THUMB_SELECTED, thumb);

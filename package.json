@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/iiif-commons/iiif-gallery-component#readme",
   "devDependencies": {
+    "dts-bundle-generator": "^2.1.0",
     "less": "3.8.1",
     "rimraf": "2.6.2",
     "serve": "10.0.2",
