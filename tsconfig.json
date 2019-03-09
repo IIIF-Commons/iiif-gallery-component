@@ -1,28 +1,35 @@
 {
-    "compilerOptions": {
+	"compilerOptions": {
+        "allowSyntheticDefaultImports": true,
         "declaration": true,
-        "declarationDir": "./dist/",
-        "noImplicitAny": true,
+        "forceConsistentCasingInFileNames": true,
+        "jsx": "react",
+        "lib": [ "es2015", "dom", "es2017" ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
         "noImplicitReturns": true,
         "noImplicitThis": false,
-        "module": "es6",
-        "moduleResolution": "node",
         "noUnusedLocals": true,
         "noUnusedParameters": false,
+        "outDir": "dist-commonjs",
+        "declarationDir": "types",
+        "skipLibCheck": true,
+        "sourceMap": true,
         "strictNullChecks": true,
-        "lib": ["es6", "dom"],
+        "suppressImplicitAnyIndexErrors": true,
+        "target": "es5",
         "types": [
             "@edsilv/jquery-plugins",
             "@edsilv/utils",
-            "@iiif/base-component",
             "@iiif/manifold",
             "@iiif/vocabulary",
+            "@iiif/base-component",
             "manifesto.js",
             "jquery"
-        ],
-        "outDir": "./dist/"
-    },
-    "include": [
-        "src/**/*"
-    ]
+        ]
+	},
+	"include": [
+		"src/**/*"
+	]
 }

@@ -1,8 +1,11 @@
-.idea
-.vscode
-node_modules
+dist-commonjs
+dist-esmodule
+dist-umd
+dist-var
+dist-css
+coverage
+docs
 npm-debug.log
-Thumbs.db
+node_modules
 debug.log
-typings
-dist
+types

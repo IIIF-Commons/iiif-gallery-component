@@ -2,14 +2,18 @@
   "name": "@iiif/iiif-gallery-component",
   "version": "1.1.15",
   "description": "",
-  "main": "./dist/GalleryComponent.js",
-  "types": "./dist/GalleryComponent.d.ts",
+  "main": "./dist-esmodule/index.js",
+  "types": "./dist-commonjs/index.d.ts",
   "scripts": {
-    "clean": "npx rimraf ./dist",
-    "build-ts": "npx tsc",
-    "minify-js": "npx uglify-js ./dist/GalleryComponent.js > ./dist/GalleryComponent.min.js",
-    "build-css": "npx lessc ./src/css/styles.less > ./dist/styles.css",
-    "build": "npm run clean && npm run build-ts && npm run build-css",
+    "clean": "rimraf -rf dist-umd dist-commonjs dist-esmodule dist-var dist-css types",
+    "build:commonjs": "tsc",
+    "build:esmodule": "tsc -m es6 --outDir dist-esmodule",
+    "build:umd": "webpack",
+    "build:var": "cross-env NODE_WEBPACK_LIBRARY_PATH=dist-var NODE_WEBPACK_LIBRARY_TARGET=var webpack",
+    "build:css": "mkdir dist-css && lessc ./src/css/styles.less > ./dist-css/styles.css",
+    "build:docs": "rimraf -rf docs && typedoc --out docs --name GalleryComponent --theme default --ignoreCompilerErrors --experimentalDecorators --emitDecoratorMetadata --target ES6 --moduleResolution node --preserveConstEnums --stripInternal --suppressExcessPropertyErrors --suppressImplicitAnyIndexErrors --module commonjs src/ && touch docs/.nojekyll",
+    "build": "npm run clean && npm run build:commonjs && npm run build:esmodule && npm run build:umd && npm run build:var && npm run build:css",
+    "prepare": "npm run build",
     "start": "npx serve"
   },
   "repository": {
@@ -25,10 +29,13 @@
   "devDependencies": {
     "dts-bundle-generator": "^2.1.0",
     "less": "3.8.1",
-    "rimraf": "2.6.2",
     "serve": "10.0.2",
+    "awesome-typescript-loader": "^5.2.1",
+    "cross-env": "^5.2.0",
+    "rimraf": "2.6.2",
     "typescript": "3.2.2",
-    "uglify-es": "^3.3.9"
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {
     "@edsilv/jquery-plugins": "1.0.3",
@@ -37,6 +44,6 @@
     "@iiif/manifold": "2.0.0-pre.11",
     "@iiif/vocabulary": "^1.0.7",
     "@types/jquery": "3.3.14",
-    "manifesto.js": "4.0.0-pre.7"
+    "manifesto.js": "4.0.0-pre.8"
   }
 }
