@@ -1,4 +1,5 @@
 import { ViewingDirection } from "@iiif/vocabulary";
+import  { BaseComponent, IBaseComponentOptions } from "@iiif/base-component";
 
 export interface IGalleryComponentContent {
     searchResult: string;
@@ -25,9 +26,9 @@ export interface IGalleryComponentData {
     viewingDirection?: ViewingDirection;
 }
 
-export class GalleryComponent extends _Components.BaseComponent {
+export class GalleryComponent extends BaseComponent {
 
-    public options: _Components.IBaseComponentOptions;
+    public options: IBaseComponentOptions;
 
     private _$header: JQuery;
     private _$leftOptions: JQuery;
@@ -47,7 +48,7 @@ export class GalleryComponent extends _Components.BaseComponent {
     private _thumbs: manifold.MultiSelectableThumb[];
     private _thumbsCache: JQuery | null;
 
-    constructor(options: _Components.IBaseComponentOptions) {
+    constructor(options: IBaseComponentOptions) {
         super(options);
         this._data = this.options.data;
         this._init();
