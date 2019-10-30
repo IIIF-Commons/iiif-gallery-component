@@ -1,19 +1,22 @@
 {
   "name": "@iiif/iiif-gallery-component",
-  "version": "1.1.15",
+  "version": "1.1.17",
   "description": "",
-  "main": "./dist-esmodule/index.js",
+  "main": "./dist-commonjs/index.js",
+  "module": "./dist-esmodule/index.js",
+  "browser": "./dist-umd/IIIFGalleryComponent.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "clean": "rimraf -rf dist-umd dist-commonjs dist-esmodule dist-var dist-css types",
+    "build:css": "cross-env mkdir dist-css && npx lessc ./src/css/styles.less > ./dist-css/styles.css",
     "build:commonjs": "tsc",
+    "build:docs": "rimraf -rf docs && typedoc --out docs --name IIIFGalleryComponent --theme default --ignoreCompilerErrors --experimentalDecorators --emitDecoratorMetadata --target ES6 --moduleResolution node --preserveConstEnums --stripInternal --suppressExcessPropertyErrors --suppressImplicitAnyIndexErrors --module commonjs src/ && touch docs/.nojekyll",
     "build:esmodule": "tsc -m es6 --outDir dist-esmodule",
+    "build:types": "dts-bundle-generator --umd-module-name IIIFGalleryComponent -o types/index.d.ts dist-esmodule/index.d.ts",
     "build:umd": "webpack",
     "build:var": "cross-env NODE_WEBPACK_LIBRARY_PATH=dist-var NODE_WEBPACK_LIBRARY_TARGET=var webpack",
-    "build:css": "mkdir dist-css && lessc ./src/css/styles.less > ./dist-css/styles.css",
-    "build:docs": "rimraf -rf docs && typedoc --out docs --name GalleryComponent --theme default --ignoreCompilerErrors --experimentalDecorators --emitDecoratorMetadata --target ES6 --moduleResolution node --preserveConstEnums --stripInternal --suppressExcessPropertyErrors --suppressImplicitAnyIndexErrors --module commonjs src/ && touch docs/.nojekyll",
-    "build": "npm run clean && npm run build:commonjs && npm run build:esmodule && npm run build:umd && npm run build:var && npm run build:css",
-    "prepare": "npm run build",
+    "build": "npm run clean && npm run build:css && npm run build:commonjs && npm run build:esmodule && npm run build:umd && npm run build:var && npm run build:types",
+    "clean": "rimraf -rf dist-css dist-umd dist-commonjs dist-esmodule dist-var types",
+    "prepublishOnly": "npm run build && npm run test",
     "start": "npx serve"
   },
   "repository": {
@@ -27,22 +30,25 @@
   },
   "homepage": "https://github.com/iiif-commons/iiif-gallery-component#readme",
   "devDependencies": {
-    "less": "3.8.1",
-    "serve": "10.0.2",
+    "@types/node": "^8.10.52",
     "awesome-typescript-loader": "^5.2.1",
-    "cross-env": "^5.2.0",
+    "cross-env": "^5.2.1",
+    "dts-bundle-generator": "^2.1.0",
+    "less": "3.8.1",
     "rimraf": "2.6.2",
-    "typescript": "3.2.2",
-    "webpack": "^4.28.3",
-    "webpack-cli": "^3.1.2"
+    "serve": "^10.0.2",
+    "typescript": "3.6.3",
+    "uglify-js": "3.4.9",
+    "webpack-cli": "^3.1.2",
+    "webpack": "^4.28.3"
   },
   "dependencies": {
-    "@edsilv/jquery-plugins": "1.0.3",
-    "@edsilv/utils": "0.2.2",
-    "@iiif/base-component": "2.0.0-pre.2",
-    "@iiif/manifold": "2.0.0-pre.11",
-    "@iiif/vocabulary": "^1.0.7",
+    "@edsilv/jquery-plugins": "1.0.7",
+    "@edsilv/utils": "1.0.2",
+    "@iiif/base-component": "2.0.0-pre.4",
+    "@iiif/manifold": "2.0.0-pre.21",
+    "@iiif/vocabulary": "1.0.11",
     "@types/jquery": "3.3.14",
-    "manifesto.js": "4.0.0-pre.8"
+    "manifesto.js": "4.0.0-pre.19"
   }
 }

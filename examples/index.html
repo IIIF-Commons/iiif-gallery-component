@@ -16,10 +16,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsviews/0.9.75/jsviews.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.min.js"></script>
-    <script src="https://unpkg.com/manifesto.js@4.0.0-pre.8/dist-umd/manifesto.js"></script>
-    <script src="https://unpkg.com/@iiif/manifold@2.0.0-pre.13/dist-umd/manifold.js"></script>
-    <script src="https://unpkg.com/@edsilv/utils/dist/Utils.js"></script>
-    <script src="https://unpkg.com/@edsilv/jquery-plugins/dist/jquery-plugins.js"></script>
+    <script src="https://unpkg.com/manifesto.js@4.0.0-pre.19/dist-umd/manifesto.js"></script>
+    <script src="https://unpkg.com/@iiif/manifold@2.0.0-pre.21/dist-umd/manifold.js"></script>
+    <script src="https://unpkg.com/@edsilv/utils@1.0.2/dist-umd/utils.js"></script>
+    <script src="https://unpkg.com/@edsilv/jquery-plugins@1.0.7/dist/jquery-plugins.js"></script>
     <script src="../dist-umd/GalleryComponent.js"></script>
 </head>
 <body>
@@ -92,6 +92,10 @@
         ];
 
         $(function() {
+
+            component = new GalleryComponent({
+                target: document.querySelector('#gallery')
+            });
             
             // http://wellcomelibrary.org/iiif/b18035978/manifest (Biocrats)
             // http://wellcomelibrary.org/iiif/b18035723/manifest (Wunder der Vererbung)
@@ -108,10 +112,6 @@
             }).then(function(h){
                 
                 helper = h;
-                
-                component = new GalleryComponent({
-                    target: document.querySelector('#gallery')
-                });
 
                 component.on('decreaseSize', function() {
                     console.log('decrease size');

@@ -8,6 +8,12 @@ const config = {
     entry: {
         'GalleryComponent': ['./src/index.ts']
     },
+    externals: {
+        'node-fetch': 'node-fetch',
+        'fetch-cookie/node-fetch': 'fetch-cookie/node-fetch',
+        'form-data': 'form-data',
+        'url': 'url'
+    },
     output: {
         path: resolvePath('dist-umd'),
         filename: '[name].js',
