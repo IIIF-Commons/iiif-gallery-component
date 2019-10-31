@@ -58,10 +58,10 @@ export class GalleryComponent extends BaseComponent {
     this._resize();
   }
 
-  protected async _init(): Promise<boolean> {
-    await super._init();
+  protected _init(): boolean {
+    super._init();
 
-		this._$element = $(this._el);
+		this._$element = $(this.el);
 
     this._$header = $('<div class="header"></div>');
     this._$element.append(this._$header);
