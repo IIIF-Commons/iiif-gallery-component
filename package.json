@@ -47,9 +47,9 @@
     "@edsilv/jquery-plugins": "1.0.7",
     "@edsilv/utils": "1.0.2",
     "@iiif/base-component": "2.0.1",
-    "@iiif/manifold": "2.0.2",
+    "@iiif/manifold": "2.*",
     "@iiif/vocabulary": "1.0.11",
     "@types/jquery": "3.3.14",
-    "manifesto.js": "4.0.1"
+    "manifesto.js": "4.*"
   }
 }
