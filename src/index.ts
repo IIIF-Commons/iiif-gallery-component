@@ -1,8 +1,15 @@
 import { ViewingDirection } from "@iiif/vocabulary";
 import { Canvas, Range, Thumb } from "manifesto.js";
-import { AnnotationGroup, Helper, MultiSelectableThumb, MultiSelectState, MultiSelectableCanvas, MultiSelectableRange } from "@iiif/manifold";
+import {
+  AnnotationGroup,
+  Helper,
+  MultiSelectableThumb,
+  MultiSelectState,
+  MultiSelectableCanvas,
+  MultiSelectableRange,
+} from "@iiif/manifold";
 import { BaseComponent, IBaseComponentOptions } from "@iiif/base-component";
-import { Strings, Maths } from "@edsilv/utils"; 
+import { Strings, Maths } from "@edsilv/utils";
 
 export interface IGalleryComponentContent {
   searchResult: string;
@@ -32,7 +39,7 @@ export interface IGalleryComponentData {
 export class GalleryComponent extends BaseComponent {
   public options: IBaseComponentOptions;
 
-	private _$element: JQuery;
+  private _$element: JQuery;
   private _$header: JQuery;
   private _$leftOptions: JQuery;
   private _$main: JQuery;
@@ -61,7 +68,7 @@ export class GalleryComponent extends BaseComponent {
   protected _init(): boolean {
     super._init();
 
-		this._$element = $(this.el);
+    this._$element = $(this.el);
 
     this._$header = $('<div class="header"></div>');
     this._$element.append(this._$header);
@@ -139,7 +146,8 @@ export class GalleryComponent extends BaseComponent {
     });
 
     this._$selectAllButton.checkboxButton((checked: boolean) => {
-      const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
+      const multiSelectState: MultiSelectState | null =
+        this._getMultiSelectState();
 
       if (multiSelectState) {
         if (checked) {
@@ -153,7 +161,8 @@ export class GalleryComponent extends BaseComponent {
     });
 
     this._$selectButton.on("click", () => {
-      const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
+      const multiSelectState: MultiSelectState | null =
+        this._getMultiSelectState();
 
       if (multiSelectState) {
         var ids: string[] = multiSelectState
@@ -182,13 +191,13 @@ export class GalleryComponent extends BaseComponent {
 								<span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>\
 								<span class="searchResults" title="{{:~galleryThumbSearchResultsTitle()}}">{{>data.searchResults}}</span>\
 						</div>\
-				</div>'
+				</div>',
     });
 
     const that = this;
 
     $.views.helpers({
-      galleryThumbClassName: function() {
+      galleryThumbClassName: function () {
         let className: string = "thumb preLoad";
 
         if (this.data.index === 0) {
@@ -201,7 +210,7 @@ export class GalleryComponent extends BaseComponent {
 
         return className;
       },
-      galleryThumbSearchResultsTitle: function() {
+      galleryThumbSearchResultsTitle: function () {
         const searchResults = Number(this.data.data.searchResults);
 
         if (searchResults) {
@@ -219,7 +228,7 @@ export class GalleryComponent extends BaseComponent {
         }
 
         return null;
-      }
+      },
     });
 
     // use unevent to detect scroll stop.
@@ -245,7 +254,7 @@ export class GalleryComponent extends BaseComponent {
         searchResult: "{0} search result",
         searchResults: "{0} search results",
         select: "Select",
-        selectAll: "Select All"
+        selectAll: "Select All",
       },
       debug: false,
       helper: null,
@@ -259,7 +268,7 @@ export class GalleryComponent extends BaseComponent {
       thumbHeight: 320,
       thumbLoadPadding: 3,
       thumbWidth: 200,
-      viewingDirection: ViewingDirection.LEFT_TO_RIGHT
+      viewingDirection: ViewingDirection.LEFT_TO_RIGHT,
     } as IGalleryComponentData;
   }
 
@@ -289,13 +298,11 @@ export class GalleryComponent extends BaseComponent {
 
     if (this._data.searchResults && this._data.searchResults.length) {
       for (let i = 0; i < this._data.searchResults.length; i++) {
-        var searchResult: AnnotationGroup = this._data.searchResults[
-          i
-        ];
+        var searchResult: AnnotationGroup = this._data.searchResults[i];
 
         // find the thumb with the same canvasIndex and add the searchResult
         let thumb: Thumb = this._thumbs.filter(
-          t => t.index === searchResult.canvasIndex
+          (t) => t.index === searchResult.canvasIndex
         )[0];
 
         // clone the data so searchResults isn't persisted on the canvas.
@@ -313,15 +320,15 @@ export class GalleryComponent extends BaseComponent {
       this.selectIndex(this._data.helper.canvasIndex);
     }
 
-    const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
+    const multiSelectState: MultiSelectState | null =
+      this._getMultiSelectState();
 
     if (multiSelectState && multiSelectState.isEnabled) {
       this._$multiSelectOptions.show();
       this._$thumbs.addClass("multiSelect");
 
       for (let i = 0; i < multiSelectState.canvases.length; i++) {
-        const canvas: MultiSelectableCanvas =
-          multiSelectState.canvases[i];
+        const canvas: MultiSelectableCanvas = multiSelectState.canvases[i];
         const thumb: Thumb = this._getThumbByCanvas(canvas);
         this._setThumbMultiSelected(thumb, canvas.multiSelected);
       }
@@ -341,7 +348,7 @@ export class GalleryComponent extends BaseComponent {
       this._$thumbs.removeClass("multiSelect");
     }
 
-    this._update();
+    // this._update();
   }
 
   private _update(): void {
@@ -355,7 +362,7 @@ export class GalleryComponent extends BaseComponent {
       );
 
       const anySelected: boolean =
-        multiSelectState.getAll().filter(t => t.multiSelected).length > 0;
+        multiSelectState.getAll().filter((t) => t.multiSelected).length > 0;
 
       if (!anySelected) {
         this._$selectButton.hide();
@@ -381,7 +388,8 @@ export class GalleryComponent extends BaseComponent {
     this._$thumbs.undelegate(".thumb", "click");
     this._$thumbs.empty();
 
-    const multiSelectState: MultiSelectState | null = this._getMultiSelectState();
+    const multiSelectState: MultiSelectState | null =
+      this._getMultiSelectState();
 
     // set initial thumb sizes
     const heights: number[] = [];
@@ -409,7 +417,7 @@ export class GalleryComponent extends BaseComponent {
 
     if (multiSelectState && !multiSelectState.isEnabled) {
       // add a selection click event to all thumbs
-      this._$thumbs.delegate(".thumb", "click", function(e: any) {
+      this._$thumbs.delegate(".thumb", "click", function (e: any) {
         e.preventDefault();
         const thumb = $.view(this).data;
         that.fire(Events.THUMB_SELECTED, thumb);
@@ -422,11 +430,14 @@ export class GalleryComponent extends BaseComponent {
         const that = this;
         const $thumb = $(thumbs[i]);
 
-        $thumb.checkboxButton(function(_checked: boolean) {
+        $thumb.checkboxButton(function (_checked: boolean) {
           const thumb: MultiSelectableThumb = $.view(<any>this).data;
           that._setThumbMultiSelected(thumb, !thumb.multiSelected);
-          const range: MultiSelectableRange = <MultiSelectableRange>that.options.data.helper.getCanvasRange(thumb.data);
-          const multiSelectState: MultiSelectState | null = that._getMultiSelectState();
+          const range: MultiSelectableRange = <MultiSelectableRange>(
+            that.options.data.helper.getCanvasRange(thumb.data)
+          );
+          const multiSelectState: MultiSelectState | null =
+            that._getMultiSelectState();
 
           if (multiSelectState) {
             if (range) {
@@ -451,7 +462,7 @@ export class GalleryComponent extends BaseComponent {
   }
 
   private _getThumbByCanvas(canvas: Canvas): Thumb {
-    return this._thumbs.filter(c => c.data.id === canvas.id)[0];
+    return this._thumbs.filter((c) => c.data.id === canvas.id)[0];
   }
 
   private _sizeThumb($thumb: JQuery): void {
@@ -522,8 +533,8 @@ export class GalleryComponent extends BaseComponent {
       // fade in on load.
       $img.hide();
 
-      $img.on("load", function() {
-        $(this).fadeIn(fadeDuration, function() {
+      $img.on("load", function () {
+        $(this).fadeIn(fadeDuration, function () {
           (<any>$(this).parent()).switchClass("loading", "loaded");
         });
       });
@@ -674,10 +685,7 @@ export class GalleryComponent extends BaseComponent {
     this._range = Maths.clamp(norm, 0.05, 1);
   }
 
-  private _setThumbMultiSelected(
-    thumb: Thumb,
-    selected: boolean
-  ): void {
+  private _setThumbMultiSelected(thumb: Thumb, selected: boolean): void {
     $.observable(thumb).setProperty("multiSelected", selected);
   }
 
