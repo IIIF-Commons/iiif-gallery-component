@@ -33,7 +33,7 @@
     "@types/node": "^8.10.52",
     "awesome-typescript-loader": "^5.2.1",
     "cross-env": "^5.2.1",
-    "dts-bundle-generator": "^2.1.0",
+    "dts-bundle-generator": "^9.5.1",
     "less": "3.13.1",
     "lessc": "^1.0.2",
     "rimraf": "^2.6.2",
