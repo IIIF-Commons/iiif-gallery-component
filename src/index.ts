@@ -327,7 +327,7 @@ export class GalleryComponent extends BaseComponent {
     return null;
   }
 
-  private _galleryThumbsTemplate = (thumb: MultiSelectableThumb): string => `
+  private _galleryThumbsTemplate = (thumb): string => `
   <button class="${this._galleryThumbClassName(thumb)}" data-src="${thumb.uri}" data-index="${thumb.index}" data-visible="${thumb.visible}" data-width="${thumb.width}" data-height="${thumb.height}" data-initialwidth="${thumb.initialWidth}" data-initialheight="${thumb.initialHeight}">
     <div class="wrap" style="width:${thumb.initialWidth}px; height:${thumb.initialHeight}px" class="${thumb.multiSelected ? 'multiSelected' : ''}">
       ${thumb.multiSelectEnabled ? `<input id="thumb-checkbox-${thumb.id}" tabindex="-1" type="checkbox" ${thumb.multiSelected ? 'checked' : ''} class="multiSelect" />` : ''}
