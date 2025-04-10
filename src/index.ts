@@ -414,8 +414,8 @@ export class GalleryComponent extends BaseComponent {
       for (var i = 0; i < thumbs.length; i++) {
         const that = this;
         const $thumb = $(thumbs[i]);
-    
-        $thumb.on("click", function () {
+
+        $thumb.checkboxButton(function (_checked: boolean) {
           const thumbIndex = parseInt($(this).attr("data-index") as string);
           const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
           that._setThumbMultiSelected(thumb, !thumb.multiSelected);
