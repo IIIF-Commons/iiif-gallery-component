@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { ViewingDirection } from "@iiif/vocabulary";
 import { Canvas, Range, Thumb } from "manifesto.js";
 import {
@@ -397,7 +398,8 @@ export class GalleryComponent extends BaseComponent {
     }
 
     const renderedHtml = this._thumbs.map(this._galleryThumbsTemplate).join('');
-    this._$thumbs.html(renderedHtml);
+    const cleanHtml = DOMPurify.sanitize(renderedHtml);
+    this._$thumbs.html(cleanHtml);
 
     if (multiSelectState && !multiSelectState.isEnabled) {
       // add a selection click event to all thumbs
