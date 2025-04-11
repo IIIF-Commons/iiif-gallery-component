@@ -328,18 +328,65 @@ export class GalleryComponent extends BaseComponent {
     return null;
   }
 
-  private _galleryThumbsTemplate = (thumb): string => `
-  <button class="${this._galleryThumbClassName(thumb)}" data-src="${thumb.uri}" data-index="${thumb.index}" data-visible="${thumb.visible}" data-width="${thumb.width}" data-height="${thumb.height}" data-initialwidth="${thumb.initialWidth}" data-initialheight="${thumb.initialHeight}">
-    <div class="wrap" style="width:${thumb.initialWidth}px; height:${thumb.initialHeight}px" class="${thumb.multiSelected ? 'multiSelected' : ''}">
-      ${thumb.multiSelectEnabled ? `<input id="thumb-checkbox-${thumb.id}" tabindex="-1" type="checkbox" ${thumb.multiSelected ? 'checked' : ''} class="multiSelect" />` : ''}
-    </div>
-    <div class="info">
-      <span class="index" style="width:${thumb.initialWidth}px">${thumb.index + 1}</span>
-      <span class="label" style="width:${thumb.initialWidth}px" title="${thumb.label}">${thumb.label}&nbsp;</span>
-      <span class="searchResults" title="${this._galleryThumbSearchResultsTitle(thumb)}">${thumb.data.searchResults ? thumb.data.searchResults : ''}</span>
-    </div>
-  </button>
-  `;
+  private _escapeHtml = (text: string): string => {
+    return text
+      .replace(/&/g, "&amp;") // Escape '&' first to avoid double escaping
+      .replace(/</g, "&lt;")  // Escape '<'
+      .replace(/>/g, "&gt;")  // Escape '>'
+      .replace(/"/g, "&quot;") // Escape '"'
+      .replace(/'/g, "&#039;"); // Escape "'"
+  };
+
+  private _galleryThumbsTemplate = (thumb): string => {
+    const galleryThumbClassName = this._escapeHtml(this._galleryThumbClassName(thumb)); // Escape special characters in label
+    const label = this._escapeHtml(thumb.label); // Escape special characters in label
+    const title = this._escapeHtml(thumb.title || ""); // Escape special characters in title
+    const uri = this._escapeHtml(thumb.uri);
+    const index = this._escapeHtml(thumb.index);
+    const visible = this._escapeHtml(thumb.visible);
+    const width = this._escapeHtml(thumb.width);
+    const height = this._escapeHtml(thumb.height);
+    const initialWidth = this._escapeHtml(thumb.initialWidth);
+    const initialHeight = this._escapeHtml(thumb.initialHeight);
+    const multiSelected = this._escapeHtml(thumb.multiSelected ? "true" : "false");
+    const multiSelectEnabled = this._escapeHtml(thumb.multiSelectEnabled ? "true" : "false");
+    const searchResults = this._escapeHtml(thumb.data.searchResults || "");
+    const searchResultsTitle = this._escapeHtml(this._galleryThumbSearchResultsTitle(thumb) || "");
+    const thumbId = this._escapeHtml(thumb.id || "");
+  
+    const htmlTemplate = `
+      <button class="${galleryThumbClassName}" 
+              data-src="${uri}" 
+              data-index="${index}" 
+              data-visible="${visible}" 
+              data-width="${width}" 
+              data-height="${height}" 
+              data-initialwidth="${initialWidth}" 
+              data-initialheight="${initialHeight}">
+        <div class="wrap" 
+             style="width:${initialWidth}px; height:${initialHeight}px" 
+             class="${multiSelected ? 'multiSelected' : ''}">
+          ${multiSelectEnabled === "true" ? `
+          <input id="thumb-checkbox-${thumbId}" 
+                 tabindex="-1" 
+                 type="checkbox" 
+                 ${multiSelected === "true" ? 'checked' : ''} 
+                 class="multiSelect" />
+          ` : ''}
+        </div>
+        <div class="info">
+          <span class="index" style="width:${initialWidth}px">${index}</span>
+          <span class="label" style="width:${initialWidth}px" title="${title}">${label}</span>
+          <span class="searchResults" 
+                title="${searchResultsTitle}">
+            ${searchResults}
+          </span>
+        </div>
+      </button>
+    `;
+
+    return htmlTemplate;
+  };
   
   private _galleryThumbClassName = (thumb: Thumb): string => {
     let className = "thumb preLoad";
