@@ -450,7 +450,8 @@ export class GalleryComponent extends BaseComponent {
       // add a selection click event to all thumbs
       this._$thumbs.delegate(".thumb", "click", function (e: any) {
         e.preventDefault();
-        const thumb: MultiSelectableThumb = $.view(<any>this).data;
+        const thumbIndex = parseInt($(this).attr("data-index") as string);
+        const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
         that.fire(Events.THUMB_SELECTED, thumb);
       });
     } else {
@@ -462,7 +463,8 @@ export class GalleryComponent extends BaseComponent {
         const $thumb = $(thumbs[i]);
 
         $thumb.checkboxButton(function (_checked: boolean) {
-          const thumb: MultiSelectableThumb = $.view(<any>this).data;
+          const thumbIndex = parseInt($(this).attr("data-index") as string);
+          const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
           that._setThumbMultiSelected(thumb, !thumb.multiSelected);
           const range: MultiSelectableRange = <MultiSelectableRange>(
             that.options.data.helper.getCanvasRange(thumb.data)
