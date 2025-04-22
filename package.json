@@ -50,7 +50,6 @@
     "@iiif/manifold": "2.*",
     "@iiif/vocabulary": "1.0.11",
     "@types/jquery": "3.3.14",
-    "dompurify": "3.2.5",
     "manifesto.js": "4.*"
   }
 }

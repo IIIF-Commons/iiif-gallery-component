@@ -1,4 +1,3 @@
-import DOMPurify from 'dompurify';
 import { ViewingDirection } from "@iiif/vocabulary";
 import { Canvas, Range, Thumb } from "manifesto.js";
 import {
@@ -329,7 +328,7 @@ export class GalleryComponent extends BaseComponent {
   }
 
   private _escapeHtml = (text: string): string => {
-    return text
+    return String(text)
       .replace(/&/g, "&amp;") // Escape '&' first to avoid double escaping
       .replace(/</g, "&lt;")  // Escape '<'
       .replace(/>/g, "&gt;")  // Escape '>'
@@ -445,8 +444,7 @@ export class GalleryComponent extends BaseComponent {
     }
 
     const renderedHtml = this._thumbs.map(this._galleryThumbsTemplate).join('');
-    const cleanHtml = DOMPurify.sanitize(renderedHtml);
-    this._$thumbs.html(cleanHtml);
+    this._$thumbs.html(renderedHtml);
 
     if (multiSelectState && !multiSelectState.isEnabled) {
       // add a selection click event to all thumbs
