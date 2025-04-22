@@ -337,6 +337,9 @@ export class GalleryComponent extends BaseComponent {
   };
 
   private _galleryThumbsTemplate = (thumb): string => {
+    const multiSelected = thumb.multiSelected;
+    const multiSelectEnabled = thumb.multiSelectEnabled
+    
     const galleryThumbClassName = this._escapeHtml(this._galleryThumbClassName(thumb)); // Escape special characters in label
     const label = this._escapeHtml(thumb.label); // Escape special characters in label
     const title = this._escapeHtml(thumb.title || ""); // Escape special characters in title
@@ -347,8 +350,6 @@ export class GalleryComponent extends BaseComponent {
     const height = this._escapeHtml(thumb.height);
     const initialWidth = this._escapeHtml(thumb.initialWidth);
     const initialHeight = this._escapeHtml(thumb.initialHeight);
-    const multiSelected = this._escapeHtml(thumb.multiSelected ? "true" : "false");
-    const multiSelectEnabled = this._escapeHtml(thumb.multiSelectEnabled ? "true" : "false");
     const searchResults = this._escapeHtml(thumb.data.searchResults || "");
     const searchResultsTitle = this._escapeHtml(this._galleryThumbSearchResultsTitle(thumb) || "");
     const thumbId = this._escapeHtml(thumb.id || "");
@@ -365,13 +366,11 @@ export class GalleryComponent extends BaseComponent {
         <div class="wrap" 
              style="width:${initialWidth}px; height:${initialHeight}px" 
              class="${multiSelected ? 'multiSelected' : ''}">
-          ${multiSelectEnabled === "true" ? `
+          ${multiSelectEnabled ? `
           <input id="thumb-checkbox-${thumbId}" 
                  tabindex="-1" 
                  type="checkbox" 
-                 ${multiSelected === "true" ? 'checked' : ''} 
-                 class="multiSelect" />
-          ` : ''}
+                 ${multiSelected ? 'checked' : ''} class="multiSelect" />` : ''}
         </div>
         <div class="info">
           <span class="index" style="width:${initialWidth}px">${index}</span>
