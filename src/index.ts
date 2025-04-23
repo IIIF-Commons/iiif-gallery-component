@@ -340,9 +340,9 @@ export class GalleryComponent extends BaseComponent {
     const multiSelected = thumb.multiSelected;
     const multiSelectEnabled = thumb.multiSelectEnabled
     
-    const galleryThumbClassName = this._escapeHtml(this._galleryThumbClassName(thumb)); // Escape special characters in label
-    const label = this._escapeHtml(thumb.label); // Escape special characters in label
-    const title = this._escapeHtml(thumb.title || ""); // Escape special characters in title
+    const galleryThumbClassName = this._escapeHtml(this._galleryThumbClassName(thumb));
+    const label = this._escapeHtml(thumb.label);
+    const title = this._escapeHtml(thumb.title || "");
     const uri = this._escapeHtml(thumb.uri);
     const index = this._escapeHtml(thumb.index);
     const visible = this._escapeHtml(thumb.visible);
