@@ -277,7 +277,7 @@ export class GalleryComponent extends BaseComponent {
       for (let i = 0; i < multiSelectState.canvases.length; i++) {
         const canvas: MultiSelectableCanvas = multiSelectState.canvases[i];
         const thumb: Thumb = this._getThumbByCanvas(canvas);
-        this._setThumbMultiSelected(thumb, canvas.multiSelected);
+        this._updateThumbHtmlMultiSelected(thumb.index, canvas.multiSelected);
       }
 
       // range selections override canvas selections
@@ -287,7 +287,7 @@ export class GalleryComponent extends BaseComponent {
 
         for (let i = 0; i < thumbs.length; i++) {
           const thumb: Thumb = thumbs[i];
-          this._setThumbMultiSelected(thumb, range.multiSelected);
+          this._updateThumbHtmlMultiSelected(thumb.index, range.multiSelected);
         }
       }
     } else {
@@ -337,7 +337,6 @@ export class GalleryComponent extends BaseComponent {
   };
 
   private _galleryThumbsTemplate = (thumb): string => {
-    const multiSelected = thumb.multiSelected;
     const multiSelectEnabled = thumb.multiSelectEnabled
     
     const galleryThumbClassName = this._escapeHtml(this._galleryThumbClassName(thumb));
@@ -353,6 +352,8 @@ export class GalleryComponent extends BaseComponent {
     const searchResults = this._escapeHtml(thumb.data.searchResults || "");
     const searchResultsTitle = this._escapeHtml(this._galleryThumbSearchResultsTitle(thumb) || "");
     const thumbId = this._escapeHtml(thumb.id || "");
+    console.log("thumbId", thumbId);
+    console.log("thumb", thumb);
   
     const htmlTemplate = `
       <button class="${galleryThumbClassName}" 
@@ -364,13 +365,12 @@ export class GalleryComponent extends BaseComponent {
               data-initialwidth="${initialWidth}" 
               data-initialheight="${initialHeight}">
         <div class="wrap" 
-             style="width:${initialWidth}px; height:${initialHeight}px" 
-             class="${multiSelected ? 'multiSelected' : ''}">
+             style="width:${initialWidth}px; height:${initialHeight}px">
           ${multiSelectEnabled ? `
-          <input id="thumb-checkbox-${thumbId}" 
+          <input id="thumb-checkbox-${index}" 
                  tabindex="-1" 
                  type="checkbox" 
-                 ${multiSelected ? 'checked' : ''} class="multiSelect" />` : ''}
+                 class="multiSelect" />` : ''}
         </div>
         <div class="info">
           <span class="index" style="width:${initialWidth}px">${index}</span>
@@ -464,7 +464,7 @@ export class GalleryComponent extends BaseComponent {
         $thumb.checkboxButton(function (_checked: boolean) {
           const thumbIndex = parseInt($(this).attr("data-index") as string);
           const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
-          that._setThumbMultiSelected(thumb, !thumb.multiSelected);
+          that._updateThumbHtmlMultiSelected(thumb.index, !thumb.multiSelected);
           const range: MultiSelectableRange = <MultiSelectableRange>(
             that.options.data.helper.getCanvasRange(thumb.data)
           );
@@ -717,8 +717,24 @@ export class GalleryComponent extends BaseComponent {
     this._range = Maths.clamp(norm, 0.05, 1);
   }
 
-  private _setThumbMultiSelected(thumb: Thumb, selected: boolean): void {
-    $.observable(thumb).setProperty("multiSelected", selected);
+
+  // Update the DOM when the multiSelected state changes
+  private _updateThumbHtmlMultiSelected(thumbIndex: number, multiSelected: boolean): void {
+    const $thumb = this._getThumbByIndex(thumbIndex);
+
+    // Update the "wrap" div class
+    const $wrap = $thumb.find(".wrap");
+    if (multiSelected) {
+        $wrap.addClass("multiSelected");
+    } else {
+        $wrap.removeClass("multiSelected");
+    }
+
+    // Update all the checkbox state
+    const $checkbox = $thumb.find(`#thumb-checkbox-${thumbIndex}`);
+    if ($checkbox.length) {
+        $checkbox.prop("checked", multiSelected);
+    }
   }
 
   protected _resize(): void {}
