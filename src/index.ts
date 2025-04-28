@@ -461,7 +461,8 @@ export class GalleryComponent extends BaseComponent {
         $thumb.checkboxButton(function (_checked: boolean) {
           const thumbIndex = parseInt($(this).attr("data-index") as string);
           const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
-          that._updateThumbHtmlMultiSelected(thumb.index, !thumb.multiSelected);
+          const multiSelected = that._getThumbMultiSelected(thumbIndex);
+          that._updateThumbHtmlMultiSelected(thumb.index, multiSelected);
           const range: MultiSelectableRange = <MultiSelectableRange>(
             that.options.data.helper.getCanvasRange(thumb.data)
           );
@@ -472,12 +473,12 @@ export class GalleryComponent extends BaseComponent {
             if (range) {
               multiSelectState.selectRange(
                 <MultiSelectableRange>range,
-                thumb.multiSelected
+                multiSelected
               );
             } else {
               multiSelectState.selectCanvas(
                 <MultiSelectableCanvas>thumb.data,
-                thumb.multiSelected
+                multiSelected
               );
             }
           }
@@ -488,6 +489,11 @@ export class GalleryComponent extends BaseComponent {
         });
       }
     }
+  }
+
+  private _getThumbMultiSelected(thumbIndex: number): boolean {
+    const $checkbox = this._getThumbByIndex(thumbIndex).find(`#thumb-checkbox-${thumbIndex}`);
+    return $checkbox.prop("checked");
   }
 
   private _getThumbByCanvas(canvas: Canvas): Thumb {
