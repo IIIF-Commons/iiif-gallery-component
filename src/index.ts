@@ -351,9 +351,6 @@ export class GalleryComponent extends BaseComponent {
     const initialHeight = this._escapeHtml(thumb.initialHeight);
     const searchResults = this._escapeHtml(thumb.data.searchResults || "");
     const searchResultsTitle = this._escapeHtml(this._galleryThumbSearchResultsTitle(thumb) || "");
-    const thumbId = this._escapeHtml(thumb.id || "");
-    console.log("thumbId", thumbId);
-    console.log("thumb", thumb);
   
     const htmlTemplate = `
       <button class="${galleryThumbClassName}" 
