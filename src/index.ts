@@ -327,7 +327,7 @@ export class GalleryComponent extends BaseComponent {
     return null;
   }
 
-  private _escapeHtml = (text: string): string => {
+  private _escapeHtml = (text: string | number | boolean): string => {
     return String(text)
       .replace(/&/g, "&amp;") // Escape '&' first to avoid double escaping
       .replace(/</g, "&lt;")  // Escape '<'
@@ -336,12 +336,11 @@ export class GalleryComponent extends BaseComponent {
       .replace(/'/g, "&#039;"); // Escape "'"
   };
 
-  private _galleryThumbsTemplate = (thumb): string => {
+  private _galleryThumbsTemplate = (thumb: MultiSelectableThumb): string => {
     const multiSelectEnabled = thumb.multiSelectEnabled
     
     const galleryThumbClassName = this._escapeHtml(this._galleryThumbClassName(thumb));
     const label = this._escapeHtml(thumb.label);
-    const title = this._escapeHtml(thumb.title || "");
     const uri = this._escapeHtml(thumb.uri);
     const index = this._escapeHtml(thumb.index);
     const visible = this._escapeHtml(thumb.visible);
@@ -371,7 +370,7 @@ export class GalleryComponent extends BaseComponent {
         </div>
         <div class="info">
           <span class="index" style="width:${initialWidth}px">${index}</span>
-          <span class="label" style="width:${initialWidth}px" title="${title}">${label}</span>
+          <span class="label" style="width:${initialWidth}px" title="${label}">${label}</span>
           <span class="searchResults" 
                 title="${searchResultsTitle}">
             ${searchResults}
