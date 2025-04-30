@@ -444,8 +444,7 @@ export class GalleryComponent extends BaseComponent {
     if (multiSelectState && !multiSelectState.isEnabled) {
       // add a selection click event to all thumbs
       this._$thumbs.delegate(".thumb", "click", function (e: any) {
-        e.preventDefault();
-        const thumbIndex = parseInt($(this).attr("data-index") as string);
+        const thumbIndex = parseInt(this.dataset.index as string);
         const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
         that.fire(Events.THUMB_SELECTED, thumb);
       });
@@ -458,7 +457,7 @@ export class GalleryComponent extends BaseComponent {
         const $thumb = $(thumbs[i]);
 
         $thumb.checkboxButton(function (_checked: boolean) {
-          const thumbIndex = parseInt($(this).attr("data-index") as string);
+          const thumbIndex = parseInt(this.dataset.index as string);
           const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
           const multiSelected = that._getThumbMultiSelected(thumbIndex);
           that._updateThumbHtmlMultiSelected(thumb.index, multiSelected);
