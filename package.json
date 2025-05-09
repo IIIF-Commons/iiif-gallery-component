@@ -17,7 +17,8 @@
     "build": "npm run clean && npm run build:css && npm run build:commonjs && npm run build:esmodule && npm run build:umd && npm run build:var && npm run build:types",
     "clean": "rimraf -rf dist-css dist-umd dist-commonjs dist-esmodule dist-var types",
     "prepublishOnly": "npm run build && npm run test",
-    "start": "npx serve"
+    "start": "npx serve",
+    "test": ""
   },
   "repository": {
     "type": "git",
