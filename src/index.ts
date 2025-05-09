@@ -177,59 +177,6 @@ export class GalleryComponent extends BaseComponent {
 
     this._setRange();
 
-    $.templates({
-      galleryThumbsTemplate:
-        '\
-				<button class="{{:~galleryThumbClassName()}}" data-src="{{>uri}}" data-index="{{>index}}" data-visible="{{>visible}}" data-width="{{>width}}" data-height="{{>height}}" data-initialwidth="{{>initialWidth}}" data-initialheight="{{>initialHeight}}">\
-						<div class="wrap" style="width:{{>initialWidth}}px; height:{{>initialHeight}}px" data-link="class{merge:multiSelected toggle=\'multiSelected\'}">\
-						{^{if multiSelectEnabled}}\
-								<input id="thumb-checkbox-{{>id}}" tabindex="-1" type="checkbox" data-link="checked{:multiSelected ? \'checked\' : \'\'}" class="multiSelect" />\
-						{{/if}}\
-						</div>\
-						<div class="info">\
-								<span class="index" style="width:{{>initialWidth}}px">{{:#index + 1}}</span>\
-								<span class="label" style="width:{{>initialWidth}}px" title="{{>label}}">{{>label}}&nbsp;</span>\
-								<span class="searchResults" title="{{:~galleryThumbSearchResultsTitle()}}">{{>data.searchResults}}</span>\
-						</div>\
-				</button>',
-    });
-
-    const that = this;
-
-    $.views.helpers({
-      galleryThumbClassName: function () {
-        let className: string = "thumb preLoad";
-
-        if (this.data.index === 0) {
-          className += " first";
-        }
-
-        if (!this.data.uri) {
-          className += " placeholder";
-        }
-
-        return className;
-      },
-      galleryThumbSearchResultsTitle: function () {
-        const searchResults = Number(this.data.data.searchResults);
-
-        if (searchResults) {
-          if (searchResults > 1) {
-            return Strings.format(
-              that.options.data.content.searchResults,
-              searchResults.toString()
-            );
-          }
-
-          return Strings.format(
-            that.options.data.content.searchResult,
-            searchResults.toString()
-          );
-        }
-
-        return null;
-      },
-    });
 
     // use unevent to detect scroll stop.
     this._$main.on(
@@ -330,7 +277,7 @@ export class GalleryComponent extends BaseComponent {
       for (let i = 0; i < multiSelectState.canvases.length; i++) {
         const canvas: MultiSelectableCanvas = multiSelectState.canvases[i];
         const thumb: Thumb = this._getThumbByCanvas(canvas);
-        this._setThumbMultiSelected(thumb, canvas.multiSelected);
+        this._updateThumbHtmlMultiSelected(thumb.index, canvas.multiSelected);
       }
 
       // range selections override canvas selections
@@ -340,7 +287,7 @@ export class GalleryComponent extends BaseComponent {
 
         for (let i = 0; i < thumbs.length; i++) {
           const thumb: Thumb = thumbs[i];
-          this._setThumbMultiSelected(thumb, range.multiSelected);
+          this._updateThumbHtmlMultiSelected(thumb.index, range.multiSelected);
         }
       }
     } else {
@@ -380,6 +327,84 @@ export class GalleryComponent extends BaseComponent {
     return null;
   }
 
+  private _escapeHtml = (text: string | number | boolean): string => {
+    return String(text)
+      .replace(/&/g, "&amp;") // Escape '&' first to avoid double escaping
+      .replace(/</g, "&lt;")  // Escape '<'
+      .replace(/>/g, "&gt;")  // Escape '>'
+      .replace(/"/g, "&quot;") // Escape '"'
+      .replace(/'/g, "&#039;"); // Escape "'"
+  };
+
+  private _galleryThumbsTemplate = (thumb: MultiSelectableThumb): string => {
+    const multiSelectEnabled = thumb.multiSelectEnabled
+    
+    const galleryThumbClassName = this._escapeHtml(this._galleryThumbClassName(thumb));
+    const label = this._escapeHtml(thumb.label);
+    const uri = this._escapeHtml(thumb.uri);
+    const index = this._escapeHtml(thumb.index);
+    const visible = this._escapeHtml(thumb.visible);
+    const width = this._escapeHtml(thumb.width);
+    const height = this._escapeHtml(thumb.height);
+    const initialWidth = this._escapeHtml(thumb.initialWidth);
+    const initialHeight = this._escapeHtml(thumb.initialHeight);
+    const searchResults = this._escapeHtml(thumb.data.searchResults || "");
+    const searchResultsTitle = this._escapeHtml(this._galleryThumbSearchResultsTitle(thumb) || "");
+  
+    const htmlTemplate = `
+      <button class="${galleryThumbClassName}" 
+              data-src="${uri}" 
+              data-index="${index}" 
+              data-visible="${visible}" 
+              data-width="${width}" 
+              data-height="${height}" 
+              data-initialwidth="${initialWidth}" 
+              data-initialheight="${initialHeight}">
+        <div class="wrap" 
+             style="width:${initialWidth}px; height:${initialHeight}px">
+          ${multiSelectEnabled ? `
+          <input id="thumb-checkbox-${index}" 
+                 tabindex="-1" 
+                 type="checkbox" 
+                 class="multiSelect" />` : ''}
+        </div>
+        <div class="info">
+          <span class="index" style="width:${initialWidth}px">${index}</span>
+          <span class="label" style="width:${initialWidth}px" title="${label}">${label}</span>
+          <span class="searchResults" 
+                title="${searchResultsTitle}">
+            ${searchResults}
+          </span>
+        </div>
+      </button>
+    `;
+
+    return htmlTemplate;
+  };
+  
+  private _galleryThumbClassName = (thumb: Thumb): string => {
+    let className = "thumb preLoad";
+    if (thumb.index === 0) {
+      className += " first";
+    }
+    if (!thumb.uri) {
+      className += " placeholder";
+    }
+    return className;
+  };
+  
+  private _galleryThumbSearchResultsTitle = (thumb: Thumb): string | null => {
+    const searchResults = Number(thumb.data.searchResults);
+    if (searchResults) {
+      if (searchResults > 1) {
+        return Strings.format(this.options.data.content.searchResults, searchResults.toString());
+      }
+      return Strings.format(this.options.data.content.searchResults, searchResults.toString());
+    }
+    return null;
+  };
+  
+
   private _createThumbs(): void {
     const that = this;
 
@@ -413,13 +438,14 @@ export class GalleryComponent extends BaseComponent {
       thumb.initialHeight = medianHeight;
     }
 
-    this._$thumbs.link($.templates.galleryThumbsTemplate, this._thumbs);
+    const renderedHtml = this._thumbs.map(this._galleryThumbsTemplate).join('');
+    this._$thumbs.html(renderedHtml);
 
     if (multiSelectState && !multiSelectState.isEnabled) {
       // add a selection click event to all thumbs
       this._$thumbs.delegate(".thumb", "click", function (e: any) {
-        e.preventDefault();
-        const thumb = $.view(this).data;
+        const thumbIndex = parseInt(this.dataset.index as string);
+        const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
         that.fire(Events.THUMB_SELECTED, thumb);
       });
     } else {
@@ -431,8 +457,10 @@ export class GalleryComponent extends BaseComponent {
         const $thumb = $(thumbs[i]);
 
         $thumb.checkboxButton(function (_checked: boolean) {
-          const thumb: MultiSelectableThumb = $.view(<any>this).data;
-          that._setThumbMultiSelected(thumb, !thumb.multiSelected);
+          const thumbIndex = parseInt(this.dataset.index as string);
+          const thumb: MultiSelectableThumb = that._thumbs[thumbIndex];
+          const multiSelected = that._getThumbMultiSelected(thumbIndex);
+          that._updateThumbHtmlMultiSelected(thumb.index, multiSelected);
           const range: MultiSelectableRange = <MultiSelectableRange>(
             that.options.data.helper.getCanvasRange(thumb.data)
           );
@@ -443,12 +471,12 @@ export class GalleryComponent extends BaseComponent {
             if (range) {
               multiSelectState.selectRange(
                 <MultiSelectableRange>range,
-                thumb.multiSelected
+                multiSelected
               );
             } else {
               multiSelectState.selectCanvas(
                 <MultiSelectableCanvas>thumb.data,
-                thumb.multiSelected
+                multiSelected
               );
             }
           }
@@ -459,6 +487,11 @@ export class GalleryComponent extends BaseComponent {
         });
       }
     }
+  }
+
+  private _getThumbMultiSelected(thumbIndex: number): boolean {
+    const $checkbox = this._getThumbByIndex(thumbIndex).find(`#thumb-checkbox-${thumbIndex}`);
+    return $checkbox.prop("checked");
   }
 
   private _getThumbByCanvas(canvas: Canvas): Thumb {
@@ -685,8 +718,24 @@ export class GalleryComponent extends BaseComponent {
     this._range = Maths.clamp(norm, 0.05, 1);
   }
 
-  private _setThumbMultiSelected(thumb: Thumb, selected: boolean): void {
-    $.observable(thumb).setProperty("multiSelected", selected);
+
+  // Update the DOM when the multiSelected state changes
+  private _updateThumbHtmlMultiSelected(thumbIndex: number, multiSelected: boolean): void {
+    const $thumb = this._getThumbByIndex(thumbIndex);
+
+    // Update the "wrap" div class
+    const $wrap = $thumb.find(".wrap");
+    if (multiSelected) {
+        $wrap.addClass("multiSelected");
+    } else {
+        $wrap.removeClass("multiSelected");
+    }
+
+    // Update all the checkbox state
+    const $checkbox = $thumb.find(`#thumb-checkbox-${thumbIndex}`);
+    if ($checkbox.length) {
+        $checkbox.prop("checked", multiSelected);
+    }
   }
 
   protected _resize(): void {}
