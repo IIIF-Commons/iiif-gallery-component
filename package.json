@@ -1,6 +1,6 @@
 {
   "name": "@iiif/iiif-gallery-component",
-  "version": "1.1.22",
+  "version": "1.1.23",
   "description": "",
   "main": "./dist-commonjs/index.js",
   "module": "./dist-esmodule/index.js",
